@@ -5,13 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/assignment2_fp/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/assignment2_fp/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/HelloController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/assignment2_fp/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/hello-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/admin.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/admin/admin.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/dependent.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/dependent/dependent.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/insuranceManager.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/insuranceManager/insuranceManager.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/insuranceSurveyor.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/insuranceSurveyor/insuranceSurveyor.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/policyHolder.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/policyHolder/policyHolder.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/policyOwner.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/policyOwner/policyOwner.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +91,7 @@
       <option name="presentableId" value="Default" />
       <updated>1714064700889</updated>
       <workItem from="1714064702006" duration="2000" />
-      <workItem from="1714312534061" duration="1765000" />
+      <workItem from="1714312534061" duration="2930000" />
     </task>
     <servers />
   </component>
