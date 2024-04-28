@@ -1,4 +1,4 @@
-package org.example.assignment2_fp;
+package main_folder;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

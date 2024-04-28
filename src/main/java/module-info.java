@@ -1,8 +1,12 @@
 module org.example.assignment2_fp {
     requires javafx.controls;
     requires javafx.fxml;
+    requires jdk.compiler;
+    requires java.sql;
 
 
-    opens org.example.assignment2_fp to javafx.fxml;
-    exports org.example.assignment2_fp;
+    opens main_folder to javafx.fxml;
+    exports main_folder;
+    exports main_folder.Controller;
+    opens main_folder.Controller to javafx.fxml;
 }
