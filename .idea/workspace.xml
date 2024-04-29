@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/admin/admin.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/admin/admin.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" afterDir="false" />
     </list>
@@ -54,22 +54,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.HelloApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.HelloApplication.executor": "Run",
+    "Application.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "admin__page",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\RMIT\rmit 5 semester\Further programming\Assignment2_FP\src\main\resources\main_folder\admin\CSS" />
@@ -113,7 +113,7 @@
       <updated>1714064700889</updated>
       <workItem from="1714064702006" duration="2000" />
       <workItem from="1714312534061" duration="2930000" />
-      <workItem from="1714356277887" duration="9477000" />
+      <workItem from="1714356277887" duration="19288000" />
     </task>
     <servers />
   </component>

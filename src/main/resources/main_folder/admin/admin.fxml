@@ -10,18 +10,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.TableColumn?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.adminController">
    <top>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <Label prefHeight="103.0" prefWidth="170.0" text="Admin">
                <font>
@@ -31,6 +32,11 @@
                   <Insets left="20.0" />
                </padding>
             </Label>
+            <Pane HBox.hgrow="ALWAYS" /> <!-- Spacer -->
+            <Button fx:id="logoutButton" onAction="#Logout" text="Logout">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin></Button>
          </children>
       </HBox>
    </top>
@@ -48,12 +54,12 @@
                         <items>
                            <FXCollections fx:factory="observableArrayList">
                               <String fx:value="Dependent" />
-                              <String fx:value="Policy Holder" />
-                              <String fx:value="Policy Owner" />
+                              <String fx:value="PolicyHolder" />
+                              <String fx:value="PolicyOwner" />
                            </FXCollections>
                         </items>
                      </ComboBox>
-                     <Button fx:id="createCustomerButton" text="Submit" />
+                     <Button fx:id="createCustomerButton" onAction="#CreateCustomer" text="Submit" />
                      <Separator>
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -71,7 +77,7 @@
                      <TextField fx:id="updateCustomerName" promptText="Name" />
                      <TextField fx:id="updateCustomerEmail" promptText="Email" />
                      <TextField fx:id="updateCustomerPassword" promptText="Password" />
-                     <Button fx:id="updateCustomerButton" text="Submit" />
+                     <Button fx:id="updateCustomerButton" onAction="#UpdateCustomer" text="Submit" />
                      <Separator>
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -86,7 +92,7 @@
 
                      <Label text="Delete User" />
                      <TextField fx:id="deleteCustomerId" promptText="ID" />
-                     <Button fx:id="deleteCustomerButton" text="Submit" />
+                     <Button fx:id="deleteCustomerButton" onAction="#DeleteCustomer" text="Submit" />
                      <Separator>
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -101,7 +107,7 @@
 
                      <Label text="Retrieve User" />
                      <TextField fx:id="retrieveCustomerId" promptText="ID" />
-                     <Button fx:id="retrieveCustomerButton" text="Submit" />
+                     <Button fx:id="retrieveCustomerButton" onAction="#RetrieveCustomer" text="Submit" />
                   </VBox>
                </TitledPane>
                <TitledPane text="Provider">
@@ -113,12 +119,12 @@
                      <ComboBox fx:id="createProviderOption">
                         <items>
                            <FXCollections fx:factory="observableArrayList">
-                              <String fx:value="Insurance Surveyor" />
-                              <String fx:value="Insurance Manager" />
+                              <String fx:value="InsuranceSurveyor" />
+                              <String fx:value="InsuranceManager" />
                            </FXCollections>
                         </items>
                      </ComboBox>
-                     <Button fx:id="createProviderButton" text="Submit" />
+                     <Button fx:id="createProviderButton" onAction="#CreateProvider" text="Submit" />
                      <Separator>
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -135,7 +141,7 @@
                      <TextField fx:id="updateProviderName" promptText="Name" />
                      <TextField fx:id="updateProviderEmail" promptText="Email" />
                      <TextField fx:id="updateProviderPassword" promptText="Password" />
-                     <Button fx:id="updateProviderButton" text="Submit" />
+                     <Button fx:id="updateProviderButton" onAction="#UpdateProvider" text="Submit" />
                      <Separator>
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -150,7 +156,7 @@
 
                      <Label text="Delete User" />
                      <TextField fx:id="deleteProviderId" promptText="ID" />
-                     <Button fx:id="deleteProviderutton" text="Submit" />
+                     <Button fx:id="deleteProviderutton" onAction="#DeleteProvider" text="Submit" />
                      <Separator>
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -165,23 +171,23 @@
 
                      <Label text="Retrieve User" />
                      <TextField fx:id="retrieveProviderId" promptText="ID" />
-                     <Button fx:id="retrieveProviderButton" text="Submit" />
+                     <Button fx:id="retrieveProviderButton" onAction="#RetrieveProvider" text="Submit" />
                   </VBox>
                </TitledPane>
                <TitledPane text="Claim Management">
                   <VBox>
                      <Label text="All Claim" />
-                     <ScrollPane prefWidth="-1.0" maxWidth="1.7976931348623157E308">
-                        <TableView fx:id="claimTable" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                     <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                        <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1176.0">
                            <columns>
                               <TableColumn fx:id="idColumn" text="ID" />
-                              <TableColumn fx:id="claimDateColumn" text="Claim Date" />
-                              <TableColumn fx:id="examDateColumn" text="Exam Date" />
-                              <TableColumn fx:id="claimAmountColumn" text="Claim Amount" />
-                              <TableColumn fx:id="insuredPersonColumn" text="Insured Person" />
-                              <TableColumn fx:id="statusColumn" text="Status" />
-                              <TableColumn fx:id="documentsColumn" text="Documents" />
-                              <TableColumn fx:id="receiverBankingInfoColumn" text="Receiver Banking Info" />
+                              <TableColumn fx:id="claimDateColumn" prefWidth="108.0" text="Claim Date" />
+                              <TableColumn fx:id="examDateColumn" prefWidth="87.0" text="Exam Date" />
+                              <TableColumn fx:id="claimAmountColumn" prefWidth="101.0" text="Claim Amount" />
+                              <TableColumn fx:id="insuredPersonColumn" prefWidth="105.0" text="Insured Person" />
+                              <TableColumn fx:id="statusColumn" prefWidth="145.0" text="Status" />
+                              <TableColumn fx:id="documentsColumn" prefWidth="186.0" text="Documents" />
+                              <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="363.0" text="Receiver Banking Info" />
                            </columns>
                         </TableView>
                      </ScrollPane>
@@ -197,7 +203,7 @@
                         </styleClass>
                      </Separator>
                      <Label text="Sum Total Claim" />
-                     <Label fx:id="totalClaimLabel" />
+                     <Label fx:id="totalClaimLabel" onDragDetected="#TotalCost" />
                   </VBox>
                </TitledPane>
             </panes>
