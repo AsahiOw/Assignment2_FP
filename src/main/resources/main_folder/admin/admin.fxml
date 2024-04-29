@@ -1,14 +1,207 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="main_folder.Admin"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.control.TableColumn?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label prefHeight="103.0" prefWidth="170.0" text="Admin">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox>
+         <Accordion>
+            <panes>
+               <TitledPane text="Customer">
+                  <VBox>
+                     <Label text="Create User" />
+                     <TextField fx:id="createCustomerName" promptText="Name" />
+                     <TextField fx:id="createCustomerEmail" promptText="Email" />
+                     <TextField fx:id="createCustomerPassword" promptText="Password" />
+                     <ComboBox fx:id="createCustomerOption">
+                        <items>
+                           <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Dependent" />
+                              <String fx:value="Policy Holder" />
+                              <String fx:value="Policy Owner" />
+                           </FXCollections>
+                        </items>
+                     </ComboBox>
+                     <Button fx:id="createCustomerButton" text="Submit" />
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
 
-</AnchorPane>
+                     <Label text="Update User" />
+                     <TextField fx:id="updateCustomerId" promptText="ID" />
+                     <TextField fx:id="updateCustomerName" promptText="Name" />
+                     <TextField fx:id="updateCustomerEmail" promptText="Email" />
+                     <TextField fx:id="updateCustomerPassword" promptText="Password" />
+                     <Button fx:id="updateCustomerButton" text="Submit" />
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
+
+                     <Label text="Delete User" />
+                     <TextField fx:id="deleteCustomerId" promptText="ID" />
+                     <Button fx:id="deleteCustomerButton" text="Submit" />
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
+
+                     <Label text="Retrieve User" />
+                     <TextField fx:id="retrieveCustomerId" promptText="ID" />
+                     <Button fx:id="retrieveCustomerButton" text="Submit" />
+                  </VBox>
+               </TitledPane>
+               <TitledPane text="Provider">
+                  <VBox>
+                     <Label text="Create User" />
+                     <TextField fx:id="createProviderName" promptText="Name" />
+                     <TextField fx:id="createProviderEmail" promptText="Email" />
+                     <TextField fx:id="createProviderPassword" promptText="Password" />
+                     <ComboBox fx:id="createProviderOption">
+                        <items>
+                           <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Insurance Surveyor" />
+                              <String fx:value="Insurance Manager" />
+                           </FXCollections>
+                        </items>
+                     </ComboBox>
+                     <Button fx:id="createProviderButton" text="Submit" />
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
+
+                     <Label text="Update User" />
+                     <TextField fx:id="updateProviderName" promptText="Name" />
+                     <TextField fx:id="updateProviderEmail" promptText="Email" />
+                     <TextField fx:id="updateProviderPassword" promptText="Password" />
+                     <Button fx:id="updateProviderButton" text="Submit" />
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
+
+                     <Label text="Delete User" />
+                     <TextField fx:id="deleteProviderId" promptText="ID" />
+                     <Button fx:id="deleteProviderutton" text="Submit" />
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
+
+                     <Label text="Retrieve User" />
+                     <TextField fx:id="retrieveProviderId" promptText="ID" />
+                     <Button fx:id="retrieveProviderButton" text="Submit" />
+                  </VBox>
+               </TitledPane>
+               <TitledPane text="Claim Management">
+                  <VBox>
+                     <Label text="All Claim" />
+                     <ScrollPane prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                        <TableView fx:id="claimTable" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                           <columns>
+                              <TableColumn fx:id="idColumn" text="ID" />
+                              <TableColumn fx:id="claimDateColumn" text="Claim Date" />
+                              <TableColumn fx:id="examDateColumn" text="Exam Date" />
+                              <TableColumn fx:id="claimAmountColumn" text="Claim Amount" />
+                              <TableColumn fx:id="insuredPersonColumn" text="Insured Person" />
+                              <TableColumn fx:id="statusColumn" text="Status" />
+                              <TableColumn fx:id="documentsColumn" text="Documents" />
+                              <TableColumn fx:id="receiverBankingInfoColumn" text="Receiver Banking Info" />
+                           </columns>
+                        </TableView>
+                     </ScrollPane>
+                     <Separator>
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <stylesheets>
+                           <URL value="@CSS/Seperator_style.css" />
+                        </stylesheets>
+                        <styleClass>
+                           <String fx:value="thick-separator" />
+                        </styleClass>
+                     </Separator>
+                     <Label text="Sum Total Claim" />
+                     <Label fx:id="totalClaimLabel" />
+                  </VBox>
+               </TitledPane>
+            </panes>
+         </Accordion>
+      </VBox>
+   </center>
+</BorderPane>
