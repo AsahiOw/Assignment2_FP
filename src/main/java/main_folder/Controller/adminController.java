@@ -173,6 +173,15 @@ public class adminController {
                             alert.setContentText("The Customer does not exist");
                             alert.showAndWait();
                         } else {
+                            String userType = rs.getString("userType");
+                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner"))) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Update Customer notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Customer does not exist");
+                                alert.showAndWait();
+                                return;
+                            }
                             if (updateCustomerName.getText().isEmpty() && updateCustomerEmail.getText().isEmpty() && updateCustomerPassword.getText().isEmpty()) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
@@ -252,6 +261,14 @@ public class adminController {
                             alert.showAndWait();
                         } else {
                             String userType = rs.getString("userType");
+                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner"))) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Delete Customer notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Customer does not exist");
+                                alert.showAndWait();
+                                return;
+                            }
                             sql = "DELETE FROM \"" + userType + "\" WHERE \"userID\" = ?";
                             stmt = conn.prepareStatement(sql);
                             stmt.setInt(1, customerId);
