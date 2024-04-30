@@ -186,7 +186,7 @@ public class adminController {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
                                 alert.setHeaderText(null);
-                                alert.setContentText("Updated the customer");
+                                alert.setContentText("Updated the Customer");
                                 alert.showAndWait();
                                 return;
                             }
@@ -219,7 +219,7 @@ public class adminController {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Update Customer notification");
                             alert.setHeaderText(null);
-                            alert.setContentText("Updated the customer");
+                            alert.setContentText("Updated the Customer");
                             alert.showAndWait();
                         }
                     } catch (NumberFormatException e) {
@@ -368,19 +368,268 @@ public class adminController {
     }
 
     public void CreateProvider() {
-        System.out.println("Create a new provider");
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (createProviderName.getText().isEmpty() || createProviderEmail.getText().isEmpty() || createProviderPassword.getText().isEmpty() || createProviderOption.getValue() == null) {
+                    System.out.println("Please enter all fields");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Create Provider notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please enter all fields");
+                    alert.showAndWait();
+                } else {
+                    String userType = createProviderOption.getValue().toString();
+                    String sql = "INSERT INTO \"User\" (\"name\", \"email\", \"password\", \"userType\") VALUES (?, ?, ?, ?)";
+                    PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    stmt.setString(1, createProviderName.getText());
+                    stmt.setString(2, createProviderEmail.getText());
+                    stmt.setString(3, createProviderPassword.getText());
+                    stmt.setString(4, userType);
+                    stmt.executeUpdate();
+                    ResultSet rs = stmt.getGeneratedKeys();
+                    int userId = 0;
+                    if (rs.next()) {
+                        userId = rs.getInt(1);
+                    }
+                    System.out.println("Created a " + userType);
+
+                    if (userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor")) {
+                        sql = "INSERT INTO \"" + userType + "\" (\"userID\") VALUES (?)";
+                        stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, userId);
+                        stmt.executeUpdate();
+                        System.out.println("Created a " + userType + " entry in the corresponding table");
+                        Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+                        alert2.setTitle("Create Provider notification");
+                        alert2.setHeaderText(null);
+                        alert2.setContentText("Created a " + userType + " entry in the corresponding table");
+                        alert2.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void UpdateProvider() {
-        System.out.println("Update a provider");
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (updateProviderId.getText().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Update Provider notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Provider does not exist");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        int customerId = Integer.parseInt(updateProviderId.getText());
+                        String sql = "SELECT * FROM \"User\" WHERE \"id\" = ?";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, customerId);
+                        ResultSet rs = stmt.executeQuery();
+                        if (!rs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Update Provider notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The Provider does not exist");
+                            alert.showAndWait();
+                        } else {
+                            String userType = rs.getString("userType");
+                            if (!(userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor"))) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Update Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Provider does not exist");
+                                alert.showAndWait();
+                                return;
+                            }
+                            if (updateProviderName.getText().isEmpty() && updateProviderEmail.getText().isEmpty() && updateProviderPassword.getText().isEmpty()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Update Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Updated the Provider");
+                                alert.showAndWait();
+                                return;
+                            }
+                            sql = "UPDATE \"User\" SET ";
+                            if (!updateProviderName.getText().isEmpty()) {
+                                sql += "\"name\" = ?, ";
+                            }
+                            if (!updateProviderEmail.getText().isEmpty()) {
+                                sql += "\"email\" = ?, ";
+                            }
+                            if (!updateProviderPassword.getText().isEmpty()) {
+                                sql += "\"password\" = ?, ";
+                            }
+                            sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
+                            sql += " WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            int index = 1;
+                            if (!updateProviderName.getText().isEmpty()) {
+                                stmt.setString(index++, updateProviderName.getText());
+                            }
+                            if (!updateProviderEmail.getText().isEmpty()) {
+                                stmt.setString(index++, updateProviderEmail.getText());
+                            }
+                            if (!updateProviderPassword.getText().isEmpty()) {
+                                stmt.setString(index++, updateProviderPassword.getText());
+                            }
+                            stmt.setInt(index, customerId);
+                            stmt.executeUpdate();
+                            System.out.println("Updated the Provider");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Update Provider notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Updated the Provider");
+                            alert.showAndWait();
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Update Provider notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The Provider does not exist");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void DeleteProvider() {
-        System.out.println("Delete a provider");
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (deleteProviderId.getText().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Delete Provider notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Provider does not exist");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        int providerId = Integer.parseInt(deleteProviderId.getText());
+                        String sql = "SELECT * FROM \"User\" WHERE \"id\" = ?";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, providerId);
+                        ResultSet rs = stmt.executeQuery();
+                        if (!rs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Delete Provider notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The Provider does not exist");
+                            alert.showAndWait();
+                        } else {
+                            String userType = rs.getString("userType");
+                            if (!(userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor"))) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Delete Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Provider does not exist");
+                                alert.showAndWait();
+                                return;
+                            }
+                            sql = "DELETE FROM \"" + userType + "\" WHERE \"userID\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, providerId);
+                            stmt.executeUpdate();
+
+                            sql = "DELETE FROM \"User\" WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, providerId);
+                            stmt.executeUpdate();
+
+                            System.out.println("Deleted the provider");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Delete Provider notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Deleted the provider");
+                            alert.showAndWait();
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Delete Provider notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The Provider does not exist");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void RetrieveProvider() {
-        System.out.println("Retrieve a provider");
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (retrieveProviderId.getText().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Retrieve Provider notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Provider corresponds to this id does not exist");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        int providerId = Integer.parseInt(retrieveProviderId.getText());
+                        String sql = "SELECT * FROM \"User\" WHERE \"id\" = ?";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, providerId);
+                        ResultSet rs = stmt.executeQuery();
+                        if (!rs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Retrieve Provider notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The Provider corresponds to this id does not exist");
+                            alert.showAndWait();
+                        } else {
+                            String userType = rs.getString("userType");
+                            if (userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner")) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Retrieve Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Provider corresponds to this id does not exist");
+                                alert.showAndWait();
+                                return;
+                            }
+                            if (userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor")) {
+                                sql = "SELECT U.* FROM \"User\" U " +
+                                        "JOIN \"" + userType + "\" T ON U.\"id\" = T.\"userID\" " +
+                                        "WHERE U.\"id\" = ?";
+                                stmt = conn.prepareStatement(sql);
+                                stmt.setInt(1, providerId);
+                                rs = stmt.executeQuery();
+                                if (rs.next()) {
+                                    String userDetails = "Userid: " + rs.getInt("id") + "\n" +
+                                            "Name: " + rs.getString("name") + "\n" +
+                                            "Email: " + rs.getString("email") + "\n" +
+                                            "Password: " + rs.getString("password") + "\n" +
+                                            "UserType: " + rs.getString("userType");
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Retrieve Provider notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText(userDetails);
+                                    alert.showAndWait();
+                                }
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Retrieve Provider notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The Provider corresponds to this id does not exist");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void TotalCost() {

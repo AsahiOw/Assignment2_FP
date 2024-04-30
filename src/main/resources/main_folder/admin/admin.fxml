@@ -138,6 +138,7 @@
                      </Separator>
 
                      <Label text="Update User" />
+                     <TextField fx:id="updateProviderId" promptText="ID" />
                      <TextField fx:id="updateProviderName" promptText="Name" />
                      <TextField fx:id="updateProviderEmail" promptText="Email" />
                      <TextField fx:id="updateProviderPassword" promptText="Password" />
