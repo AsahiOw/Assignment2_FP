@@ -15,12 +15,12 @@ public class main extends Application {
     public void start(Stage stage) throws IOException {
         stg = stage;
         stage.setResizable(false);
-//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login/login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login/login.fxml"));
 //        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("admin/admin.fxml"));
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("dependent/dependent.fxml"));
+//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("dependent/dependent.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
 //        stage.initStyle(StageStyle.UNDECORATED);
-        stage.setTitle("Test");
+        stage.setTitle("Ooptional");
         stage.setScene(scene);
         stage.show();
     }
