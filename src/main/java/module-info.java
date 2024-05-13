@@ -9,4 +9,5 @@ module org.example.assignment2_fp {
     exports main_folder;
     exports main_folder.Controller;
     opens main_folder.Controller to javafx.fxml;
+    opens main_folder.Model to javafx.base;
 }

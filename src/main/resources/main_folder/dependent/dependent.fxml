@@ -1,14 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="main_folder.Dependent"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.dependentController">
+   <top>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label prefHeight="100.0" prefWidth="273.0" text=" Dependent">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Label>
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout">
+                <HBox.margin>
+                    <Insets right="20.0" />
+                </HBox.margin>>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Accordion>
+              <panes>
+                <TitledPane animated="false" text="Information">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Your Information" />
+                              <TableView fx:id="infoTable" prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                  <TableColumn fx:id="dependentIdColumn" prefWidth="119.20000803470612" text="ID" />
+                                  <TableColumn fx:id="dependentNameColumn" prefWidth="270.39998626708984" text="Name" />
+                                    <TableColumn fx:id="dependentEmailColumn" prefWidth="332.7999572753906" text="Email" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </content></TitledPane>
+                <TitledPane text="Claim">
+                    <VBox>
+                        <Label text="All Claim" />
+                        <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                            <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1176.0">
+                                <columns>
+                                    <TableColumn fx:id="idColumn" text="ID" />
+                                    <TableColumn fx:id="claimDateColumn" prefWidth="108.0" text="Claim Date" />
+                                    <TableColumn fx:id="examDateColumn" prefWidth="87.0" text="Exam Date" />
+                                    <TableColumn fx:id="claimAmountColumn" prefWidth="101.0" text="Claim Amount" />
+                                    <TableColumn fx:id="insuredPersonColumn" prefWidth="105.0" text="Insured Person" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="145.0" text="Status" />
+                                    <TableColumn fx:id="documentsColumn" prefWidth="186.0" text="Documents" />
+                                    <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="363.0" text="Receiver Banking Info" />
+                                </columns>
+                            </TableView>
+                        </ScrollPane>
+                    </VBox>
+                  </TitledPane>
+              </panes>
+            </Accordion>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/admin/admin.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/admin/admin.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/dependentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/dependentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyHolderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyHolderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyOwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyOwnerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/dependent/dependent.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/dependent/dependent.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="FxmlFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -48,7 +52,9 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="2fbLBpDQqlupztTafaB7x6CYYij" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -59,8 +65,10 @@
     &quot;Application.main.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;admin__page&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/peace/Documents/GitHub/Assignment2_FP/src/main/resources/main_folder/dependent&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -70,6 +78,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\peace\Documents\GitHub\Assignment2_FP\src\main\resources\main_folder\dependent" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\RMIT\rmit 5 semester\Further programming\Assignment2_FP\src\main\resources\main_folder\admin\CSS" />
     </key>
@@ -97,8 +108,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
-        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
       </set>
     </attachedChunks>
   </component>
@@ -114,6 +125,10 @@
       <workItem from="1714312534061" duration="2930000" />
       <workItem from="1714356277887" duration="20679000" />
       <workItem from="1714448649931" duration="2193000" />
+      <workItem from="1715228756139" duration="430000" />
+      <workItem from="1715229375444" duration="6886000" />
+      <workItem from="1715249259872" duration="687000" />
+      <workItem from="1715609164987" duration="6066000" />
     </task>
     <servers />
   </component>
