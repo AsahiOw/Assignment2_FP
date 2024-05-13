@@ -7,17 +7,16 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.loginController">
    <children>
-      <TextField layoutX="351.0" layoutY="330.0" prefHeight="49.0" prefWidth="498.0" alignment="CENTER" />
-      <PasswordField layoutX="351.0" layoutY="414.0" prefHeight="49.0" prefWidth="498.0" alignment="CENTER" />
-      <Button layoutX="564.0" layoutY="517.0" mnemonicParsing="false" text="Login">
+      <TextField fx:id="emailField" alignment="CENTER" layoutX="351.0" layoutY="330.0" prefHeight="49.0" prefWidth="498.0" />
+      <PasswordField fx:id="passwordField" alignment="CENTER" layoutX="351.0" layoutY="414.0" prefHeight="49.0" prefWidth="498.0" />
+      <Button fx:id="loginBTN" layoutX="564.0" layoutY="517.0" mnemonicParsing="false" onAction="#Login" text="Login">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Button>
-      <Label layoutX="473.0" layoutY="90.0" text="System Name Here">
+      <Label layoutX="534.0" layoutY="93.0" text="Ooptional">
          <font>
             <Font size="30.0" />
          </font>
