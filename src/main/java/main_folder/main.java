@@ -16,7 +16,8 @@ public class main extends Application {
         stg = stage;
         stage.setResizable(false);
 //        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login/login.fxml"));
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("admin/admin.fxml"));
+//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("admin/admin.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("dependent/dependent.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
 //        stage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("Test");
