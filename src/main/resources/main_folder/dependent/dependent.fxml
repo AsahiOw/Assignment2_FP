@@ -24,7 +24,7 @@
                </font>
             </Label>
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout">
+            <Button fx:id="logoutBTN" mnemonicParsing="false" onAction="#Logout" text="Logout">
                 <HBox.margin>
                     <Insets right="20.0" />
                 </HBox.margin>>
@@ -47,6 +47,7 @@
                                   <TableColumn fx:id="dependentIdColumn" prefWidth="119.20000803470612" text="ID" />
                                   <TableColumn fx:id="dependentNameColumn" prefWidth="270.39998626708984" text="Name" />
                                     <TableColumn fx:id="dependentEmailColumn" prefWidth="332.7999572753906" text="Email" />
+                                    <TableColumn fx:id="dependentPolicyNumberColumn" prefWidth="75.0" text="Policy Number" />
                                 </columns>
                               </TableView>
                            </children>

@@ -23,7 +23,7 @@ public class loginController {
     private TextField passwordField;
     @FXML
     private Button loginBTN;
-    private String loggedInUser;
+    private static String loggedInUser;
 
     public void Login() {
         database db = new database();
@@ -69,12 +69,12 @@ public class loginController {
         }
     }
 
-    public String getLoggedInUser() {
+    public static String getLoggedInUser() {
         return loggedInUser;
     }
 
-    public void setLoggedInUser(String loggedInUser) {
-        this.loggedInUser = loggedInUser;
+    public static void setLoggedInUser(String loggedInUser) {
+        loginController.loggedInUser = loggedInUser;
     }
 
     private String lowerCaseFirstLetter(String str) {
