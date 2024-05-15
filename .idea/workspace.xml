@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/policyHolder/policyHolder.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/policyHolder/policyHolder.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +60,7 @@
     "Application.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "update-dependency-for-admincontroler",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/RMIT/rmit 5 semester/Further programming/GUI JAVAFX tutor/login",
@@ -127,6 +124,7 @@
       <workItem from="1715229375444" duration="6886000" />
       <workItem from="1715249259872" duration="687000" />
       <workItem from="1715609164987" duration="6066000" />
+      <workItem from="1715786423075" duration="8251000" />
     </task>
     <servers />
   </component>
