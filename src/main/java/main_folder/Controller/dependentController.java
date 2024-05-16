@@ -14,7 +14,6 @@ import main_folder.ConnectDatabase.database;
 import main_folder.Model.Dependent;
 import main_folder.Model.Claim;
 import main_folder.Model.PolicyHolder;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -55,7 +54,6 @@ public class dependentController extends Thread implements Initializable {
     private TableColumn<Claim, String> receiverBankingInfoColumn;
 
 
-    //Will be using something else instead of TableView.
     public void RetrieveDependent() {
         database db = new database();
         try (Connection conn = db.connect()){
@@ -116,7 +114,7 @@ public class dependentController extends Thread implements Initializable {
             e.printStackTrace();
         }
         for (Dependent dependent : dependentData) {
-            dependentInfo.appendText(dependent.toString() + "\n");
+            dependentInfo.appendText(dependent.toString());
         }
     }
 
@@ -218,7 +216,7 @@ public class dependentController extends Thread implements Initializable {
                         // handle error
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Retrieve Claim notification");
-                        alert.setHeaderText(null);
+                        alert.setHeaderText(null);  // Header text is null
                         alert.setContentText("The Claim corresponds to this id cannot be found");
                         alert.showAndWait();
                     } else {
