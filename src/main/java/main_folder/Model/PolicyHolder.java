@@ -1,13 +1,12 @@
 package main_folder.Model;
 
-
-public class Dependent {
+public class PolicyHolder {
     private String id;
     private String name;
     private String email;
     private String policyNumber;
 
-    public Dependent(String id, String name, String email, String policyNumber) {
+    public PolicyHolder(String id, String name, String email, String policyNumber) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -44,6 +43,11 @@ public class Dependent {
 
     public void setPolicyNumber(String policyNumber) {
         this.policyNumber = policyNumber;
+    }
+
+    public String printForDependent() {
+        return  "Your Policy Holder: " + name + "\n" +
+                "Email: " + email + "\n";
     }
 
     @Override
