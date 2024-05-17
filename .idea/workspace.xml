@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/HelloController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/login/login.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/policyHolder/policyHolder.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main_folder/policyHolder/policyHolder.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/hello-view.fxml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,17 +62,21 @@
   "keyToString": {
     "Application.HelloApplication.executor": "Run",
     "Application.main.executor": "Run",
+    "JUnit.All in Assignment2_FP.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "jar-file-creation",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/RMIT/rmit 5 semester/Further programming/GUI JAVAFX tutor/login",
+    "last_opened_file_path": "C:/Users/hatua/OneDrive/Tài liệu/Important/openjfx-22_windows-x64_bin-sdk/javafx-sdk-22/bin/vcruntime140_1.dll",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -83,7 +88,7 @@
       <recent name="D:\RMIT\rmit 5 semester\Further programming\Assignment2_FP\src\main\resources\main_folder\admin\CSS" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.main">
     <configuration name="main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main_folder.main" />
       <module name="Assignment2_FP" />
@@ -97,9 +102,18 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="All in Assignment2_FP" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Assignment2_FP" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.main" />
+        <item itemvalue="JUnit.All in Assignment2_FP" />
       </list>
     </recent_temporary>
   </component>
@@ -127,6 +141,8 @@
       <workItem from="1715229375444" duration="6886000" />
       <workItem from="1715249259872" duration="687000" />
       <workItem from="1715609164987" duration="6066000" />
+      <workItem from="1715786423075" duration="8251000" />
+      <workItem from="1715907373833" duration="33495000" />
     </task>
     <servers />
   </component>

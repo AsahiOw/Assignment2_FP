@@ -110,6 +110,24 @@
                      <Button fx:id="retrieveCustomerButton" onAction="#RetrieveCustomer" text="Submit" />
                   </VBox>
                </TitledPane>
+               <TitledPane text="All Customer">
+                  <VBox>
+                     <Label text="All Customers" />
+                     <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                        <TableView fx:id="customerTable" maxWidth="1.7976931348623157E308" onSort="#CustomerTable" prefHeight="400.0" prefWidth="1176.0">
+                           <columns>
+                              <TableColumn fx:id="customerIdColumn" prefWidth="167.0" text="ID" />
+                              <TableColumn fx:id="customerNameColumn" prefWidth="167.0" text="Name" />
+                              <TableColumn fx:id="customerEmailColumn" prefWidth="167.0" text="Email" />
+                              <TableColumn fx:id="customerPasswordColumn" prefWidth="167.0" text="Password" />
+                              <TableColumn fx:id="customerUserTypeColumn" prefWidth="167.0" text="UserType" />
+                              <TableColumn fx:id="customerInsuranceNumberColumn" minWidth="0.0" prefWidth="167.0" text="InsuranceNumber" />
+                              <TableColumn fx:id="customerIdDependencyColumn" prefWidth="173.0" text="ID Dependency" />
+                           </columns>
+                        </TableView>
+                     </ScrollPane>
+                  </VBox>
+               </TitledPane>
                <TitledPane text="Provider">
                   <VBox>
                      <Label text="Create User" />
@@ -173,6 +191,23 @@
                      <Label text="Retrieve User" />
                      <TextField fx:id="retrieveProviderId" promptText="ID" />
                      <Button fx:id="retrieveProviderButton" onAction="#RetrieveProvider" text="Submit" />
+                  </VBox>
+               </TitledPane>
+               <TitledPane text="All Provider">
+                  <VBox>
+                     <Label text="All Providers" />
+                     <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                        <TableView fx:id="providerTable" maxWidth="1.7976931348623157E308" onSort="#ProviderTable" prefHeight="400.0" prefWidth="1176.0">
+                           <columns>
+                              <TableColumn fx:id="providerIdColumn" prefWidth="195.0" text="ID" />
+                              <TableColumn fx:id="providerNameColumn" prefWidth="195.0" text="Name" />
+                              <TableColumn fx:id="providerEmailColumn" prefWidth="195.0" text="Email" />
+                              <TableColumn fx:id="providerPasswordColumn" prefWidth="195.0" text="Password" />
+                              <TableColumn fx:id="providerUserTypeColumn" prefWidth="195.0" text="UserType" />
+                              <TableColumn fx:id="providerIdDependencyColumn" prefWidth="200.0" text="ID Dependency" />
+                           </columns>
+                        </TableView>
+                     </ScrollPane>
                   </VBox>
                </TitledPane>
                <TitledPane text="Claim Management">
