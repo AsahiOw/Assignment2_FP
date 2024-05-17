@@ -3,17 +3,17 @@ package main_folder.Model;
 import java.sql.Date;
 
 public class Claim {
-    private Integer id;
-    private Date Claim_Date;
-    private Date Exam_Date;
-    private Double Claim_amount;
+    private String id;
+    private String Claim_Date;
+    private String Exam_Date;
+    private String Claim_amount;
     private String Insured_Person;
     private String Status;
     private String Documents;
     private String Receiver_Banking_Infor;
     public Claim() {}
 
-    public Claim(Integer id, Date claim_Date, Date exam_Date, Double claim_amount, String insured_Person, String status, String documents, String receiver_Banking_Infor) {
+    public Claim(String id, String claim_Date, String exam_Date, String claim_amount, String insured_Person, String status, String documents, String receiver_Banking_Infor) {
         this.id = id;
         Claim_Date = claim_Date;
         Exam_Date = exam_Date;
@@ -24,19 +24,19 @@ public class Claim {
         Receiver_Banking_Infor = receiver_Banking_Infor;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public Date getClaim_Date() {
+    public String getClaim_Date() {
         return Claim_Date;
     }
 
-    public Date getExam_Date() {
+    public String getExam_Date() {
         return Exam_Date;
     }
 
-    public Double getClaim_amount() {
+    public String getClaim_amount() {
         return Claim_amount;
     }
 
@@ -56,19 +56,19 @@ public class Claim {
         return Receiver_Banking_Infor;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public void setClaim_Date(Date claim_Date) {
+    public void setClaim_Date(String claim_Date) {
         Claim_Date = claim_Date;
     }
 
-    public void setExam_Date(Date exam_Date) {
+    public void setExam_Date(String exam_Date) {
         Exam_Date = exam_Date;
     }
 
-    public void setClaim_amount(Double claim_amount) {
+    public void setClaim_amount(String claim_amount) {
         Claim_amount = claim_amount;
     }
 
