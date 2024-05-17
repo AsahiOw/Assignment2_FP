@@ -1,12 +1,12 @@
 package main_folder.Model;
 
-public class Customer {
+public class Client {
     private int id;
     private int insuranceNumber;
-    public Customer() {
+    public Client() {
     }
 
-    public Customer(int id, int insuranceNumber) {
+    public Client(int id, int insuranceNumber) {
         this.id = id;
         this.insuranceNumber = insuranceNumber;
     }

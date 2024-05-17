@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import main_folder.ConnectDatabase.database;
 import main_folder.Model.Claim;
-import main_folder.Model.Customer;
+import main_folder.Model.Client;
 
 import java.io.IOException;
 import java.sql.*;
@@ -44,7 +44,7 @@ public class insuranceSurveyorController {
     private TableView<Claim> filteredClaimsTable1;
 
     @FXML
-    private TableView<Customer> filteredCustomerFindTable1;
+    private TableView<Client> filteredCustomerFindTable1;
 
     @FXML
     private Button logoutBTN;
@@ -202,15 +202,15 @@ public class insuranceSurveyorController {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, criteria);
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    List<Customer> customers = new ArrayList<>();
+                    List<Client> clients = new ArrayList<>();
                     while (rs.next()) {
-                        Customer customer = new Customer();
-                        customer.setId(rs.getInt(1));
-                        customer.setInsuranceNumber(rs.getInt(2));
-                        customers.add(customer);
+                        Client client = new Client();
+                        client.setId(rs.getInt(1));
+                        client.setInsuranceNumber(rs.getInt(2));
+                        clients.add(client);
                     }
-                    if (!customers.isEmpty()) {
-                        displayFilteredCustomers1(customers);
+                    if (!clients.isEmpty()) {
+                        displayFilteredCustomers1(clients);
                     } else {
                         showAlert("Info", "No claims found for the given criteria.");
                     }
@@ -221,8 +221,8 @@ public class insuranceSurveyorController {
         }
     }
 
-    private void displayFilteredCustomers1(List<Customer> customers) {
-        filteredCustomerFindTable1.setItems(FXCollections.observableArrayList(customers));
+    private void displayFilteredCustomers1(List<Client> clients) {
+        filteredCustomerFindTable1.setItems(FXCollections.observableArrayList(clients));
     }
 
     public void Logout() throws IOException {

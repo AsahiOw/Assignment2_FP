@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import main_folder.ConnectDatabase.database;
 import main_folder.Model.Claim;
-import main_folder.Model.Customer;
+import main_folder.Model.Client;
 import main_folder.Model.Surveyor;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class insuranceManagerController {
     private TableView<Claim> filteredClaimsTable2;
 
     @FXML
-    private TableView<Customer> filteredCustomerFindTable2;
+    private TableView<Client> filteredCustomerFindTable2;
 
     @FXML
     private Label surveyorInfoLabel;
@@ -135,15 +135,15 @@ public class insuranceManagerController {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, criteria);
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    List<Customer> customers = new ArrayList<>();
+                    List<Client> clients = new ArrayList<>();
                     while (rs.next()) {
-                        Customer customer = new Customer();
-                        customer.setId(rs.getInt(1));
-                        customer.setInsuranceNumber(rs.getInt(2));
-                        customers.add(customer);
+                        Client client = new Client();
+                        client.setId(rs.getInt(1));
+                        client.setInsuranceNumber(rs.getInt(2));
+                        clients.add(client);
                     }
-                    if (!customers.isEmpty()) {
-                        displayFilteredCustomers2(customers);
+                    if (!clients.isEmpty()) {
+                        displayFilteredCustomers2(clients);
                     } else {
                         showAlert("Info", "No claims found for the given criteria.");
                     }
@@ -154,8 +154,8 @@ public class insuranceManagerController {
         }
     }
 
-    private void displayFilteredCustomers2(List<Customer> customers) {
-        filteredCustomerFindTable2.setItems(FXCollections.observableArrayList(customers));
+    private void displayFilteredCustomers2(List<Client> clients) {
+        filteredCustomerFindTable2.setItems(FXCollections.observableArrayList(clients));
     }
 
     @FXML
