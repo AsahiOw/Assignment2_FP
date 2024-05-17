@@ -1,16 +1,29 @@
 package main_folder.Controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import javafx.application.Platform;
 import main_folder.ConnectDatabase.database;
+import main_folder.Model.Customer;
+import main_folder.Model.Provider;
 
+import java.net.URL;
 import java.sql.*;
 import java.util.Optional;
 import java.util.Random;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
-public class adminController {
+public class adminController implements Initializable {
     @FXML
     private TextField createCustomerName;
     @FXML
@@ -89,8 +102,44 @@ public class adminController {
     private Label totalClaimLabel;
     @FXML
     private Button logoutButton;
+    @FXML
+    private TableColumn customerIdColumn;
+    @FXML
+    private TableColumn customerNameColumn;
+    @FXML
+    private TableColumn customerEmailColumn;
+    @FXML
+    private TableColumn customerPasswordColumn;
+    @FXML
+    private TableColumn customerUserTypeColumn;
+    @FXML
+    private TableColumn customerInsuranceNumberColumn;
+    @FXML
+    private TableColumn customerIdDependencyColumn;
+    @FXML
+    private TableView customerTable;
+    @FXML
+    private TableColumn providerIdColumn;
+    @FXML
+    private TableColumn providerNameColumn;
+    @FXML
+    private TableColumn providerEmailColumn;
+    @FXML
+    private TableColumn providerPasswordColumn;
+    @FXML
+    private TableColumn providerUserTypeColumn;
+    @FXML
+    private TableColumn providerIdDependencyColumn;
+    @FXML
+    private TableView providerTable;
 
     // Method in adminPage.fxml
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        CustomerTable();
+        ProviderTable();
+    }
+
     public void CreateCustomer() {
         database db = new database();
         try (Connection conn = db.connect()) {
@@ -103,6 +152,20 @@ public class adminController {
                     alert.setContentText("Please enter all fields");
                     alert.showAndWait();
                 } else {
+                    // Check if the email already exists
+                    String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ?";
+                    PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
+                    checkEmailStmt.setString(1, createCustomerEmail.getText());
+                    ResultSet checkEmailRs = checkEmailStmt.executeQuery();
+                    if (checkEmailRs.next()) {
+                        // If the email already exists, show an alert and return
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Create Provider notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The email already exists");
+                        alert.showAndWait();
+                        return;
+                    } else {
                     String userType = createCustomerOption.getValue().toString();
                     if (userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner")) {
                         // Prompt for the ID of the related user
@@ -215,6 +278,7 @@ public class adminController {
                                             stmt6.setInt(1, policyHolderId); // ID of the related PolicyHolder
                                             stmt6.setInt(2, dependentId); // ID of the new Dependent
                                             stmt6.executeUpdate();
+                                            CustomerTable();
                                             System.out.println("Created a new dependency in the PolicyHolder_Dependent table");
                                         }
                                     }
@@ -244,12 +308,13 @@ public class adminController {
                                         } else {
                                             int PolicyHolderId = rs5.getInt("id"); // Get the PolicyHolder ID
 
-                                            // Insert a new row into the PolicyHolder_Dependent table
+                                            // Insert a new row into the PolicyOwner_PolicyHolder table
                                             String sql6 = "INSERT INTO \"PolicyOwner_PolicyHolder\" (\"PolicyOwner\", \"PolicyHolder\") VALUES (?, ?)";
                                             PreparedStatement stmt6 = conn.prepareStatement(sql6);
                                             stmt6.setInt(1, PolicyOwnerId); // ID of the related PolicyOwner
                                             stmt6.setInt(2, PolicyHolderId); // ID of the new PolicyHolder
                                             stmt6.executeUpdate();
+                                            CustomerTable();
                                             System.out.println("Created a new PolicyHolder in the PolicyOwner_PolicyHolder table");
                                         }
                                     }
@@ -274,18 +339,20 @@ public class adminController {
                                         ResultSet rs5 = stmt5.executeQuery();
 
                                         if (!rs5.next()) {
-                                            // Handle the case where the user ID does not exist in the Dependent table
+                                            // Handle the case where the user ID does not exist in the PolicyOwner table
                                             System.out.println("The user does not exist in the PolicyOwner table");
                                         } else {
                                             int PolicyOwnerId = rs5.getInt("id"); // Get the PolicyOwner ID
 
-                                            // Insert a new row into the PolicyHolder_Dependent table
+                                            // Insert a new row into the InsuranceManager_PolicyOwner table
                                             String sql6 = "INSERT INTO \"InsuranceManager_PolicyOwner\" (\"InsuranceManager\", \"PolicyOwner\") VALUES (?, ?)";
                                             PreparedStatement stmt6 = conn.prepareStatement(sql6);
                                             stmt6.setInt(1, InsuranceManagerId); // ID of the related InsuranceManager
                                             stmt6.setInt(2, PolicyOwnerId); // ID of the new PolicyOwner
                                             stmt6.executeUpdate();
+                                            CustomerTable();
                                             System.out.println("Created a new PolicyOwner in the InsuranceManager_PolicyOwner table");
+                                            }
                                         }
                                     }
                                 }
@@ -323,6 +390,25 @@ public class adminController {
                             alert.setContentText("The Customer does not exist");
                             alert.showAndWait();
                         } else {
+                            // Check if the new email already exists
+                            if (!updateCustomerEmail.getText().isEmpty()) {
+                                String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ? AND \"id\" != ?";
+                                PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
+                                checkEmailStmt.setString(1, updateCustomerEmail.getText());
+                                checkEmailStmt.setInt(2, customerId);
+                                ResultSet checkEmailRs = checkEmailStmt.executeQuery();
+                                if (checkEmailRs.next()) {
+                                    // If the email already exists and does not belong to the current user, show an alert and return
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Update Customer notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("The email already exists");
+                                    alert.showAndWait();
+                                    return;
+                                }
+                            }
+
+                            // Rest of the method...
                             String userType = rs.getString("userType");
                             if (!(userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner"))) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -366,6 +452,7 @@ public class adminController {
                             stmt.setInt(index, customerId);
                             stmt.executeUpdate();
                             System.out.println("Updated the customer");
+                            CustomerTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Update Customer notification");
                             alert.setHeaderText(null);
@@ -435,6 +522,7 @@ public class adminController {
                             stmt.executeUpdate();
 
                             System.out.println("Deleted the customer");
+                            CustomerTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Customer notification");
                             alert.setHeaderText(null);
@@ -454,7 +542,6 @@ public class adminController {
             e.printStackTrace();
         }
     }
-
     public void RetrieveCustomer() {
         database db = new database();
         try (Connection conn = db.connect()) {
@@ -480,10 +567,14 @@ public class adminController {
                             alert.showAndWait();
                         } else {
                             String userType = rs.getString("userType");
-                            if (userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner")) {
-                                sql = "SELECT U.*, C.\"InsuranceNumber\" FROM \"User\" U " +
-                                        "JOIN \"" + userType + "\" T ON U.\"id\" = T.\"userID\" " +
-                                        "JOIN \"Customer\" C ON T.\"policyNumber\" = C.\"id\" " +
+                            if (userType.equals("Dependent")) {
+                                sql = "SELECT U.*, C.\"InsuranceNumber\", PH_U.\"name\" AS \"PolicyHolderName\", PH_U.\"email\" AS \"PolicyHolderEmail\" " +
+                                        "FROM \"User\" U " +
+                                        "JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
+                                        "JOIN \"Customer\" C ON D.\"policyNumber\" = C.\"id\" " +
+                                        "JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                                        "JOIN \"PolicyHolder\" PH ON PD.\"PolicyHolder\" = PH.\"id\" " +
+                                        "JOIN \"User\" PH_U ON PH.\"userID\" = PH_U.\"id\" " +
                                         "WHERE U.\"id\" = ?";
                                 stmt = conn.prepareStatement(sql);
                                 stmt.setInt(1, customerId);
@@ -494,7 +585,68 @@ public class adminController {
                                             "Email: " + rs.getString("email") + "\n" +
                                             "Password: " + rs.getString("password") + "\n" +
                                             "UserType: " + rs.getString("userType") + "\n" +
-                                            "InsuranceNumber: " + rs.getInt("InsuranceNumber");
+                                            "InsuranceNumber: " + rs.getInt("InsuranceNumber") + "\n" +
+                                            "Policy Holder Dependency" + "\n" +
+                                            "Policy Holder Name: " + rs.getString("PolicyHolderName") + "\n" +
+                                            "Policy Holder Email: " + rs.getString("PolicyHolderEmail");
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Retrieve Customer notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText(userDetails);
+                                    alert.showAndWait();
+                                }
+                            }
+                            if (userType.equals("PolicyHolder")) {
+                                sql = "SELECT U.*, C.\"InsuranceNumber\", PO_U.\"name\" AS \"PolicyOwnerName\", PO_U.\"email\" AS \"PolicyOwnerEmail\" " +
+                                        "FROM \"User\" U " +
+                                        "JOIN \"PolicyHolder\" PH ON U.\"id\" = PH.\"userID\" " +
+                                        "JOIN \"Customer\" C ON PH.\"policyNumber\" = C.\"id\" " +
+                                        "JOIN \"PolicyOwner_PolicyHolder\" POPH ON PH.\"id\" = POPH.\"PolicyHolder\" " +
+                                        "JOIN \"PolicyOwner\" PO ON POPH.\"PolicyOwner\" = PO.\"id\" " +
+                                        "JOIN \"User\" PO_U ON PO.\"userID\" = PO_U.\"id\" " +
+                                        "WHERE U.\"id\" = ?";
+                                stmt = conn.prepareStatement(sql);
+                                stmt.setInt(1, customerId);
+                                rs = stmt.executeQuery();
+                                if (rs.next()) {
+                                    String userDetails = "Userid: " + rs.getInt("id") + "\n" +
+                                            "Name: " + rs.getString("name") + "\n" +
+                                            "Email: " + rs.getString("email") + "\n" +
+                                            "Password: " + rs.getString("password") + "\n" +
+                                            "UserType: " + rs.getString("userType") + "\n" +
+                                            "InsuranceNumber: " + rs.getInt("InsuranceNumber") + "\n" +
+                                            "Policy Owner Dependency" + "\n" +
+                                            "Policy Owner Name: " + rs.getString("PolicyOwnerName") + "\n" +
+                                            "Policy Owner Email: " + rs.getString("PolicyOwnerEmail");
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Retrieve Customer notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText(userDetails);
+                                    alert.showAndWait();
+                                }
+                            }
+                            if (userType.equals("PolicyOwner")) {
+                                sql = "SELECT U.*, C.\"InsuranceNumber\", IM_U.\"name\" AS \"InsuranceManagerName\", IM_U.\"email\" AS \"InsuranceManagerEmail\" " +
+                                        "FROM \"User\" U " +
+                                        "JOIN \"PolicyOwner\" PO ON U.\"id\" = PO.\"userID\" " +
+                                        "JOIN \"Customer\" C ON PO.\"policyNumber\" = C.\"id\" " +
+                                        "JOIN \"InsuranceManager_PolicyOwner\" IMPO ON PO.\"id\" = IMPO.\"PolicyOwner\" " +
+                                        "JOIN \"InsuranceManager\" IM ON IMPO.\"InsuranceManager\" = IM.\"id\" " +
+                                        "JOIN \"User\" IM_U ON IM.\"userID\" = IM_U.\"id\" " +
+                                        "WHERE U.\"id\" = ?";
+                                stmt = conn.prepareStatement(sql);
+                                stmt.setInt(1, customerId);
+                                rs = stmt.executeQuery();
+                                if (rs.next()) {
+                                    String userDetails = "Userid: " + rs.getInt("id") + "\n" +
+                                            "Name: " + rs.getString("name") + "\n" +
+                                            "Email: " + rs.getString("email") + "\n" +
+                                            "Password: " + rs.getString("password") + "\n" +
+                                            "UserType: " + rs.getString("userType") + "\n" +
+                                            "InsuranceNumber: " + rs.getInt("InsuranceNumber") + "\n" +
+                                            "Insurance Manager Dependency" + "\n" +
+                                            "Insurance Manager Name: " + rs.getString("InsuranceManagerName") + "\n" +
+                                            "Insurance Manager Email: " + rs.getString("InsuranceManagerEmail");
                                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                     alert.setTitle("Retrieve Customer notification");
                                     alert.setHeaderText(null);
@@ -517,6 +669,73 @@ public class adminController {
         }
     }
 
+    public void CustomerTable() {
+        new Thread(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                if (conn != null) {
+                    String sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"password\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN C_D.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN C_PH.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN C_PO.\"InsuranceNumber\" " +
+                            "END AS \"InsuranceNumber\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN PH_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN PO_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN IM_U.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_D ON D.\"policyNumber\" = C_D.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH ON U.\"id\" = PH.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PH ON PH.\"policyNumber\" = C_PH.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner_PolicyHolder\" POPH ON PH.\"id\" = POPH.\"PolicyHolder\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO_U ON POPH.\"PolicyOwner\" = PO_U.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO ON U.\"id\" = PO.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PO ON PO.\"policyNumber\" = C_PO.\"id\" " +
+                            "LEFT JOIN \"InsuranceManager_PolicyOwner\" IMPO ON PO.\"id\" = IMPO.\"PolicyOwner\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM_U ON IMPO.\"InsuranceManager\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('Dependent', 'PolicyHolder', 'PolicyOwner')";
+
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    ResultSet rs = stmt.executeQuery();
+
+                    // Clear existing data
+                    Platform.runLater(() -> customerTable.getItems().clear());
+
+                    // Add data to table
+                    while (rs.next()) {
+                        Customer customer = new Customer(
+                                rs.getString("id"),
+                                rs.getString("name"),
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getString("userType"),
+                                rs.getString("InsuranceNumber"),
+                                rs.getString("idDependency")
+                        );
+                        Platform.runLater(() -> customerTable.getItems().add(customer));
+                    }
+
+                    // Set column data
+                    Platform.runLater(() -> {
+                        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                        customerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+                        customerPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+                        customerUserTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
+                        customerInsuranceNumberColumn.setCellValueFactory(new PropertyValueFactory<>("InsuranceNumber"));
+                        customerIdDependencyColumn.setCellValueFactory(new PropertyValueFactory<>("idDependency"));
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
     public void CreateProvider() {
         database db = new database();
         try (Connection conn = db.connect()) {
@@ -529,32 +748,127 @@ public class adminController {
                     alert.setContentText("Please enter all fields");
                     alert.showAndWait();
                 } else {
+                    // Check if the email already exists
+                    String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ?";
+                    PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
+                    checkEmailStmt.setString(1, createProviderEmail.getText());
+                    ResultSet checkEmailRs = checkEmailStmt.executeQuery();
+                    if (checkEmailRs.next()) {
+                        // If the email already exists, show an alert and return
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Create Provider notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The email already exists");
+                        alert.showAndWait();
+                        return;
+                    } else {
                     String userType = createProviderOption.getValue().toString();
-                    String sql = "INSERT INTO \"User\" (\"name\", \"email\", \"password\", \"userType\") VALUES (?, ?, ?, ?)";
-                    PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                    stmt.setString(1, createProviderName.getText());
-                    stmt.setString(2, createProviderEmail.getText());
-                    stmt.setString(3, createProviderPassword.getText());
-                    stmt.setString(4, userType);
-                    stmt.executeUpdate();
-                    ResultSet rs = stmt.getGeneratedKeys();
-                    int userId = 0;
-                    if (rs.next()) {
-                        userId = rs.getInt(1);
-                    }
-                    System.out.println("Created a " + userType);
-
-                    if (userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor")) {
-                        sql = "INSERT INTO \"" + userType + "\" (\"userID\") VALUES (?)";
-                        stmt = conn.prepareStatement(sql);
-                        stmt.setInt(1, userId);
+                    if (userType.equals("InsuranceManager")) {
+                        String sql = "INSERT INTO \"User\" (\"name\", \"email\", \"password\", \"userType\") VALUES (?, ?, ?, ?)";
+                        PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                        stmt.setString(1, createProviderName.getText());
+                        stmt.setString(2, createProviderEmail.getText());
+                        stmt.setString(3, createProviderPassword.getText());
+                        stmt.setString(4, userType);
                         stmt.executeUpdate();
+                        ResultSet rs = stmt.getGeneratedKeys();
+                        int userId = 0;
+                        if (rs.next()) {
+                            userId = rs.getInt(1);
+                        }
+                        System.out.println("Created a " + userType);
+
+                        String sql2 = "INSERT INTO \"" + userType + "\" (\"userID\") VALUES (?)";
+                        PreparedStatement stmt2 = conn.prepareStatement(sql2);
+                        stmt2.setInt(1, userId);
+                        stmt2.executeUpdate();
                         System.out.println("Created a " + userType + " entry in the corresponding table");
+                        ProviderTable();
                         Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                         alert2.setTitle("Create Provider notification");
                         alert2.setHeaderText(null);
                         alert2.setContentText("Created a " + userType + " entry in the corresponding table");
                         alert2.showAndWait();
+                    }
+
+                    if (userType.equals("InsuranceSurveyor")) {
+                        TextInputDialog dialog = new TextInputDialog();
+                        dialog.setTitle("Enter Related User ID");
+                        dialog.setHeaderText(null);
+                        dialog.setContentText("Please enter the ID of the related InsuranceManager:");
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()) {
+                            String relatedUserIdStr = result.get();
+                            if (relatedUserIdStr.isEmpty()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Create Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("No related user ID was entered");
+                                alert.showAndWait();
+                                return;
+                            }
+                            int relatedUserId = Integer.parseInt(result.get());
+
+                            String sql = "INSERT INTO \"User\" (\"name\", \"email\", \"password\", \"userType\") VALUES (?, ?, ?, ?)";
+                            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                            stmt.setString(1, createProviderName.getText());
+                            stmt.setString(2, createProviderEmail.getText());
+                            stmt.setString(3, createProviderPassword.getText());
+                            stmt.setString(4, userType);
+                            stmt.executeUpdate();
+                            ResultSet rs = stmt.getGeneratedKeys();
+                            int userId = 0;
+                            if (rs.next()) {
+                                userId = rs.getInt(1);
+                            }
+                            System.out.println("Created a " + userType);
+
+                            String sql2 = "INSERT INTO \"" + userType + "\" (\"userID\") VALUES (?)";
+                            PreparedStatement stmt2 = conn.prepareStatement(sql2);
+                            stmt2.setInt(1, userId);
+                            stmt2.executeUpdate();
+                            System.out.println("Created a " + userType + " entry in the corresponding table");
+                            Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+                            alert2.setTitle("Create Provider notification");
+                            alert2.setHeaderText(null);
+                            alert2.setContentText("Created a " + userType + " entry in the corresponding table");
+                            alert2.showAndWait();
+
+                            // Check if the related user ID exists in the corresponse table
+                            String sql3 = "SELECT * FROM \"InsuranceManager\" WHERE \"userID\" = ?";
+                            PreparedStatement stmt3 = conn.prepareStatement(sql3);
+                            stmt3.setInt(1, relatedUserId);
+                            ResultSet rs3 = stmt3.executeQuery();
+
+                            if (!rs3.next()) {
+                                // Handle the case where the related user ID does not exist in the PolicyHolder table
+                                System.out.println("The related user does not exist in the InsuranceManager table");
+                            } else {
+                                int InsuranceManagerId = rs3.getInt("id"); // Get the InsuranceManager ID
+
+                                String sql4 = "SELECT * FROM \"InsuranceSurveyor\" WHERE \"userID\" = ?";
+                                PreparedStatement stmt4 = conn.prepareStatement(sql4);
+                                stmt4.setInt(1, userId);
+                                ResultSet rs4 = stmt4.executeQuery();
+
+                                int InsuranceSurveyorId = 0;
+                                if (!rs4.next()) {
+                                    // Handle the case where the user ID does not exist in the InsuranceSurveyor table
+                                    System.out.println("The user does not exist in the InsuranceSurveyor table");
+                                } else {
+                                    InsuranceSurveyorId = rs4.getInt("id");
+                                }
+                                // Insert a new row into the InsuranceManager_InsuranceSurveyor table
+                                String sql6 = "INSERT INTO \"InsuranceManager_InsuranceSurveyor\" (\"InsuranceManager\", \"InsuranceSurveyor\") VALUES (?, ?)";
+                                PreparedStatement stmt6 = conn.prepareStatement(sql6);
+                                stmt6.setInt(1, InsuranceManagerId); // ID of the related InsuranceManager
+                                stmt6.setInt(2, InsuranceSurveyorId); // ID of the new InsuranceSurveyor
+                                stmt6.executeUpdate();
+                                ProviderTable();
+                                System.out.println("Created a new InsuranceSurveyor in the InsuranceManager_InsuranceSurveyor table");
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -587,54 +901,73 @@ public class adminController {
                             alert.setContentText("The Provider does not exist");
                             alert.showAndWait();
                         } else {
-                            String userType = rs.getString("userType");
-                            if (!(userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor"))) {
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("Update Provider notification");
-                                alert.setHeaderText(null);
-                                alert.setContentText("The Provider does not exist");
-                                alert.showAndWait();
-                                return;
-                            }
-                            if (updateProviderName.getText().isEmpty() && updateProviderEmail.getText().isEmpty() && updateProviderPassword.getText().isEmpty()) {
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("Update Provider notification");
-                                alert.setHeaderText(null);
-                                alert.setContentText("Updated the Provider");
-                                alert.showAndWait();
-                                return;
-                            }
-                            sql = "UPDATE \"User\" SET ";
-                            if (!updateProviderName.getText().isEmpty()) {
-                                sql += "\"name\" = ?, ";
-                            }
+                            // Check if the new email already exists
                             if (!updateProviderEmail.getText().isEmpty()) {
-                                sql += "\"email\" = ?, ";
+                                String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ? AND \"id\" != ?";
+                                PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
+                                checkEmailStmt.setString(1, updateProviderEmail.getText());
+                                checkEmailStmt.setInt(2, customerId);
+                                ResultSet checkEmailRs = checkEmailStmt.executeQuery();
+                                if (checkEmailRs.next()) {
+                                    // If the email already exists and does not belong to the current user, show an alert and return
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Update Provider notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("The email already exists");
+                                    alert.showAndWait();
+                                    return;
+                                } else {
+                                    String userType = rs.getString("userType");
+                                    if (!(userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor"))) {
+                                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                        alert.setTitle("Update Provider notification");
+                                        alert.setHeaderText(null);
+                                        alert.setContentText("The Provider does not exist");
+                                        alert.showAndWait();
+                                        return;
+                                    }
+                                    if (updateProviderName.getText().isEmpty() && updateProviderEmail.getText().isEmpty() && updateProviderPassword.getText().isEmpty()) {
+                                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                        alert.setTitle("Update Provider notification");
+                                        alert.setHeaderText(null);
+                                        alert.setContentText("Updated the Provider");
+                                        alert.showAndWait();
+                                        return;
+                                    }
+                                    sql = "UPDATE \"User\" SET ";
+                                    if (!updateProviderName.getText().isEmpty()) {
+                                        sql += "\"name\" = ?, ";
+                                    }
+                                    if (!updateProviderEmail.getText().isEmpty()) {
+                                        sql += "\"email\" = ?, ";
+                                    }
+                                    if (!updateProviderPassword.getText().isEmpty()) {
+                                        sql += "\"password\" = ?, ";
+                                    }
+                                    sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
+                                    sql += " WHERE \"id\" = ?";
+                                    stmt = conn.prepareStatement(sql);
+                                    int index = 1;
+                                    if (!updateProviderName.getText().isEmpty()) {
+                                        stmt.setString(index++, updateProviderName.getText());
+                                    }
+                                    if (!updateProviderEmail.getText().isEmpty()) {
+                                        stmt.setString(index++, updateProviderEmail.getText());
+                                    }
+                                    if (!updateProviderPassword.getText().isEmpty()) {
+                                        stmt.setString(index++, updateProviderPassword.getText());
+                                    }
+                                    stmt.setInt(index, customerId);
+                                    stmt.executeUpdate();
+                                    System.out.println("Updated the Provider");
+                                    ProviderTable();
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Update Provider notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("Updated the Provider");
+                                    alert.showAndWait();
+                                }
                             }
-                            if (!updateProviderPassword.getText().isEmpty()) {
-                                sql += "\"password\" = ?, ";
-                            }
-                            sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
-                            sql += " WHERE \"id\" = ?";
-                            stmt = conn.prepareStatement(sql);
-                            int index = 1;
-                            if (!updateProviderName.getText().isEmpty()) {
-                                stmt.setString(index++, updateProviderName.getText());
-                            }
-                            if (!updateProviderEmail.getText().isEmpty()) {
-                                stmt.setString(index++, updateProviderEmail.getText());
-                            }
-                            if (!updateProviderPassword.getText().isEmpty()) {
-                                stmt.setString(index++, updateProviderPassword.getText());
-                            }
-                            stmt.setInt(index, customerId);
-                            stmt.executeUpdate();
-                            System.out.println("Updated the Provider");
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Update Provider notification");
-                            alert.setHeaderText(null);
-                            alert.setContentText("Updated the Provider");
-                            alert.showAndWait();
                         }
                     } catch (NumberFormatException e) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -694,6 +1027,7 @@ public class adminController {
                             stmt.executeUpdate();
 
                             System.out.println("Deleted the provider");
+                            ProviderTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Provider notification");
                             alert.setHeaderText(null);
@@ -747,7 +1081,7 @@ public class adminController {
                                 alert.showAndWait();
                                 return;
                             }
-                            if (userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor")) {
+                            if (userType.equals("InsuranceManager")) {
                                 sql = "SELECT U.* FROM \"User\" U " +
                                         "JOIN \"" + userType + "\" T ON U.\"id\" = T.\"userID\" " +
                                         "WHERE U.\"id\" = ?";
@@ -760,6 +1094,32 @@ public class adminController {
                                             "Email: " + rs.getString("email") + "\n" +
                                             "Password: " + rs.getString("password") + "\n" +
                                             "UserType: " + rs.getString("userType");
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Retrieve Provider notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText(userDetails);
+                                    alert.showAndWait();
+                                }
+                            }
+                            if (userType.equals("InsuranceSurveyor")) {
+                                sql = "SELECT U.*, U_IM.\"name\" as IMName, U_IM.\"email\" as IMEmail FROM \"User\" U " +
+                                        "JOIN \"InsuranceSurveyor\" INSURV ON U.\"id\" = INSURV.\"userID\" " +
+                                        "JOIN \"InsuranceManager_InsuranceSurveyor\" IM_INSURV ON INSURV.\"id\" = IM_INSURV.\"InsuranceSurveyor\" " +
+                                        "JOIN \"InsuranceManager\" IM ON IM_INSURV.\"InsuranceManager\" = IM.\"id\" " +
+                                        "JOIN \"User\" U_IM ON IM.\"userID\" = U_IM.\"id\" " +
+                                        "WHERE U.\"id\" = ?";
+                                stmt = conn.prepareStatement(sql);
+                                stmt.setInt(1, providerId);
+                                rs = stmt.executeQuery();
+                                if (rs.next()) {
+                                    String userDetails = "Userid: " + rs.getInt("id") + "\n" +
+                                            "Name: " + rs.getString("name") + "\n" +
+                                            "Email: " + rs.getString("email") + "\n" +
+                                            "Password: " + rs.getString("password") + "\n" +
+                                            "UserType: " + rs.getString("userType") + "\n" +
+                                            "InsuranceManager Dependency" + "\n" +
+                                            "InsuranceManager Name: " + rs.getString("IMName") + "\n" +
+                                            "InsuranceManager Email: " + rs.getString("IMEmail");
                                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                     alert.setTitle("Retrieve Provider notification");
                                     alert.setHeaderText(null);
@@ -782,14 +1142,67 @@ public class adminController {
         }
     }
 
+    public void ProviderTable() {
+        new Thread(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                if (conn != null) {
+                    String sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"password\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'InsuranceSurveyor' THEN IM2.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"InsuranceManager\" IM1 ON U.\"id\" = IM1.\"userID\" " +
+                            "LEFT JOIN \"InsuranceSurveyor\" INSURV ON U.\"id\" = INSURV.\"userID\" " +
+                            "LEFT JOIN \"InsuranceManager_InsuranceSurveyor\" IM_INSURV ON INSURV.\"id\" = IM_INSURV.\"InsuranceSurveyor\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM2 ON IM_INSURV.\"InsuranceManager\" = IM2.\"id\" " +
+                            "LEFT JOIN \"User\" IM_U ON IM2.\"userID\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('InsuranceManager', 'InsuranceSurveyor')";
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    ResultSet rs = stmt.executeQuery();
+
+                    // Clear existing data
+                    Platform.runLater(() -> providerTable.getItems().clear());
+
+                    // Add data to table
+                    while (rs.next()) {
+                        Provider provider = new Provider(
+                                rs.getString("id"),
+                                rs.getString("name"),
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getString("userType"),
+                                rs.getString("idDependency")
+                        );
+                        Platform.runLater(() -> providerTable.getItems().add(provider));
+                    }
+
+                    // Set column data
+                    Platform.runLater(() -> {
+                        providerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                        providerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                        providerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+                        providerPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+                        providerUserTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
+                        providerIdDependencyColumn.setCellValueFactory(new PropertyValueFactory<>("idDependency"));
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
     public void TotalCost() {
         System.out.println("Logout");
     }
-    public void Logout(){
-        System.out.println("Logout");
+    public void Logout() throws IOException {
+        System.out.println("Logout button clicked."); // Debug line
+        loginController.setLoggedInUser(null);
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
-
-    // private method
-    // CRUD for customer
 
 }
