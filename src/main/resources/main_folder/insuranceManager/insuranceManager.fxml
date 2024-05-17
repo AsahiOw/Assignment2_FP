@@ -6,9 +6,81 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="main_folder.InsuranceManager"
+            fx:controller="main_folder.Controller.insuranceManagerController"
             prefHeight="400.0" prefWidth="600.0">
+    <TitledPane text="Insurance Manager">
+        <VBox>
+            <Label text="Approve/Reject Proposed Claims" />
+            <TextField fx:id="claimIdApproval" promptText="Claim ID" />
+            <ComboBox fx:id="approvalDecision">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Approve" />
+                        <String fx:value="Reject" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <Button fx:id="approveRejectButton" onAction="#ApproveRejectClaim" text="Submit" />
+            <Separator>
+                <padding>
+                    <Insets bottom="10.0" top="10.0" />
+                </padding>
+                <stylesheets>
+                    <URL value="@../admin/CSS/Seperator_style.css" />
+                </stylesheets>
+                <styleClass>
+                    <String fx:value="thick-separator" />
+                </styleClass>
+            </Separator>
 
+            <Label text="Retrieve and Filter Claims/Customers" />
+            <TextField fx:id="retrieveFilterClaimIdFind2" promptText="ClaimID" />
+            <Button fx:id="retrieveFilterButton2" onAction="#RetrieveAndFilterClaims2" text="Submit" />
+
+            <TableView fx:id="filteredClaimsTable2">
+                <columns>
+                    <TableColumn text="Claim ID" fx:id="claimIdInsuranceColumn2" />
+                    <TableColumn text="Claim Date" fx:id="claimDateInsuranceColumn2" />
+                    <TableColumn text="Exam Date" fx:id="examDateInsuranceColumn2" />
+                    <TableColumn text="Claim Amount" fx:id="claimAmountInsuranceColumn2" />
+                    <TableColumn text="Insured Person" fx:id="insuredPersonInsuranceColumn2" />
+                    <TableColumn text="Status" fx:id="statusInsurancesColumn2" />
+                    <TableColumn text="Documents" fx:id="documentsInsuranceColumn2" />
+                    <TableColumn text="Receiver Banking Info" fx:id="receiverBankingInfoInsuranceColumn2" />
+                </columns>
+            </TableView>
+
+            <TextField fx:id="retrieveFilterCustomerIdFind2" promptText="CustomerID" />
+            <Button fx:id="retrieveFilterCustomerButton2" onAction="#RetrieveAndFilterCustomers2" text="Submit" />
+
+            <TableView fx:id="filteredCustomerFindTable2">
+                <columns>
+                    <TableColumn text="Customer ID" fx:id="idCustomerColumn2" />
+                    <TableColumn text="Insurance" fx:id="insuranceCustomerColumn2" />
+                </columns>
+            </TableView>
+            <Separator>
+                <padding>
+                    <Insets bottom="10.0" top="10.0" />
+                </padding>
+                <stylesheets>
+                    <URL value="@../admin/CSS/Seperator_style.css" />
+                </stylesheets>
+                <styleClass>
+                    <String fx:value="thick-separator" />
+                </styleClass>
+            </Separator>
+
+            <Label text="View Surveyor Information" />
+            <TextField fx:id="surveyorId" promptText="Surveyor ID" />
+            <Button fx:id="viewSurveyorButton" onAction="#ViewSurveyorInfo" text="Submit" />
+            <Label fx:id="surveyorInfoLabel" text="Surveyor Infor" />
+
+        </VBox>
+    </TitledPane>
 </AnchorPane>

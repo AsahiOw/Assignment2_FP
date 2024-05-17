@@ -157,10 +157,10 @@ public class dependentController extends Thread implements Initializable {
                             ResultSet rs3 = stmt3.executeQuery();
                             if (rs3.next()){
                                 Claim claim = new Claim(
-                                        rs3.getString("id"),
-                                        rs3.getString("Claim_Date"),
-                                        rs3.getString("Exam_Date"),
-                                        rs3.getString("Claim_amount"),
+                                        rs3.getInt("id"),
+                                        rs3.getDate("Claim_Date"),
+                                        rs3.getDate("Exam_Date"),
+                                        rs3.getDouble("Claim_amount"),
                                         rs3.getString("Insured_Person"),
                                         rs3.getString("Status"),
                                         rs3.getString("Documents"),

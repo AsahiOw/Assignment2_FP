@@ -6,9 +6,81 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
+<?import java.net.URL?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="main_folder.InsuranceSurveyor"
+            fx:controller="main_folder.Controller.insuranceSurveyorController"
             prefHeight="400.0" prefWidth="600.0">
+    <TitledPane text="Insurance Surveyor">
+        <VBox>
+            <Label text="Request Additional Claim Information" />
+            <TextField fx:id="claimIdRequestInfo" promptText="Claim ID" />
+            <Button fx:id="requestInfoButton" onAction="#RequestAdditionalInfo" text="Submit" />
+            <Label fx:id="additionalInfoLabel" />
+            <Separator>
+                <padding>
+                    <Insets bottom="10.0" top="10.0" />
+                </padding>
+                <stylesheets>
+                    <URL value="@../admin/CSS/Seperator_style.css" />
+                </stylesheets>
+                <styleClass>
+                    <String fx:value="thick-separator" />
+                </styleClass>
+            </Separator>
+
+            <Label text="Propose Claims to Managers" />
+            <TextField fx:id="claimDateField" promptText="Claim Date" />
+            <TextField fx:id="examDateField" promptText="Exam Date" />
+            <TextField fx:id="claimAmountField" promptText="Claim Amount" />
+            <TextField fx:id="insuredPersonField" promptText="Insured Person" />
+            <TextField fx:id="statusField" promptText="Status" />
+            <TextField fx:id="documentsField" promptText="Documents" />
+            <TextField fx:id="receiverBankingInfoField" promptText="Receiver Banking Info" />
+            <Button fx:id="proposeClaimButton" onAction="#ProposeClaim" text="Submit" />
+
+            <Separator>
+                <padding>
+                    <Insets bottom="10.0" top="10.0" />
+                </padding>
+                <stylesheets>
+                    <URL value="@../admin/CSS/Seperator_style.css" />
+                </stylesheets>
+                <styleClass>
+                    <String fx:value="thick-separator" />
+                </styleClass>
+            </Separator>
+
+            <Label text="Retrieve and Filter Claims/Customers" />
+            <TextField fx:id="retrieveFilterClaimIdFind1" promptText="ClaimID" />
+            <Button fx:id="retrieveFilterButton" onAction="#RetrieveAndFilterClaims1" text="Submit" />
+
+            <TableView fx:id="filteredClaimsTable1">
+                <columns>
+                    <TableColumn text="Claim ID" fx:id="claimIdInsuranceColumn" />
+                    <TableColumn text="Claim Date" fx:id="claimDateInsuranceColumn" />
+                    <TableColumn text="Exam Date" fx:id="examDateInsuranceColumn" />
+                    <TableColumn text="Claim Amount" fx:id="claimAmountInsuranceColumn" />
+                    <TableColumn text="Insured Person" fx:id="insuredPersonInsuranceColumn" />
+                    <TableColumn text="Status" fx:id="statusInsurancesColumn" />
+                    <TableColumn text="Documents" fx:id="documentsInsuranceColumn" />
+                    <TableColumn text="Receiver Banking Info" fx:id="receiverBankingInfoInsuranceColumn" />
+                </columns>
+            </TableView>
+
+            <TextField fx:id="retrieveFilterCustomerIdFind1" promptText="CustomerID" />
+            <Button fx:id="retrieveFilterCustomerButton" onAction="#RetrieveAndFilterCustomers1" text="Submit" />
+
+            <TableView fx:id="filteredCustomerFindTable1">
+                <columns>
+                    <TableColumn text="Customer ID" fx:id="idCustomerColumn" />
+                    <TableColumn text="Insurance" fx:id="insuranceCustomerColumn" />
+                </columns>
+            </TableView>
+
+
+        </VBox>
+    </TitledPane>
 
 </AnchorPane>
