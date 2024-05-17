@@ -2,14 +2,16 @@ package main_folder.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import main_folder.ConnectDatabase.database;
 import main_folder.Model.Claim;
 import main_folder.Model.Customer;
 
+import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +45,9 @@ public class insuranceSurveyorController {
 
     @FXML
     private TableView<Customer> filteredCustomerFindTable1;
+
+    @FXML
+    private Button logoutBTN;
 
     @FXML
     private TextField claimIdRequestInfo, claimIdPropose, retrieveFilterClaimIdFind1, retrieveFilterCustomerIdFind1, retrieveFilterClaimIdFind2, retrieveFilterCustomerIdFind2, claimIdApproval, surveyorId, managerRetrieveFilterCriteria;
@@ -218,5 +223,15 @@ public class insuranceSurveyorController {
 
     private void displayFilteredCustomers1(List<Customer> customers) {
         filteredCustomerFindTable1.setItems(FXCollections.observableArrayList(customers));
+    }
+
+    public void Logout() throws IOException {
+        System.out.println("Logout button clicked."); // Debug line
+        loginController.setLoggedInUser(null);
+        Stage stage = (Stage) logoutBTN.getScene().getWindow();
+        Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }

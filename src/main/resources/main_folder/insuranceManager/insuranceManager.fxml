@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import java.net.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.collections.FXCollections?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="main_folder.Controller.insuranceManagerController"
-            prefHeight="400.0" prefWidth="600.0">
-    <TitledPane text="Insurance Manager">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.insuranceManagerController">
+    <top>
+        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label prefHeight="100.0" prefWidth="426.0" text="Insurance Manager">
+                    <font>
+                        <Font name="System Bold" size="45.0" />
+                    </font>
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                </Label>
+                <Pane HBox.hgrow="ALWAYS" /> <!-- Spacer -->
+                <Button fx:id="logoutBTN" onAction="#Logout" text="Logout">
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin></Button>
+            </children>
+        </HBox>
+    </top>
+    <center>
+    <AnchorPane>
+    <TitledPane prefHeight="1196.0" prefWidth="1200.0" text="Insurance Manager">
         <VBox>
             <Label text="Approve/Reject Proposed Claims" />
             <TextField fx:id="claimIdApproval" promptText="Claim ID" />
@@ -44,14 +61,14 @@
 
             <TableView fx:id="filteredClaimsTable2">
                 <columns>
-                    <TableColumn text="Claim ID" fx:id="claimIdInsuranceColumn2" />
-                    <TableColumn text="Claim Date" fx:id="claimDateInsuranceColumn2" />
-                    <TableColumn text="Exam Date" fx:id="examDateInsuranceColumn2" />
-                    <TableColumn text="Claim Amount" fx:id="claimAmountInsuranceColumn2" />
-                    <TableColumn text="Insured Person" fx:id="insuredPersonInsuranceColumn2" />
-                    <TableColumn text="Status" fx:id="statusInsurancesColumn2" />
-                    <TableColumn text="Documents" fx:id="documentsInsuranceColumn2" />
-                    <TableColumn text="Receiver Banking Info" fx:id="receiverBankingInfoInsuranceColumn2" />
+                    <TableColumn fx:id="claimIdInsuranceColumn2" text="Claim ID" />
+                    <TableColumn fx:id="claimDateInsuranceColumn2" text="Claim Date" />
+                    <TableColumn fx:id="examDateInsuranceColumn2" text="Exam Date" />
+                    <TableColumn fx:id="claimAmountInsuranceColumn2" text="Claim Amount" />
+                    <TableColumn fx:id="insuredPersonInsuranceColumn2" text="Insured Person" />
+                    <TableColumn fx:id="statusInsurancesColumn2" text="Status" />
+                    <TableColumn fx:id="documentsInsuranceColumn2" text="Documents" />
+                    <TableColumn fx:id="receiverBankingInfoInsuranceColumn2" text="Receiver Banking Info" />
                 </columns>
             </TableView>
 
@@ -60,8 +77,8 @@
 
             <TableView fx:id="filteredCustomerFindTable2">
                 <columns>
-                    <TableColumn text="Customer ID" fx:id="idCustomerColumn2" />
-                    <TableColumn text="Insurance" fx:id="insuranceCustomerColumn2" />
+                    <TableColumn fx:id="idCustomerColumn2" text="Customer ID" />
+                    <TableColumn fx:id="insuranceCustomerColumn2" text="Insurance" />
                 </columns>
             </TableView>
             <Separator>
@@ -84,3 +101,5 @@
         </VBox>
     </TitledPane>
 </AnchorPane>
+    </center>
+</BorderPane>

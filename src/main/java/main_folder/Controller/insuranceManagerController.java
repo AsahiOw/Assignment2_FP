@@ -2,12 +2,17 @@ package main_folder.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import main_folder.ConnectDatabase.database;
 import main_folder.Model.Claim;
 import main_folder.Model.Customer;
 import main_folder.Model.Surveyor;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,6 +37,9 @@ public class insuranceManagerController {
     private Label surveyorInfoLabel;
 
     private main_folder.ConnectDatabase.database database = new database();
+
+    @FXML
+    private Button logoutBTN;
 
 
     @FXML
@@ -190,6 +198,16 @@ public class insuranceManagerController {
     @FXML
     private void displaySurveyorInfo(Surveyor surveyor) {
         surveyorInfoLabel.setText(surveyor.toString());
+    }
+
+    public void Logout() throws IOException {
+        System.out.println("Logout button clicked."); // Debug line
+        loginController.setLoggedInUser(null);
+        Stage stage = (Stage) logoutBTN.getScene().getWindow();
+        Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
 

@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.geometry.Insets?>
-<?import java.net.URL?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="main_folder.Controller.insuranceSurveyorController"
-            prefHeight="400.0" prefWidth="600.0">
-    <TitledPane text="Insurance Surveyor">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.insuranceSurveyorController">
+    <top>
+        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label prefHeight="100.0" prefWidth="426.0" text="Insurance Surveyor">
+                    <font>
+                        <Font name="System Bold" size="45.0" />
+                    </font>
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                </Label>
+                <Pane HBox.hgrow="ALWAYS" /> <!-- Spacer -->
+                <Button fx:id="logoutBTN" onAction="#Logout" text="Logout">
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin></Button>
+            </children>
+        </HBox>
+    </top>
+    <center>
+<AnchorPane>
+    <TitledPane prefHeight="1326.0" prefWidth="1200.0" text="Insurance Surveyor">
         <VBox>
             <Label text="Request Additional Claim Information" />
             <TextField fx:id="claimIdRequestInfo" promptText="Claim ID" />
@@ -58,14 +75,14 @@
 
             <TableView fx:id="filteredClaimsTable1">
                 <columns>
-                    <TableColumn text="Claim ID" fx:id="claimIdInsuranceColumn" />
-                    <TableColumn text="Claim Date" fx:id="claimDateInsuranceColumn" />
-                    <TableColumn text="Exam Date" fx:id="examDateInsuranceColumn" />
-                    <TableColumn text="Claim Amount" fx:id="claimAmountInsuranceColumn" />
-                    <TableColumn text="Insured Person" fx:id="insuredPersonInsuranceColumn" />
-                    <TableColumn text="Status" fx:id="statusInsurancesColumn" />
-                    <TableColumn text="Documents" fx:id="documentsInsuranceColumn" />
-                    <TableColumn text="Receiver Banking Info" fx:id="receiverBankingInfoInsuranceColumn" />
+                    <TableColumn fx:id="claimIdInsuranceColumn" text="Claim ID" />
+                    <TableColumn fx:id="claimDateInsuranceColumn" text="Claim Date" />
+                    <TableColumn fx:id="examDateInsuranceColumn" text="Exam Date" />
+                    <TableColumn fx:id="claimAmountInsuranceColumn" text="Claim Amount" />
+                    <TableColumn fx:id="insuredPersonInsuranceColumn" text="Insured Person" />
+                    <TableColumn fx:id="statusInsurancesColumn" text="Status" />
+                    <TableColumn fx:id="documentsInsuranceColumn" text="Documents" />
+                    <TableColumn fx:id="receiverBankingInfoInsuranceColumn" text="Receiver Banking Info" />
                 </columns>
             </TableView>
 
@@ -74,8 +91,8 @@
 
             <TableView fx:id="filteredCustomerFindTable1">
                 <columns>
-                    <TableColumn text="Customer ID" fx:id="idCustomerColumn" />
-                    <TableColumn text="Insurance" fx:id="insuranceCustomerColumn" />
+                    <TableColumn fx:id="idCustomerColumn" text="Customer ID" />
+                    <TableColumn fx:id="insuranceCustomerColumn" text="Insurance" />
                 </columns>
             </TableView>
 
@@ -84,3 +101,5 @@
     </TitledPane>
 
 </AnchorPane>
+    </center>
+</BorderPane>
