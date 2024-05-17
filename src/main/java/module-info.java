@@ -3,6 +3,7 @@ module furtherProgramming.assignment2_fp {
     requires javafx.fxml;
     requires jdk.compiler;
     requires java.sql;
+    requires java.net.http;
 
 
     opens main_folder to javafx.fxml;

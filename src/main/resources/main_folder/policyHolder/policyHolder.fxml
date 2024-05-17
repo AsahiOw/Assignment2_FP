@@ -3,13 +3,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -73,7 +76,7 @@
                                                       </AnchorPane>
                                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                          <children>
-                                                            <TextArea prefHeight="535.0" prefWidth="1200.0" />
+                                                            <TextArea fx:id="holderInfo" prefHeight="535.0" prefWidth="1200.0" />
                                                          </children>
                                                       </AnchorPane>
                                                   </items>
@@ -142,8 +145,167 @@
                      </center>
                   </BorderPane>
                </content></Tab>
-          <Tab text="File Claim" />
-            <Tab text="Update Information" />
+          <Tab text="File Claim">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Accordion>
+                                <panes>
+                                  <TitledPane animated="false" text="File Claim for yourself">
+                                       <content>
+                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Label text="Please, fill in the information" />
+                                                <TextField fx:id="claimDateField" promptText="Date of claim made (yyyy-mm-dd)" />
+                                                <TextField fx:id="examDateField" promptText="Prefered date for Exam (yyyy-mm-dd)" />
+                                                <TextField fx:id="claimAmountField" promptText="Claim Amount" />
+                                                <TextField fx:id="bankingInfoField" promptText="Banking Information" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Label text="Please, upload the necessary documents" />
+                                                <Button fx:id="chooseFileBTN" mnemonicParsing="false" onAction="#selectFile" text="Choose file" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="3.0" top="5.0" />
+                                                   </padding>
+                                                   <opaqueInsets>
+                                                      <Insets />
+                                                   </opaqueInsets>
+                                                </Separator>
+                                                <Button fx:id="submitCreateClaim" mnemonicParsing="false" onAction="#CreateClaim" text="Submit" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                  </TitledPane>
+                                  <TitledPane animated="false" text="File Claim for your Dependent">
+                                       <content>
+                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Label text="Please, fill information for your dependent." />
+                                                <ComboBox fx:id="dependentComboBox" prefHeight="25.0" prefWidth="188.0" promptText="Choose your Dependent" />
+                                                <TextField fx:id="claimDateDependField" promptText="Date of claim made (yyyy-mm-dd)" />
+                                                <TextField fx:id="examDateDependField" promptText="Preferred date for Exam (yyyy-mm-dd)" />
+                                                <TextField fx:id="claimAmountDependField" promptText="Claim Amount" />
+                                                <TextField fx:id="bankingInfoDependField" promptText="Banking Information" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Label text="Please, upload the necessary documents" />
+                                                <Button fx:id="chooseFileDependBTN" mnemonicParsing="false" onAction="#selectFile" text="Choose file" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="3.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Button fx:id="submitCreateClaimDependent" mnemonicParsing="false" onAction="#CreateDependentClaim" text="Submit" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                  </TitledPane>
+                                </panes>
+                              </Accordion>
+                           </children>
+                        </VBox>
+                     </center>
+                  </BorderPane>
+               </content></Tab>
+            <Tab text="Update Information">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Accordion>
+                                <panes>
+                                  <TitledPane animated="false" text="Update Your Information">
+                                       <content>
+                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Label text="Fill in the information you want to Update" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="7.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <TextField fx:id="emailField" promptText="New Email" />
+                                                <TextField fx:id="passwordField" promptText="New Password" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" top="7.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Button fx:id="submitUpdate" mnemonicParsing="false" onAction="#UpdateHolder" text="Update" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                  </TitledPane>
+                                  <TitledPane animated="false" text="Update Dependent Information">
+                                       <content>
+                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Label text="Choose which of you Dependent to Update" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="7.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <ComboBox fx:id="updateDependComboBox" prefHeight="25.0" prefWidth="180.0" promptText="Choose your Dependent" />
+                                                <TextField fx:id="emailDependField" promptText="New Email" />
+                                                <TextField fx:id="passwordDependField" promptText="New Password" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Button fx:id="updateDependent" mnemonicParsing="false" onAction="#UpdateDependent" text="Update" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                  </TitledPane>
+                                  <TitledPane animated="false" text="Update a Claim">
+                                       <content>
+                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Label text="Fill in the information you want to Update" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <TextField fx:id="idClaimToFind" promptText="Fill in the ID of the Claim you want to Update" />
+                                                <TextField fx:id="claimDateUpdateField" promptText="New Prefered Exam Date" />
+                                                <TextField fx:id="amountUpdateField" promptText="New Amount" />
+                                                <TextField fx:id="bankUpdateField" promptText="New Banking Info" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="3.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Label text="Please, upload the necessary documents" />
+                                                <Button fx:id="chooseFileUpdateBTN" mnemonicParsing="false" onAction="#selectFile" text="Choose file" />
+                                                <Separator prefWidth="200.0">
+                                                   <padding>
+                                                      <Insets bottom="3.0" top="5.0" />
+                                                   </padding>
+                                                </Separator>
+                                                <Button fx:id="updateClaimField" mnemonicParsing="false" onAction="#UpdateClaim" text="Update" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                  </TitledPane>
+                                </panes>
+                              </Accordion>
+                           </children>
+                        </VBox>
+                     </center></BorderPane>
+               </content></Tab>
         </tabs>
       </TabPane>
    </center>
