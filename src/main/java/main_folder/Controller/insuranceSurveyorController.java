@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import main_folder.ConnectDatabase.database;
-import main_folder.Model.Claim;
+import main_folder.Model.Claim_Insurance;
 import main_folder.Model.Client;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class insuranceSurveyorController {
     private TextField receiverBankingInfoField;
 
     @FXML
-    private TableView<Claim> filteredClaimsTable1;
+    private TableView<Claim_Insurance> filteredClaimsTable1;
 
     @FXML
     private TableView<Client> filteredCustomerFindTable1;
@@ -70,9 +70,9 @@ public class insuranceSurveyorController {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, criteria);
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    List<Claim> filteredClaims = new ArrayList<>();
+                    List<Claim_Insurance> filteredClaims = new ArrayList<>();
                     while (rs.next()) {
-                        Claim claim = new Claim();
+                        Claim_Insurance claim = new Claim_Insurance();
                         claim.setId(rs.getInt(1));
                         claim.setClaim_Date(rs.getDate(2));
                         claim.setExam_Date(rs.getDate(3));
@@ -95,7 +95,7 @@ public class insuranceSurveyorController {
         }
     }
 
-    private void displayFilteredClaims1(List<Claim> claims) {
+    private void displayFilteredClaims1(List<Claim_Insurance> claims) {
         filteredClaimsTable1.setItems(FXCollections.observableArrayList(claims));
     }
 

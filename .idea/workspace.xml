@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages">
+    <list default="true" id="a1f6b104-184f-4cf5-b5f8-3fcce2d9d740" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/HelloController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main_folder/hello-view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,75 +17,21 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;AsahiOw&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/BruhMomento2004/Basic.git&quot;,
-    &quot;accountId&quot;: &quot;aebb1dfb-c0db-4d36-8172-018e382a6a20&quot;
-  }
-}</component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 8
-}</component>
-  <component name="ProjectId" id="2fbLBpDQqlupztTafaB7x6CYYij" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.HelloApplication.executor": "Run",
     "Application.main.executor": "Run",
-    "JUnit.All in Assignment2_FP.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "jar-file-creation",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/hatua/OneDrive/Tài liệu/Important/openjfx-22_windows-x64_bin-sdk/javafx-sdk-22/bin/vcruntime140_1.dll",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "vue.rearranger.settings.migration": "true"
+    "git-widget-placeholder": "master",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\peace\Documents\GitHub\Assignment2_FP\src\main\resources\main_folder\dependent" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\RMIT\rmit 5 semester\Further programming\Assignment2_FP\src\main\resources\main_folder\admin\CSS" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="main_folder.Model" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Application.main">
+}]]></component>
+  <component name="RunManager">
     <configuration name="main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main_folder.main" />
       <module name="Assignment2_FP" />
@@ -102,64 +45,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="All in Assignment2_FP" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Assignment2_FP" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.main" />
-        <item itemvalue="JUnit.All in Assignment2_FP" />
       </list>
     </recent_temporary>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
-        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="" />
-      <created>1714064700889</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1714064700889</updated>
-      <workItem from="1714064702006" duration="2000" />
-      <workItem from="1714312534061" duration="2930000" />
-      <workItem from="1714356277887" duration="20679000" />
-      <workItem from="1714448649931" duration="2193000" />
-      <workItem from="1715228756139" duration="430000" />
-      <workItem from="1715229375444" duration="6886000" />
-      <workItem from="1715249259872" duration="687000" />
-      <workItem from="1715609164987" duration="6066000" />
-      <workItem from="1715786423075" duration="8251000" />
-      <workItem from="1715907373833" duration="33495000" />
-    </task>
-    <task id="LOCAL-00001" summary="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages">
-      <option name="closed" value="true" />
-      <created>1715963924229</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1715963924229</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages" />
-    <option name="LAST_COMMIT_MESSAGE" value="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages" />
   </component>
 </project>
