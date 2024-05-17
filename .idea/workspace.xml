@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="">
+    <list default="true" id="fd0c9847-f621-46b5-9556-e123b7fbce53" name="Changes" comment="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/HelloController.java" beforeDir="false" />
@@ -27,6 +27,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -36,16 +37,12 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/AsahiOw/Assignment2_FP.git&quot;,
-    &quot;accountId&quot;: &quot;52507ffd-ee13-4a0d-830e-db5c56bbafcd&quot;
+    &quot;url&quot;: &quot;https://github.com/BruhMomento2004/Basic.git&quot;,
+    &quot;accountId&quot;: &quot;aebb1dfb-c0db-4d36-8172-018e382a6a20&quot;
   }
 }</component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -79,13 +76,16 @@
     "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\peace\Documents\GitHub\Assignment2_FP\src\main\resources\main_folder\dependent" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\RMIT\rmit 5 semester\Further programming\Assignment2_FP\src\main\resources\main_folder\admin\CSS" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="main_folder.Model" />
     </key>
   </component>
   <component name="RunManager" selected="Application.main">
@@ -144,9 +144,22 @@
       <workItem from="1715786423075" duration="8251000" />
       <workItem from="1715907373833" duration="33495000" />
     </task>
+    <task id="LOCAL-00001" summary="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages">
+      <option name="closed" value="true" />
+      <created>1715963924229</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715963924229</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages" />
+    <option name="LAST_COMMIT_MESSAGE" value="add in the header section displaying the user roles, make the logout button properly work and adjusting the height and width of the screen to be in line with the rest of the pages" />
   </component>
 </project>
