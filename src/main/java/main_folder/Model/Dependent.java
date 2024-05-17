@@ -48,11 +48,9 @@ public class Dependent {
 
     @Override
     public String toString() {
-        return "Dependent{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", policyNumber='" + policyNumber + '\'' +
-                '}';
+        return  "Your ID: " + id + "\n" +
+                "Full Name: " + name + "\n" +
+                "Email: " + email + "\n" +
+                "Your Insurance Number: " + policyNumber;
     }
 }
