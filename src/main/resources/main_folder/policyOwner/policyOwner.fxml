@@ -72,7 +72,7 @@
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <TableView fx:id="holderClaimTable" prefHeight="570.0" prefWidth="1200.0">
+                                                <TableView fx:id="OwnerClaimTable" prefHeight="570.0" prefWidth="1200.0">
                                                    <columns>
                                                       <TableColumn fx:id="idColumn" text="ID" />
                                                       <TableColumn fx:id="claimDateColumn" prefWidth="108.0" text="Claim Date" />
