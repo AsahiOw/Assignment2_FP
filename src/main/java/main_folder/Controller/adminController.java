@@ -1,8 +1,5 @@
 package main_folder.Controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,8 +10,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 import main_folder.ConnectDatabase.database;
+import main_folder.Model.Claim;
 import main_folder.Model.Customer;
 import main_folder.Model.Provider;
+import main_folder.Model.Record;
 
 import java.net.URL;
 import java.sql.*;
@@ -22,6 +21,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.io.IOException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class adminController implements Initializable {
     @FXML
@@ -95,7 +96,7 @@ public class adminController implements Initializable {
     @FXML
     private TableColumn statusColumn;
     @FXML
-    private TableColumn documentColumn;
+    private TableColumn documentsColumn;
     @FXML
     private TableColumn receiverBankingInfoColumn;
     @FXML
@@ -132,13 +133,50 @@ public class adminController implements Initializable {
     private TableColumn providerIdDependencyColumn;
     @FXML
     private TableView providerTable;
+    @FXML
+    private Button updateRecordButton;
+    @FXML
+    private TableView recordTable;
+    @FXML
+    private TableColumn idRecordColumn;
+    @FXML
+    private TableColumn dateRecordColumn;
+    @FXML
+    private TableColumn contextRecordColumn;
 
     // Method in adminPage.fxml
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        setupClaimTableColumns();
+        setupRecordTableColumns();
         CustomerTable();
         ProviderTable();
+        ClaimTable();
+        LoginRecord();
+        RecordTable();
     }
+
+    private void setupClaimTableColumns(){
+        executorService.submit(() -> {
+            idColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("id"));
+            claimDateColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_Date"));
+            examDateColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Exam_Date"));
+            claimAmountColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_amount"));
+            insuredPersonColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Insured_Person"));
+            statusColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Status"));
+            documentsColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Documents"));
+            receiverBankingInfoColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Receiver_Banking_Infor"));
+        });
+    }
+
+    private void setupRecordTableColumns(){
+        executorService.submit(() -> {
+            idRecordColumn.setCellValueFactory(new PropertyValueFactory<Record, String>("id"));
+            dateRecordColumn.setCellValueFactory(new PropertyValueFactory<Record, String>("date"));
+            contextRecordColumn.setCellValueFactory(new PropertyValueFactory<Record, String>("context"));
+        });
+    }
+    private ExecutorService executorService = Executors.newFixedThreadPool(6);
 
     public void CreateCustomer() {
         database db = new database();
@@ -242,6 +280,7 @@ public class adminController implements Initializable {
                                 stmt3.setInt(2, customerId);
                                 stmt3.executeUpdate();
                                 System.out.println("Created a " + userType + " with a new Customer entry");
+                                CreateUserRecord();
                                 Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                                 alert2.setTitle("Create Customer notification");
                                 alert2.setHeaderText(null);
@@ -422,7 +461,7 @@ public class adminController implements Initializable {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
                                 alert.setHeaderText(null);
-                                alert.setContentText("Updated the Customer");
+                                alert.setContentText("Please enter all field");
                                 alert.showAndWait();
                                 return;
                             }
@@ -452,6 +491,7 @@ public class adminController implements Initializable {
                             stmt.setInt(index, customerId);
                             stmt.executeUpdate();
                             System.out.println("Updated the customer");
+                            UpdateCustomerRecord(customerId);
                             CustomerTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Update Customer notification");
@@ -522,6 +562,7 @@ public class adminController implements Initializable {
                             stmt.executeUpdate();
 
                             System.out.println("Deleted the customer");
+                            DeleteCustomerRecord(customerId);
                             CustomerTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Customer notification");
@@ -568,6 +609,7 @@ public class adminController implements Initializable {
                         } else {
                             String userType = rs.getString("userType");
                             if (userType.equals("Dependent")) {
+                                RetrieveCustomerRecord(customerId, "Dependent");
                                 sql = "SELECT U.*, C.\"InsuranceNumber\", PH_U.\"name\" AS \"PolicyHolderName\", PH_U.\"email\" AS \"PolicyHolderEmail\" " +
                                         "FROM \"User\" U " +
                                         "JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
@@ -597,6 +639,7 @@ public class adminController implements Initializable {
                                 }
                             }
                             if (userType.equals("PolicyHolder")) {
+                                RetrieveCustomerRecord(customerId, "PolicyHolder");
                                 sql = "SELECT U.*, C.\"InsuranceNumber\", PO_U.\"name\" AS \"PolicyOwnerName\", PO_U.\"email\" AS \"PolicyOwnerEmail\" " +
                                         "FROM \"User\" U " +
                                         "JOIN \"PolicyHolder\" PH ON U.\"id\" = PH.\"userID\" " +
@@ -626,6 +669,7 @@ public class adminController implements Initializable {
                                 }
                             }
                             if (userType.equals("PolicyOwner")) {
+                                RetrieveCustomerRecord(customerId, "PolicyOwner");
                                 sql = "SELECT U.*, C.\"InsuranceNumber\", IM_U.\"name\" AS \"InsuranceManagerName\", IM_U.\"email\" AS \"InsuranceManagerEmail\" " +
                                         "FROM \"User\" U " +
                                         "JOIN \"PolicyOwner\" PO ON U.\"id\" = PO.\"userID\" " +
@@ -670,7 +714,7 @@ public class adminController implements Initializable {
     }
 
     public void CustomerTable() {
-        new Thread(() -> {
+        executorService.submit(() -> {
             database db = new database();
             try (Connection conn = db.connect()) {
                 if (conn != null) {
@@ -734,7 +778,7 @@ public class adminController implements Initializable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
     public void CreateProvider() {
         database db = new database();
@@ -783,6 +827,7 @@ public class adminController implements Initializable {
                         stmt2.setInt(1, userId);
                         stmt2.executeUpdate();
                         System.out.println("Created a " + userType + " entry in the corresponding table");
+                        CreateUserRecord();
                         ProviderTable();
                         Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                         alert2.setTitle("Create Provider notification");
@@ -864,6 +909,7 @@ public class adminController implements Initializable {
                                 stmt6.setInt(1, InsuranceManagerId); // ID of the related InsuranceManager
                                 stmt6.setInt(2, InsuranceSurveyorId); // ID of the new InsuranceSurveyor
                                 stmt6.executeUpdate();
+                                CreateUserRecord();
                                 ProviderTable();
                                 System.out.println("Created a new InsuranceSurveyor in the InsuranceManager_InsuranceSurveyor table");
                                 }
@@ -889,10 +935,10 @@ public class adminController implements Initializable {
                     alert.showAndWait();
                 } else {
                     try {
-                        int customerId = Integer.parseInt(updateProviderId.getText());
+                        int providerId = Integer.parseInt(updateProviderId.getText());
                         String sql = "SELECT * FROM \"User\" WHERE \"id\" = ?";
                         PreparedStatement stmt = conn.prepareStatement(sql);
-                        stmt.setInt(1, customerId);
+                        stmt.setInt(1, providerId);
                         ResultSet rs = stmt.executeQuery();
                         if (!rs.next()) {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -904,10 +950,10 @@ public class adminController implements Initializable {
                             // Check if the new email already exists
                             if (!updateProviderEmail.getText().isEmpty()) {
                                 String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ? AND \"id\" != ?";
-                                PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
+                                PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql); // Create a new PreparedStatement
                                 checkEmailStmt.setString(1, updateProviderEmail.getText());
-                                checkEmailStmt.setInt(2, customerId);
-                                ResultSet checkEmailRs = checkEmailStmt.executeQuery();
+                                checkEmailStmt.setInt(2, providerId);
+                                ResultSet checkEmailRs = checkEmailStmt.executeQuery(); // Execute the new query with the new PreparedStatement
                                 if (checkEmailRs.next()) {
                                     // If the email already exists and does not belong to the current user, show an alert and return
                                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -916,72 +962,72 @@ public class adminController implements Initializable {
                                     alert.setContentText("The email already exists");
                                     alert.showAndWait();
                                     return;
-                                } else {
-                                    String userType = rs.getString("userType");
-                                    if (!(userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor"))) {
-                                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                        alert.setTitle("Update Provider notification");
-                                        alert.setHeaderText(null);
-                                        alert.setContentText("The Provider does not exist");
-                                        alert.showAndWait();
-                                        return;
-                                    }
-                                    if (updateProviderName.getText().isEmpty() && updateProviderEmail.getText().isEmpty() && updateProviderPassword.getText().isEmpty()) {
-                                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                        alert.setTitle("Update Provider notification");
-                                        alert.setHeaderText(null);
-                                        alert.setContentText("Updated the Provider");
-                                        alert.showAndWait();
-                                        return;
-                                    }
-                                    sql = "UPDATE \"User\" SET ";
-                                    if (!updateProviderName.getText().isEmpty()) {
-                                        sql += "\"name\" = ?, ";
-                                    }
-                                    if (!updateProviderEmail.getText().isEmpty()) {
-                                        sql += "\"email\" = ?, ";
-                                    }
-                                    if (!updateProviderPassword.getText().isEmpty()) {
-                                        sql += "\"password\" = ?, ";
-                                    }
-                                    sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
-                                    sql += " WHERE \"id\" = ?";
-                                    stmt = conn.prepareStatement(sql);
-                                    int index = 1;
-                                    if (!updateProviderName.getText().isEmpty()) {
-                                        stmt.setString(index++, updateProviderName.getText());
-                                    }
-                                    if (!updateProviderEmail.getText().isEmpty()) {
-                                        stmt.setString(index++, updateProviderEmail.getText());
-                                    }
-                                    if (!updateProviderPassword.getText().isEmpty()) {
-                                        stmt.setString(index++, updateProviderPassword.getText());
-                                    }
-                                    stmt.setInt(index, customerId);
-                                    stmt.executeUpdate();
-                                    System.out.println("Updated the Provider");
-                                    ProviderTable();
-                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                    alert.setTitle("Update Provider notification");
-                                    alert.setHeaderText(null);
-                                    alert.setContentText("Updated the Provider");
-                                    alert.showAndWait();
                                 }
                             }
+                            String userType = rs.getString("userType");
+                            if (!(userType.equals("InsuranceManager") || userType.equals("InsuranceSurveyor"))) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Update Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Provider does not exist");
+                                alert.showAndWait();
+                                return;
+                            }
+                            if (updateProviderName.getText().isEmpty() && updateProviderEmail.getText().isEmpty() && updateProviderPassword.getText().isEmpty()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Update Provider notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Please enter all field");
+                                alert.showAndWait();
+                                return;
+                            }
+                            sql = "UPDATE \"User\" SET ";
+                            if (!updateProviderName.getText().isEmpty()) {
+                                sql += "\"name\" = ?, ";
+                            }
+                            if (!updateProviderEmail.getText().isEmpty()) {
+                                sql += "\"email\" = ?, ";
+                            }
+                            if (!updateProviderPassword.getText().isEmpty()) {
+                                sql += "\"password\" = ?, ";
+                            }
+                            sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
+                            sql += " WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            int index = 1;
+                            if (!updateProviderName.getText().isEmpty()) {
+                                stmt.setString(index++, updateProviderName.getText());
+                            }
+                            if (!updateProviderEmail.getText().isEmpty()) {
+                                stmt.setString(index++, updateProviderEmail.getText());
+                            }
+                            if (!updateProviderPassword.getText().isEmpty()) {
+                                stmt.setString(index++, updateProviderPassword.getText());
+                            }
+                            stmt.setInt(index, providerId);
+                            stmt.executeUpdate();
+                            System.out.println("Updated the Provider");
+                            UpdateProviderRecord(providerId);
+                            ProviderTable();
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Update Provider notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Updated the Provider");
+                            alert.showAndWait();
                         }
-                    } catch (NumberFormatException e) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Update Provider notification");
-                        alert.setHeaderText(null);
-                        alert.setContentText("The Provider does not exist");
-                        alert.showAndWait();
-                    }
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Update Provider notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Provider does not exist");
+                    alert.showAndWait();
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
 
     public void DeleteProvider() {
         database db = new database();
@@ -1027,6 +1073,7 @@ public class adminController implements Initializable {
                             stmt.executeUpdate();
 
                             System.out.println("Deleted the provider");
+                            DeleteProviderRecord(providerId);
                             ProviderTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Provider notification");
@@ -1082,6 +1129,7 @@ public class adminController implements Initializable {
                                 return;
                             }
                             if (userType.equals("InsuranceManager")) {
+                                RetrieveProviderRecord(providerId, "InsuranceManager");
                                 sql = "SELECT U.* FROM \"User\" U " +
                                         "JOIN \"" + userType + "\" T ON U.\"id\" = T.\"userID\" " +
                                         "WHERE U.\"id\" = ?";
@@ -1102,6 +1150,7 @@ public class adminController implements Initializable {
                                 }
                             }
                             if (userType.equals("InsuranceSurveyor")) {
+                                RetrieveProviderRecord(providerId, "InsuranceSurveyor");
                                 sql = "SELECT U.*, U_IM.\"name\" as IMName, U_IM.\"email\" as IMEmail FROM \"User\" U " +
                                         "JOIN \"InsuranceSurveyor\" INSURV ON U.\"id\" = INSURV.\"userID\" " +
                                         "JOIN \"InsuranceManager_InsuranceSurveyor\" IM_INSURV ON INSURV.\"id\" = IM_INSURV.\"InsuranceSurveyor\" " +
@@ -1143,7 +1192,7 @@ public class adminController implements Initializable {
     }
 
     public void ProviderTable() {
-        new Thread(() -> {
+        executorService.submit(() -> {
             database db = new database();
             try (Connection conn = db.connect()) {
                 if (conn != null) {
@@ -1190,14 +1239,44 @@ public class adminController implements Initializable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
-    public void TotalCost() {
-        System.out.println("Logout");
+    public void ClaimTable(){
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "SELECT C.* FROM \"Claim\" C";
+
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                claimTable.getItems().clear();
+
+                // Add data to table
+                while (rs.next()) {
+                    Claim claim = new Claim(
+                            rs.getString("id"),
+                            rs.getString("Claim_Date"),
+                            rs.getString("Exam_Date"),
+                            rs.getString("Claim_amount"),
+                            rs.getString("Insured_Person"),
+                            rs.getString("Status"),
+                            rs.getString("Documents"),
+                            rs.getString("Receiver_Banking_Infor")
+                    );
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        claimTable.getItems().add(claim);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
     public void Logout() throws IOException {
         System.out.println("Logout button clicked."); // Debug line
-        loginController.setLoggedInUser(null);
         Stage stage = (Stage) logoutButton.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
         Scene scene = new Scene(root);
@@ -1205,4 +1284,169 @@ public class adminController implements Initializable {
         stage.show();
     }
 
+    public void updateRecordMethod(){
+        RecordTable();
+    }
+    public void RecordTable(){
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "SELECT R.* FROM \"Record\" R";
+
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                recordTable.getItems().clear();
+
+                // Add data to table
+                while (rs.next()) {
+                    Record record = new Record(
+                            rs.getString("id"),
+                            rs.getString("record"),
+                            rs.getString("created_at")
+                    );
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        recordTable.getItems().add(record);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    //    record section
+    private void LoginRecord(){
+        executorService.submit(() -> {
+            String loggedInUserId = loginController.getLoggedInUser();
+            String record = "Admin logged in with id " + loggedInUserId;
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void CreateUserRecord() {
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sqlUser = "SELECT * FROM \"User\" ORDER BY \"id\" DESC LIMIT 1";
+                PreparedStatement stmtUser = conn.prepareStatement(sqlUser);
+                ResultSet rsUser = stmtUser.executeQuery();
+
+                if (rsUser.next()) {
+                    String userType = rsUser.getString("userType");
+                    String id = rsUser.getString("id");
+                    String loggedInUserId = loginController.getLoggedInUser();
+
+                    String record = userType + " with the id of " + id + " has been created by Admin id " + loggedInUserId;
+
+                    String sqlRecord = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                    PreparedStatement stmtRecord = conn.prepareStatement(sqlRecord);
+                    stmtRecord.setString(1, record);
+                    stmtRecord.executeUpdate();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void UpdateCustomerRecord(int id){
+        executorService.submit(() -> {
+            String record = "Customer with the id of " + id + " has been updated by Admin id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void DeleteCustomerRecord(int id){
+        executorService.submit(() -> {
+            String record = "Customer with the id of " + id + " has been deleted by Admin id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void RetrieveCustomerRecord(int id, String userType){
+        executorService.submit(() -> {
+            String record = userType + " with the id of " + id + " has been retrieved by Admin id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void UpdateProviderRecord(int id){
+        executorService.submit(() -> {
+            String record = "Provider with the id of " + id + " has been updated by Admin id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void DeleteProviderRecord(int id){
+        executorService.submit(() -> {
+            String record = "Provider with the id of " + id + " has been deleted by Admin id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void RetrieveProviderRecord(int id, String userType){
+        executorService.submit(() -> {
+            String record = userType + "with the id of " + id + " has been retrieved by Admin id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }

@@ -1,208 +1,179 @@
 package main_folder.Controller;
 
-import javafx.collections.FXCollections;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import main_folder.ConnectDatabase.database;
 import main_folder.Model.Claim;
-import main_folder.Model.Client;
-import main_folder.Model.Surveyor;
+import main_folder.Model.Customer;
+import main_folder.Model.Provider;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class insuranceManagerController {
-
-    @FXML
-    private TextField claimIdRequestInfo, claimIdPropose, retrieveFilterClaimIdFind1, retrieveFilterCustomerIdFind1, retrieveFilterClaimIdFind2, retrieveFilterCustomerIdFind2, claimIdApproval, surveyorId, managerRetrieveFilterCriteria;
-    @FXML
-    private ComboBox<String> approvalDecision;
-
-    @FXML
-    private TableView<Claim> filteredClaimsTable2;
-
-    @FXML
-    private TableView<Client> filteredCustomerFindTable2;
-
-    @FXML
-    private Label surveyorInfoLabel;
-
-    private main_folder.ConnectDatabase.database database = new database();
-
     @FXML
     private Button logoutBTN;
 
+    @FXML
+    private TextField searchBarCustomer;
 
     @FXML
-    private void ApproveRejectClaim() {
-        String claimId = claimIdApproval.getText();
-        String decision = approvalDecision.getValue();
-
-        if (claimId.isEmpty() || decision == null) {
-            showAlert("Error", "Please enter both Claim ID and decision.");
-            return;
-        }
-
-        try (Connection conn = database.connect()) {
-            String sql = "UPDATE \"Claim\" SET \"Status\" = ? WHERE \"id\" = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, decision);
-                pstmt.setInt(2, Integer.parseInt(claimId));
-                int rowsAffected = pstmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    showAlert("Success", "Claim status updated successfully.");
-                } else {
-                    showAlert("Error", "Failed to update claim status.");
-                }
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
-        }
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+    private Button searchButtonCustomer;
 
     @FXML
-    private void RetrieveAndFilterClaims2() {
-        Integer criteria = Integer.valueOf(retrieveFilterClaimIdFind2.getText());
-
-        if (retrieveFilterClaimIdFind2.getText().isEmpty()) {
-            showAlert("Error", "Criteria must be provided.");
-            return;
-        }
-
-        try (Connection conn = database.connect()) {
-            String sql = "SELECT * FROM \"Claim\" WHERE  \"id\"  = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, criteria);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    List<Claim> filteredClaims = new ArrayList<>();
-                    while (rs.next()) {
-                        Claim claim = new Claim();
-                        claim.setId(rs.getInt(1));
-                        claim.setClaim_Date(rs.getDate(2));
-                        claim.setExam_Date(rs.getDate(3));
-                        claim.setClaim_amount(rs.getDouble(4));
-                        claim.setInsured_Person(rs.getString(5));
-                        claim.setStatus(rs.getString(6));
-                        claim.setDocuments(rs.getString(7));
-                        claim.setReceiver_Banking_Infor(rs.getString(8));
-                        filteredClaims.add(claim);
-                    }
-                    if (!filteredClaims.isEmpty()) {
-                        displayFilteredClaims2(filteredClaims);
-                    } else {
-                        showAlert("Info", "No claims found for the given criteria.");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
-        }
-    }
-
-    private void displayFilteredClaims2(List<Claim> claims) {
-        filteredClaimsTable2.setItems(FXCollections.observableArrayList(claims));
-    }
-
+    private TableView customerTable;
 
     @FXML
-    private void RetrieveAndFilterCustomers2() {
-        Integer criteria = Integer.valueOf(retrieveFilterCustomerIdFind2.getText());
-
-        if (retrieveFilterCustomerIdFind2.getText().isEmpty()) {
-            showAlert("Error", "Criteria must be provided.");
-            return;
-        }
-
-        try (Connection conn = database.connect()) {
-            String sql = "SELECT * FROM \"Customer\" WHERE  \"id\"  = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, criteria);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    List<Client> clients = new ArrayList<>();
-                    while (rs.next()) {
-                        Client client = new Client();
-                        client.setId(rs.getInt(1));
-                        client.setInsuranceNumber(rs.getInt(2));
-                        clients.add(client);
-                    }
-                    if (!clients.isEmpty()) {
-                        displayFilteredCustomers2(clients);
-                    } else {
-                        showAlert("Info", "No claims found for the given criteria.");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
-        }
-    }
-
-    private void displayFilteredCustomers2(List<Client> clients) {
-        filteredCustomerFindTable2.setItems(FXCollections.observableArrayList(clients));
-    }
+    private TextField searchBarClaim;
 
     @FXML
-    private void ViewSurveyorInfo() {
-        String surveyorIdText = surveyorId.getText();
-
-        if (surveyorIdText.isEmpty()) {
-            showAlert("Error", "Surveyor ID must be provided.");
-            return;
-        }
-
-        Surveyor surveyor = null;
-
-        try (Connection conn = database.connect()) {
-            String sql = "SELECT * FROM  \"InsuranceSurveyor\" INNER JOIN \"User\"  ON \"InsuranceSurveyor\".\"userID\" = \"User\".\"id\" WHERE \"InsuranceSurveyor\".\"userID\" = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, Integer.parseInt(surveyorIdText));
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        surveyor = new Surveyor();
-                        surveyor.setId(rs.getInt(1));
-                        surveyor.setUserId(rs.getInt(2));
-                        surveyor.setName(rs.getString(3));
-                        surveyor.setEmail(rs.getString(4));
-                        surveyor.setUserType(rs.getString(6));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
-        }
-
-        if (surveyor != null) {
-            displaySurveyorInfo(surveyor);
-        } else {
-            showAlert("Info", "No surveyor found with the given ID.");
-        }
-    }
+    private Button searchButtonClaim;
 
     @FXML
-    private void displaySurveyorInfo(Surveyor surveyor) {
-        surveyorInfoLabel.setText(surveyor.toString());
+    private TableView claimTable;
+
+    @FXML
+    private Label userIdLabel;
+
+    @FXML
+    private Label userNameLabel;
+
+    @FXML
+    private Label userEmailLabel;
+
+    @FXML
+    private TextField PendingID;
+
+    @FXML
+    private ComboBox managerOption;
+
+    @FXML
+    private Button Send;
+
+    @FXML
+    private TextField searchBarClaimPending;
+
+    @FXML
+    private Button searchButtonClaimPending;
+
+    @FXML
+    private TextField searchBarProvider;
+
+    @FXML
+    private Button searchButtonProvider;
+
+    @FXML
+    private Label totalCost;
+
+    @FXML
+    private TableView claimPending;
+
+    @FXML
+    private TableView providerTable;
+    @FXML
+    private TableColumn idColumnPending;
+    @FXML
+    private TableColumn claimDateColumnPending;
+    @FXML
+    private TableColumn examDateColumnPending;
+    @FXML
+    private TableColumn claimAmountColumnPending;
+    @FXML
+    private TableColumn insuredPersonColumnPending;
+    @FXML
+    private TableColumn statusColumnPending;
+    @FXML
+    private TableColumn documentsColumnPending;
+    @FXML
+    private TableColumn receiverBankingInfoColumnPending;
+    @FXML
+    private TableColumn idColumn;
+    @FXML
+    private TableColumn claimDateColumn;
+    @FXML
+    private TableColumn examDateColumn;
+    @FXML
+    private TableColumn claimAmountColumn;
+    @FXML
+    private TableColumn insuredPersonColumn;
+    @FXML
+    private TableColumn statusColumn;
+    @FXML
+    private TableColumn documentsColumn;
+    @FXML
+    private TableColumn receiverBankingInfoColumn;
+    @FXML
+    private TableColumn customerIdColumn;
+    @FXML
+    private TableColumn customerNameColumn;
+    @FXML
+    private TableColumn customerEmailColumn;
+    @FXML
+    private TableColumn customerUserTypeColumn;
+    @FXML
+    private TableColumn customerInsuranceNumberColumn;
+    @FXML
+    private TableColumn customerIdDependencyColumn;
+    @FXML
+    private TableColumn providerIdColumn;
+    @FXML
+    private TableColumn providerNameColumn;
+    @FXML
+    private TableColumn providerEmailColumn;
+
+    public void initialize() {
+        setupPendingTableColumns();
+        setupClaimTableColumns();
+        PendingTable();
+        ClaimTable();
+        CustomerTable();
+        ProviderTable();
+        userDetail();
+        costCalculation();
+        LoginRecord();
+    }
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(6);
+
+    private void setupPendingTableColumns() {
+        executorService.submit(() -> {
+            idColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("id"));
+            claimDateColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_Date"));
+            examDateColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Exam_Date"));
+            claimAmountColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_amount"));
+            insuredPersonColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Insured_Person"));
+            statusColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Status"));
+            documentsColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Documents"));
+            receiverBankingInfoColumnPending.setCellValueFactory(new PropertyValueFactory<Claim, String>("Receiver_Banking_Infor"));
+        });
+    }
+
+    private void setupClaimTableColumns(){
+        executorService.submit(() -> {
+            idColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("id"));
+            claimDateColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_Date"));
+            examDateColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Exam_Date"));
+            claimAmountColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_amount"));
+            insuredPersonColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Insured_Person"));
+            statusColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Status"));
+            documentsColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Documents"));
+            receiverBankingInfoColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Receiver_Banking_Infor"));
+        });
     }
 
     public void Logout() throws IOException {
         System.out.println("Logout button clicked."); // Debug line
-        loginController.setLoggedInUser(null);
         Stage stage = (Stage) logoutBTN.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
         Scene scene = new Scene(root);
@@ -210,5 +181,654 @@ public class insuranceManagerController {
         stage.show();
     }
 
+    public void SendEvaluation() {
+        // Check if the PendingID TextField and managerOption ComboBox are empty
+        if (PendingID.getText().isEmpty() || managerOption.getValue() == null) {
+            showAlert("Please enter all fields");
+            return;
+        }
 
+        // Get the input from the PendingID TextField and managerOption ComboBox
+        String pendingId = PendingID.getText();
+        String managerOptionValue = managerOption.getValue().toString();
+
+        // Convert pendingId to a long
+        long pendingIdLong;
+        try {
+            pendingIdLong = Long.parseLong(pendingId);
+        } catch (NumberFormatException e) {
+            showAlert("Invalid ID format");
+            return;
+        }
+
+        // Connect to the database and query the User table for a user with the given email
+        database db = new database();
+        try (Connection conn = db.connect();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"Claim\" WHERE \"id\" = ?")) {
+            stmt.setLong(1, pendingIdLong);
+            ResultSet rs = stmt.executeQuery();
+
+            // If no such user exists, show an alert
+            if (!rs.next()) {
+                showAlert("This Claim does not exist");
+                return;
+            }
+            // Check if the status of the claim is "Pending"
+            String status = rs.getString("Status");
+            if (!status.equals("Pending")) {
+                showAlert("This Claim is invalid");
+                return;
+            }
+
+            // If the claim exists, update the claim's status
+            try (PreparedStatement updateStmt = conn.prepareStatement("UPDATE \"Claim\" SET \"Status\" = ? WHERE \"id\" = ?")) {
+                updateStmt.setString(1, managerOptionValue);
+                updateStmt.setLong(2, pendingIdLong);
+                updateStmt.executeUpdate();
+            }
+
+            // Show an alert saying "Evaluate Claim complete"
+            SendEvaluationRecord(pendingId, managerOptionValue);
+            PendingTable();
+            showAlert("Evaluate Claim complete");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public void SearchPending() {
+        String searchTerm = searchBarClaimPending.getText();
+
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql;
+                PreparedStatement stmt;
+
+                if (searchTerm == null || searchTerm.trim().isEmpty()) {
+                    // If user does not input any value, show the default data
+                    sql = "SELECT C.* FROM \"Claim\" C WHERE C.\"Status\" = 'Pending'";
+                    stmt = conn.prepareStatement(sql);
+                } else {
+                    // If user inputs a value, search all columns in the Claim table
+                    // If user inputs a value, search all columns in the Claim table
+                    sql = "SELECT C.* FROM \"Claim\" C WHERE C.\"Status\" = 'Pending' AND (" +
+                            "CAST(C.\"id\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Claim_Date\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Exam_Date\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Claim_amount\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Insured_Person\" AS TEXT) LIKE ? OR " +
+                            "LOWER(C.\"Status\") LIKE ? OR " +
+                            "LOWER(C.\"Documents\") LIKE ? OR " +
+                            "LOWER(C.\"Receiver_Banking_Infor\") LIKE ?)";
+                    stmt = conn.prepareStatement(sql);
+                    for (int i = 1; i <= 8; i++) {
+                        stmt.setString(i, "%" + searchTerm + "%");
+                    }
+                }
+
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                Platform.runLater(() -> claimPending.getItems().clear());
+
+                // Add data to table
+                while (rs.next()) {
+                    Claim claim = new Claim(
+                            rs.getString("id"),
+                            rs.getString("Claim_Date"),
+                            rs.getString("Exam_Date"),
+                            rs.getString("Claim_amount"),
+                            rs.getString("Insured_Person"),
+                            rs.getString("Status"),
+                            rs.getString("Documents"),
+                            rs.getString("Receiver_Banking_Infor")
+                    );
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        claimPending.getItems().add(claim);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void PendingTable() {
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "SELECT C.* FROM \"Claim\" C WHERE C.\"Status\" = 'Pending'";
+
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                claimPending.getItems().clear();
+
+                // Add data to table
+                while (rs.next()) {
+                    Claim claim = new Claim(
+                            rs.getString("id"),
+                            rs.getString("Claim_Date"),
+                            rs.getString("Exam_Date"),
+                            rs.getString("Claim_amount"),
+                            rs.getString("Insured_Person"),
+                            rs.getString("Status"),
+                            rs.getString("Documents"),
+                            rs.getString("Receiver_Banking_Infor")
+                    );
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        claimPending.getItems().add(claim);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void SearchCustomer() {
+        String searchTerm = searchBarCustomer.getText();
+
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql;
+                PreparedStatement stmt;
+
+                if (searchTerm == null || searchTerm.trim().isEmpty()) {
+                    // If user does not input any value, show the default data
+                    sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"password\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN C_D.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN C_PH.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN C_PO.\"InsuranceNumber\" " +
+                            "END AS \"InsuranceNumber\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN PH_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN PO_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN IM_U.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_D ON D.\"policyNumber\" = C_D.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH ON U.\"id\" = PH.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PH ON PH.\"policyNumber\" = C_PH.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner_PolicyHolder\" POPH ON PH.\"id\" = POPH.\"PolicyHolder\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO_U ON POPH.\"PolicyOwner\" = PO_U.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO ON U.\"id\" = PO.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PO ON PO.\"policyNumber\" = C_PO.\"id\" " +
+                            "LEFT JOIN \"InsuranceManager_PolicyOwner\" IMPO ON PO.\"id\" = IMPO.\"PolicyOwner\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM_U ON IMPO.\"InsuranceManager\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('Dependent', 'PolicyHolder', 'PolicyOwner')";
+                    stmt = conn.prepareStatement(sql);
+                } else {
+                    // If user inputs a value, search all columns in the User table
+                    sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"password\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN C_D.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN C_PH.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN C_PO.\"InsuranceNumber\" " +
+                            "END AS \"InsuranceNumber\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN PH_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN PO_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN IM_U.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_D ON D.\"policyNumber\" = C_D.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH ON U.\"id\" = PH.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PH ON PH.\"policyNumber\" = C_PH.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner_PolicyHolder\" POPH ON PH.\"id\" = POPH.\"PolicyHolder\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO_U ON POPH.\"PolicyOwner\" = PO_U.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO ON U.\"id\" = PO.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PO ON PO.\"policyNumber\" = C_PO.\"id\" " +
+                            "LEFT JOIN \"InsuranceManager_PolicyOwner\" IMPO ON PO.\"id\" = IMPO.\"PolicyOwner\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM_U ON IMPO.\"InsuranceManager\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('Dependent', 'PolicyHolder', 'PolicyOwner') AND (" +
+                            "CAST(U.\"id\" AS TEXT) LIKE ? OR " +
+                            "LOWER(U.\"name\") LIKE ? OR " +
+                            "LOWER(U.\"email\") LIKE ? OR " +
+                            "LOWER(U.\"password\") LIKE ? OR " +
+                            "LOWER(U.\"userType\") LIKE ?)";
+                    stmt = conn.prepareStatement(sql);
+                    for (int i = 1; i <= 5; i++) {
+                        stmt.setString(i, "%" + searchTerm + "%");
+                    }
+                }
+
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                Platform.runLater(() -> customerTable.getItems().clear());
+
+                // Add data to table
+                while (rs.next()) {
+                    Customer customer = new Customer(
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            rs.getString("userType"),
+                            rs.getString("InsuranceNumber"),
+                            rs.getString("idDependency")
+                    );
+                    Platform.runLater(() -> customerTable.getItems().add(customer));
+                }
+
+                // Set column data
+                Platform.runLater(() -> {
+                    customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                    customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                    customerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+                    customerUserTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
+                    customerInsuranceNumberColumn.setCellValueFactory(new PropertyValueFactory<>("InsuranceNumber"));
+                    customerIdDependencyColumn.setCellValueFactory(new PropertyValueFactory<>("idDependency"));
+                });
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    public void CustomerTable(){
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                if (conn != null) {
+                    String sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"password\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN C_D.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN C_PH.\"InsuranceNumber\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN C_PO.\"InsuranceNumber\" " +
+                            "END AS \"InsuranceNumber\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'Dependent' THEN PH_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyHolder' THEN PO_U.\"userID\" " +
+                            "WHEN U.\"userType\" = 'PolicyOwner' THEN IM_U.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_D ON D.\"policyNumber\" = C_D.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                            "LEFT JOIN \"PolicyHolder\" PH ON U.\"id\" = PH.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PH ON PH.\"policyNumber\" = C_PH.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner_PolicyHolder\" POPH ON PH.\"id\" = POPH.\"PolicyHolder\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO_U ON POPH.\"PolicyOwner\" = PO_U.\"id\" " +
+                            "LEFT JOIN \"PolicyOwner\" PO ON U.\"id\" = PO.\"userID\" " +
+                            "LEFT JOIN \"Customer\" C_PO ON PO.\"policyNumber\" = C_PO.\"id\" " +
+                            "LEFT JOIN \"InsuranceManager_PolicyOwner\" IMPO ON PO.\"id\" = IMPO.\"PolicyOwner\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM_U ON IMPO.\"InsuranceManager\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('Dependent', 'PolicyHolder', 'PolicyOwner')";
+
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    ResultSet rs = stmt.executeQuery();
+
+                    // Clear existing data
+                    Platform.runLater(() -> customerTable.getItems().clear());
+
+                    // Add data to table
+                    while (rs.next()) {
+                        Customer customer = new Customer(
+                                rs.getString("id"),
+                                rs.getString("name"),
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getString("userType"),
+                                rs.getString("InsuranceNumber"),
+                                rs.getString("idDependency")
+                        );
+                        Platform.runLater(() -> customerTable.getItems().add(customer));
+                    }
+
+                    // Set column data
+                    Platform.runLater(() -> {
+                        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                        customerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+                        customerUserTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
+                        customerInsuranceNumberColumn.setCellValueFactory(new PropertyValueFactory<>("InsuranceNumber"));
+                        customerIdDependencyColumn.setCellValueFactory(new PropertyValueFactory<>("idDependency"));
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    public void SearchClaim(){String searchTerm = searchBarClaim.getText();
+
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql;
+                PreparedStatement stmt;
+
+                if (searchTerm == null || searchTerm.trim().isEmpty()) {
+                    // If user does not input any value, show the default data
+                    sql = "SELECT C.* FROM \"Claim\" C ";
+                    stmt = conn.prepareStatement(sql);
+                } else {
+                    // If user inputs a value, search all columns in the Claim table
+                    sql = "SELECT C.* FROM \"Claim\" C WHERE (" +
+                            "CAST(C.\"id\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Claim_Date\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Exam_Date\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Claim_amount\" AS TEXT) LIKE ? OR " +
+                            "CAST(C.\"Insured_Person\" AS TEXT) LIKE ? OR " +
+                            "LOWER(C.\"Status\") LIKE ? OR " +
+                            "LOWER(C.\"Documents\") LIKE ? OR " +
+                            "LOWER(C.\"Receiver_Banking_Infor\") LIKE ?)";
+                    stmt = conn.prepareStatement(sql);
+                    for (int i = 1; i <= 8; i++) {
+                        stmt.setString(i, "%" + searchTerm + "%");
+                    }
+                }
+
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                Platform.runLater(() -> claimTable.getItems().clear());
+
+                // Add data to table
+                while (rs.next()) {
+                    Claim claim = new Claim(
+                            rs.getString("id"),
+                            rs.getString("Claim_Date"),
+                            rs.getString("Exam_Date"),
+                            rs.getString("Claim_amount"),
+                            rs.getString("Insured_Person"),
+                            rs.getString("Status"),
+                            rs.getString("Documents"),
+                            rs.getString("Receiver_Banking_Infor")
+                    );
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        claimTable.getItems().add(claim);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void ClaimTable(){
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "SELECT C.* FROM \"Claim\" C";
+
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                claimTable.getItems().clear();
+
+                // Add data to table
+                while (rs.next()) {
+                    Claim claim = new Claim(
+                            rs.getString("id"),
+                            rs.getString("Claim_Date"),
+                            rs.getString("Exam_Date"),
+                            rs.getString("Claim_amount"),
+                            rs.getString("Insured_Person"),
+                            rs.getString("Status"),
+                            rs.getString("Documents"),
+                            rs.getString("Receiver_Banking_Infor")
+                    );
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        claimTable.getItems().add(claim);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void SearchSurveyor() {
+        String searchTerm = searchBarProvider.getText().toLowerCase(); // Assuming searchBarSurveyor is the TextField for surveyor search
+
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql;
+                PreparedStatement stmt;
+
+                if (searchTerm == null || searchTerm.trim().isEmpty()) {
+                    // If user does not input any value, show the default data
+                    sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'InsuranceSurveyor' THEN IM2.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"InsuranceManager\" IM1 ON U.\"id\" = IM1.\"userID\" " +
+                            "LEFT JOIN \"InsuranceSurveyor\" INSURV ON U.\"id\" = INSURV.\"userID\" " +
+                            "LEFT JOIN \"InsuranceManager_InsuranceSurveyor\" IM_INSURV ON INSURV.\"id\" = IM_INSURV.\"InsuranceSurveyor\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM2 ON IM_INSURV.\"InsuranceManager\" = IM2.\"id\" " +
+                            "LEFT JOIN \"User\" IM_U ON IM2.\"userID\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('InsuranceSurveyor')";
+                    stmt = conn.prepareStatement(sql);
+                } else {
+                    // If user inputs a value, search all columns in the User table
+                    sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'InsuranceSurveyor' THEN IM2.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"InsuranceManager\" IM1 ON U.\"id\" = IM1.\"userID\" " +
+                            "LEFT JOIN \"InsuranceSurveyor\" INSURV ON U.\"id\" = INSURV.\"userID\" " +
+                            "LEFT JOIN \"InsuranceManager_InsuranceSurveyor\" IM_INSURV ON INSURV.\"id\" = IM_INSURV.\"InsuranceSurveyor\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM2 ON IM_INSURV.\"InsuranceManager\" = IM2.\"id\" " +
+                            "LEFT JOIN \"User\" IM_U ON IM2.\"userID\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('InsuranceSurveyor') AND (" +
+                            "CAST(U.\"id\" AS TEXT) LIKE ? OR " +
+                            "LOWER(U.\"name\") LIKE ? OR " +
+                            "LOWER(U.\"email\") LIKE ?)";
+                    stmt = conn.prepareStatement(sql);
+                    for (int i = 1; i <= 3; i++) {
+                        stmt.setString(i, "%" + searchTerm + "%");
+                    }
+                }
+
+                ResultSet rs = stmt.executeQuery();
+
+                // Clear existing data
+                Platform.runLater(() -> providerTable.getItems().clear());
+
+                // Add data to table
+                while (rs.next()) {
+                    Provider provider = new Provider(
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("email")
+                    );
+                    Platform.runLater(() -> providerTable.getItems().add(provider));
+                }
+
+                // Set column data
+                Platform.runLater(() -> {
+                    providerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                    providerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                    providerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+                });
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void ProviderTable(){
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                if (conn != null) {
+                    String sql = "SELECT U.\"id\", U.\"name\", U.\"email\", U.\"password\", U.\"userType\", " +
+                            "CASE " +
+                            "WHEN U.\"userType\" = 'InsuranceSurveyor' THEN IM2.\"userID\" " +
+                            "END AS \"idDependency\" " +
+                            "FROM \"User\" U " +
+                            "LEFT JOIN \"InsuranceManager\" IM1 ON U.\"id\" = IM1.\"userID\" " +
+                            "LEFT JOIN \"InsuranceSurveyor\" INSURV ON U.\"id\" = INSURV.\"userID\" " +
+                            "LEFT JOIN \"InsuranceManager_InsuranceSurveyor\" IM_INSURV ON INSURV.\"id\" = IM_INSURV.\"InsuranceSurveyor\" " +
+                            "LEFT JOIN \"InsuranceManager\" IM2 ON IM_INSURV.\"InsuranceManager\" = IM2.\"id\" " +
+                            "LEFT JOIN \"User\" IM_U ON IM2.\"userID\" = IM_U.\"id\" " +
+                            "WHERE U.\"userType\" IN ('InsuranceSurveyor')";
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    ResultSet rs = stmt.executeQuery();
+
+                    // Clear existing data
+                    Platform.runLater(() -> providerTable.getItems().clear());
+
+                    // Add data to table
+                    while (rs.next()) {
+                        Provider provider = new Provider(
+                                rs.getString("id"),
+                                rs.getString("name"),
+                                rs.getString("email")
+                        );
+                        Platform.runLater(() -> providerTable.getItems().add(provider));
+                    }
+
+                    // Set column data
+                    Platform.runLater(() -> {
+                        providerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                        providerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+                        providerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void userDetail(){
+        String loggedInUserId = loginController.getLoggedInUser();
+
+        if (loggedInUserId != null) {
+            // Connect to the database and query the User table for a user with the given ID
+            database db = new database();
+            try (Connection conn = db.connect();
+                 PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"User\" WHERE \"id\" = ?")) {
+                stmt.setInt(1, Integer.parseInt(loggedInUserId));
+                ResultSet rs = stmt.executeQuery();
+
+                // If the user exists, update the labels with the user's details
+                if (rs.next()) {
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        userIdLabel.setText(loggedInUserId);
+                        userNameLabel.setText(name);
+                        userEmailLabel.setText(email);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Handle case where no user is logged in
+            Platform.runLater(() -> {
+                userIdLabel.setText("No user logged in");
+                userNameLabel.setText("No user logged in");
+                userEmailLabel.setText("No user logged in");
+            });
+        }
+    }
+    private void costCalculation() {
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                // Count the number of PolicyOwners
+                String sqlPolicyOwners = "SELECT COUNT(*) FROM \"User\" WHERE \"userType\" = 'PolicyOwner'";
+                PreparedStatement stmtPolicyOwners = conn.prepareStatement(sqlPolicyOwners);
+                ResultSet rsPolicyOwners = stmtPolicyOwners.executeQuery();
+                int countPolicyOwners = rsPolicyOwners.next() ? rsPolicyOwners.getInt(1) : 0;
+
+                // Count the number of PolicyHolders
+                String sqlPolicyHolders = "SELECT COUNT(*) FROM \"User\" WHERE \"userType\" = 'PolicyHolder'";
+                PreparedStatement stmtPolicyHolders = conn.prepareStatement(sqlPolicyHolders);
+                ResultSet rsPolicyHolders = stmtPolicyHolders.executeQuery();
+                int countPolicyHolders = rsPolicyHolders.next() ? rsPolicyHolders.getInt(1) : 0;
+
+                // Count the number of Dependents
+                String sqlDependents = "SELECT COUNT(*) FROM \"User\" WHERE \"userType\" = 'Dependent'";
+                PreparedStatement stmtDependents = conn.prepareStatement(sqlDependents);
+                ResultSet rsDependents = stmtDependents.executeQuery();
+                int countDependents = rsDependents.next() ? rsDependents.getInt(1) : 0;
+
+                // Calculate the total cost
+                int totalCosts = countPolicyOwners * 100 + countPolicyHolders * 100 + countDependents * 60;
+
+                // Calculate the cost for each user type
+                int costPolicyOwners = countPolicyOwners * 100;
+                int costPolicyHolders = countPolicyHolders * 100;
+                int costDependents = countDependents * 60;
+
+                // Create the formatted string
+                String formattedCosts = String.format("PolicyOwner: $%d\nPolicyHolder: $%d\nDependent: $%d\nTotal: $%d",
+                        costPolicyOwners, costPolicyHolders, costDependents, totalCosts);
+
+                // Update the "TotalCost" label
+                Platform.runLater(() -> totalCost.setText(formattedCosts));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    //    record section
+    private void LoginRecord(){
+        executorService.submit(() -> {
+            String loggedInUserId = loginController.getLoggedInUser();
+            String record = "InsuranceManager logged in with id " + loggedInUserId;
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void SendEvaluationRecord(String id, String managerOption){
+        executorService.submit(() -> {
+            String record = "Claim with id " + id + " has been evaluated by InsuranceManager id " + loginController.getLoggedInUser() + " as " + managerOption;
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }

@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.insuranceManagerController">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.insuranceManagerController">
     <top>
         <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -29,77 +41,146 @@
         </HBox>
     </top>
     <center>
-    <AnchorPane>
-    <TitledPane prefHeight="1196.0" prefWidth="1200.0" text="Insurance Manager">
         <VBox>
-            <Label text="Approve/Reject Proposed Claims" />
-            <TextField fx:id="claimIdApproval" promptText="Claim ID" />
-            <ComboBox fx:id="approvalDecision">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Approve" />
-                        <String fx:value="Reject" />
-                    </FXCollections>
-                </items>
-            </ComboBox>
-            <Button fx:id="approveRejectButton" onAction="#ApproveRejectClaim" text="Submit" />
-            <Separator>
-                <padding>
-                    <Insets bottom="10.0" top="10.0" />
-                </padding>
-                <stylesheets>
-                    <URL value="@../admin/CSS/Seperator_style.css" />
-                </stylesheets>
-                <styleClass>
-                    <String fx:value="thick-separator" />
-                </styleClass>
-            </Separator>
-
-            <Label text="Retrieve and Filter Claims/Customers" />
-            <TextField fx:id="retrieveFilterClaimIdFind2" promptText="ClaimID" />
-            <Button fx:id="retrieveFilterButton2" onAction="#RetrieveAndFilterClaims2" text="Submit" />
-
-            <TableView fx:id="filteredClaimsTable2">
-                <columns>
-                    <TableColumn fx:id="claimIdInsuranceColumn2" text="Claim ID" />
-                    <TableColumn fx:id="claimDateInsuranceColumn2" text="Claim Date" />
-                    <TableColumn fx:id="examDateInsuranceColumn2" text="Exam Date" />
-                    <TableColumn fx:id="claimAmountInsuranceColumn2" text="Claim Amount" />
-                    <TableColumn fx:id="insuredPersonInsuranceColumn2" text="Insured Person" />
-                    <TableColumn fx:id="statusInsurancesColumn2" text="Status" />
-                    <TableColumn fx:id="documentsInsuranceColumn2" text="Documents" />
-                    <TableColumn fx:id="receiverBankingInfoInsuranceColumn2" text="Receiver Banking Info" />
-                </columns>
-            </TableView>
-
-            <TextField fx:id="retrieveFilterCustomerIdFind2" promptText="CustomerID" />
-            <Button fx:id="retrieveFilterCustomerButton2" onAction="#RetrieveAndFilterCustomers2" text="Submit" />
-
-            <TableView fx:id="filteredCustomerFindTable2">
-                <columns>
-                    <TableColumn fx:id="idCustomerColumn2" text="Customer ID" />
-                    <TableColumn fx:id="insuranceCustomerColumn2" text="Insurance" />
-                </columns>
-            </TableView>
-            <Separator>
-                <padding>
-                    <Insets bottom="10.0" top="10.0" />
-                </padding>
-                <stylesheets>
-                    <URL value="@../admin/CSS/Seperator_style.css" />
-                </stylesheets>
-                <styleClass>
-                    <String fx:value="thick-separator" />
-                </styleClass>
-            </Separator>
-
-            <Label text="View Surveyor Information" />
-            <TextField fx:id="surveyorId" promptText="Surveyor ID" />
-            <Button fx:id="viewSurveyorButton" onAction="#ViewSurveyorInfo" text="Submit" />
-            <Label fx:id="surveyorInfoLabel" text="Surveyor Infor" />
-
+            <Accordion>
+                <panes>
+                    <TitledPane text="Claim Evaluation">
+                        <VBox>
+                            <Label text="Claim Evaluation" />
+                            <TextField fx:id="PendingID" promptText="Enter an ID..." />
+                            <ComboBox fx:id="managerOption">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Approved" />
+                                        <String fx:value="Rejected" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                            <Button fx:id="Send" onAction="#SendEvaluation" text="Send" />
+                            <Separator>
+                                <padding>
+                                    <Insets bottom="10.0" top="10.0" />
+                                </padding>
+                                <stylesheets>
+                                    <URL value="@CSS/Seperator_style.css" />
+                                </stylesheets>
+                                <styleClass>
+                                    <String fx:value="thick-separator" />
+                                </styleClass>
+                            </Separator>
+                            <HBox>
+                                <TextField fx:id="searchBarClaimPending" promptText="Search..." />
+                                <Button fx:id="searchButtonClaimPending" onAction="#SearchPending" text="Search" />
+                            </HBox>
+                            <Label text="All Propose Claim" />
+                            <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                <TableView fx:id="claimPending" maxWidth="1.7976931348623157E308" onSort="#PendingTable" prefHeight="400.0" prefWidth="1176.0">
+                                    <columns>
+                                        <TableColumn fx:id="idColumnPending" prefWidth="146.0" text="ID" />
+                                        <TableColumn fx:id="claimDateColumnPending" prefWidth="146.0" text="Claim Date" />
+                                        <TableColumn fx:id="examDateColumnPending" prefWidth="146.0" text="Exam Date" />
+                                        <TableColumn fx:id="claimAmountColumnPending" prefWidth="146.0" text="Claim Amount" />
+                                        <TableColumn fx:id="insuredPersonColumnPending" prefWidth="146.0" text="Insured Person" />
+                                        <TableColumn fx:id="statusColumnPending" prefWidth="146.0" text="Status" />
+                                        <TableColumn fx:id="documentsColumnPending" minWidth="0.0" prefWidth="146.0" text="Documents" />
+                                        <TableColumn fx:id="receiverBankingInfoColumnPending" prefWidth="153.0" text="Receiver Banking Info" />
+                                    </columns>
+                                </TableView>
+                            </ScrollPane>
+                        </VBox>
+                    </TitledPane>
+                    <TitledPane text="All Customer">
+                        <VBox>
+                            <HBox>
+                                <TextField fx:id="searchBarCustomer" promptText="Search..." />
+                                <Button fx:id="searchButtonCustomer" onAction="#SearchCustomer" text="Search" />
+                            </HBox>
+                            <Label text="All Customers" />
+                            <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                <TableView fx:id="customerTable" maxWidth="1.7976931348623157E308" onSort="#CustomerTable" prefHeight="400.0" prefWidth="1176.0">
+                                    <columns>
+                                        <TableColumn fx:id="customerIdColumn" prefWidth="195.0" text="ID" />
+                                        <TableColumn fx:id="customerNameColumn" prefWidth="195.0" text="Name" />
+                                        <TableColumn fx:id="customerEmailColumn" prefWidth="195.0" text="Email" />
+                                        <TableColumn fx:id="customerUserTypeColumn" prefWidth="195.0" text="UserType" />
+                                        <TableColumn fx:id="customerInsuranceNumberColumn" minWidth="0.0" prefWidth="195.0" text="InsuranceNumber" />
+                                        <TableColumn fx:id="customerIdDependencyColumn" prefWidth="200.0" text="ID Dependency" />
+                                    </columns>
+                                </TableView>
+                            </ScrollPane>
+                        </VBox>
+                    </TitledPane>
+                    <TitledPane text="All Claim">
+                        <VBox>
+                            <HBox>
+                                <TextField fx:id="searchBarClaim" promptText="Search..." />
+                                <Button fx:id="searchButtonClaim" onAction="#SearchClaim" text="Search" />
+                            </HBox>
+                            <Label text="All Claim" />
+                            <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" onSort="#ClaimTable" prefHeight="400.0" prefWidth="1176.0">
+                                    <columns>
+                                        <TableColumn fx:id="idColumn" prefWidth="146.0" text="ID" />
+                                        <TableColumn fx:id="claimDateColumn" prefWidth="146.0" text="Claim Date" />
+                                        <TableColumn fx:id="examDateColumn" prefWidth="146.0" text="Exam Date" />
+                                        <TableColumn fx:id="claimAmountColumn" prefWidth="146.0" text="Claim Amount" />
+                                        <TableColumn fx:id="insuredPersonColumn" prefWidth="146.0" text="Insured Person" />
+                                        <TableColumn fx:id="statusColumn" prefWidth="146.0" text="Status" />
+                                        <TableColumn fx:id="documentsColumn" prefWidth="146.0" text="Documents" />
+                                        <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="153.0" text="Receiver Banking Info" />
+                                    </columns>
+                                </TableView>
+                            </ScrollPane>
+                        </VBox>
+                    </TitledPane>
+                    <TitledPane text="All Surveyor">
+                        <VBox>
+                            <HBox>
+                                <TextField fx:id="searchBarProvider" promptText="Search..." />
+                                <Button fx:id="searchButtonProvider" onAction="#SearchSurveyor" text="Search" />
+                            </HBox>
+                            <Label text="All Surveyor" />
+                            <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                <TableView fx:id="providerTable" maxWidth="1.7976931348623157E308" onSort="#ProviderTable" prefHeight="400.0" prefWidth="1176.0">
+                                    <columns>
+                                        <TableColumn fx:id="providerIdColumn" prefWidth="391.0" text="ID" />
+                                        <TableColumn fx:id="providerNameColumn" prefWidth="391.0" text="Name" />
+                                        <TableColumn fx:id="providerEmailColumn" prefWidth="393.0" text="Email" />
+                                    </columns>
+                                </TableView>
+                            </ScrollPane>
+                        </VBox>
+                    </TitledPane>
+                    <TitledPane text="User Information">
+                        <VBox>
+                            <Label text="User ID:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="userIdLabel" />
+                            <Label text="User Name:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="userNameLabel" />
+                            <Label text="User Email:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="userEmailLabel" />
+                            <Label text="Yearly Earn:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="totalCost" />
+                        </VBox>
+                    </TitledPane>
+                </panes>
+            </Accordion>
         </VBox>
-    </TitledPane>
-</AnchorPane>
     </center>
 </BorderPane>
