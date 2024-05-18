@@ -1,389 +1,235 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.policyHolderController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_folder.Controller.policyOwnerController">
    <top>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="100.0" prefWidth="155.0" text="Owner">
+            <Label prefHeight="100.0" prefWidth="344.0" text="PolicyOwner">
                <font>
                   <Font name="System Bold" size="45.0" />
                </font>
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
             </Label>
-            <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="logoutBTN" mnemonicParsing="false" onAction="#Logout" text="Logout">
+            <Pane HBox.hgrow="ALWAYS" /> <!-- Spacer -->
+            <Button fx:id="logoutButton" onAction="#Logout" text="Logout">
                <HBox.margin>
-                  <Insets right="20.0" top="35.0" />
-               </HBox.margin>>
-            </Button>
+                  <Insets right="20.0" />
+               </HBox.margin></Button>
          </children>
       </HBox>
    </top>
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
-            <Tab text="View Information">
+            <Tab text="Beneficiary">
                <content>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <center>
-                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Accordion prefHeight="670.0">
-                                 <panes>
-                                    <TitledPane animated="false" text="Your Information">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <SplitPane dividerPositions="0.05" orientation="VERTICAL" prefHeight="570.0" prefWidth="1200.0">
-                                                   <items>
-                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                                                         <children>
-                                                            <Label text="Profile Information">
-                                                               <font>
-                                                                  <Font name="System Bold Italic" size="14.0" />
-                                                               </font>
-                                                               <opaqueInsets>
-                                                                  <Insets />
-                                                               </opaqueInsets>
-                                                               <padding>
-                                                                  <Insets left="10.0" top="2.0" />
-                                                               </padding>
-                                                            </Label>
-                                                         </children>
-                                                      </AnchorPane>
-                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                                                         <children>
-                                                            <TextArea fx:id="holderInfo" prefHeight="535.0" prefWidth="1200.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </items>
-                                                </SplitPane>
-                                             </children></AnchorPane>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Your Claims">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <TableView fx:id="OwnerClaimTable" prefHeight="570.0" prefWidth="1200.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="idColumn" text="ID" />
-                                                      <TableColumn fx:id="claimDateColumn" prefWidth="108.0" text="Claim Date" />
-                                                      <TableColumn fx:id="examDateColumn" prefWidth="87.0" text="Exam Date" />
-                                                      <TableColumn fx:id="claimAmountColumn" prefWidth="101.0" text="Claim Amount" />
-                                                      <TableColumn fx:id="insuredPersonColumn" prefWidth="105.0" text="Insured Person" />
-                                                      <TableColumn fx:id="statusColumn" prefWidth="145.0" text="Status" />
-                                                      <TableColumn fx:id="documentsColumn" prefWidth="186.0" text="Documents" />
-                                                      <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="363.0" text="Receiver Banking Info" />
-                                                   </columns>
-                                                </TableView>
-                                             </children></AnchorPane>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Your Benecifiaries">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <TableView layoutX="-1.0" layoutY="3.0" prefHeight="300.0" prefWidth="1200.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="holderIdColumn" prefWidth="100.0" text="Holder's ID" />
-                                                      <TableColumn fx:id="holderNameColumn" prefWidth="300.0" text="Full Name" />
-                                                      <TableColumn fx:id="holderEmailColumn" prefWidth="300.0" text="Email" />
-                                                      <TableColumn fx:id="holderPolicyNumberColumn" prefWidth="500.0" text="Policy Number" />
-                                                   </columns>
-                                                </TableView>
-                                                <TableView layoutX="-1.0" layoutY="303.0" prefHeight="300.0" prefWidth="1200.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="dependentIdColumn" prefWidth="100.0" text="Dependent's ID" />
-                                                      <TableColumn fx:id="dependentNameColumn" prefWidth="300.0" text="Full Name" />
-                                                      <TableColumn fx:id="dependentEmailColumn" prefWidth="300.0" text="Email" />
-                                                      <TableColumn fx:id="dependentPolicyNumberColumn" prefWidth="500.0" text="Policy Number" />
-                                                   </columns>
-                                                </TableView>
-                                             </children></AnchorPane>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Beneficiaries Claim">
-                                       <content>
-                                          <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <TableView fx:id="holderClaimTable" prefHeight="570.0" prefWidth="1200.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="idHolderColumn" prefWidth="100.0" text="Holder ID" />
-                                                      <TableColumn fx:id="claimDateHolderColumn" prefWidth="84.0" text="Claim Date" />
-                                                      <TableColumn fx:id="examDateHolderColumn" prefWidth="87.0" text="Exam Date" />
-                                                      <TableColumn fx:id="claimAmountHolderColumn" prefWidth="101.0" text="Claim Amount" />
-                                                      <TableColumn fx:id="insuredPersonHolderColumn" prefWidth="105.0" text="Insured Person" />
-                                                      <TableColumn fx:id="statusHolderColumn" prefWidth="145.0" text="Status" />
-                                                      <TableColumn fx:id="documentsHolderColumn" prefWidth="186.0" text="Documents" />
-                                                      <TableColumn fx:id="receiverBankingInfoHolderColumn" prefWidth="363.0" text="Holder Banking Info" />
-                                                   </columns>
-                                                </TableView>
-                                                <TableView fx:id="dependentClaimTable" prefHeight="570.0" prefWidth="1200.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="idDependentColumn" prefWidth="100.0" text="Dependant ID" />
-                                                      <TableColumn fx:id="claimDateDependentColumn" prefWidth="84.0" text="Claim Date" />
-                                                      <TableColumn fx:id="examDateDependentColumn" prefWidth="87.0" text="Exam Date" />
-                                                      <TableColumn fx:id="claimAmountDependentColumn" prefWidth="101.0" text="Claim Amount" />
-                                                      <TableColumn fx:id="insuredPersonDependentColumn" prefWidth="105.0" text="Insured Person" />
-                                                      <TableColumn fx:id="statusDependentColumn" prefWidth="145.0" text="Status" />
-                                                      <TableColumn fx:id="documentsDependentColumn" prefWidth="186.0" text="Documents" />
-                                                      <TableColumn fx:id="receiverBankingInfoDependentColumn" prefWidth="363.0" text="Dependant Banking Info" />
-                                                   </columns>
-                                                </TableView>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                 </panes>
-                              </Accordion>
-                           </children>
-                        </VBox>
-                     </center>
-                  </BorderPane>
-               </content></Tab>
-            <Tab text="File Claim">
+                     <VBox>
+                        <Label text="Create Beneficiary" />
+                        <TextField fx:id="createCustomerName" promptText="Name" />
+                        <TextField fx:id="createCustomerEmail" promptText="Email" />
+                        <TextField fx:id="createCustomerPassword" promptText="Password" />
+                        <ComboBox fx:id="createCustomerOption">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Dependent" />
+                                 <String fx:value="PolicyHolder" />
+                              </FXCollections>
+                           </items>
+                        </ComboBox>
+                        <Button fx:id="createCustomerButton" onAction="#CreateCustomer" text="Submit" />
+                        <Separator>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                           <styleClass>
+                              <String fx:value="thick-separator" />
+                           </styleClass>
+                        </Separator>
+                        <Label text="Update Beneficiary" />
+                        <TextField fx:id="updateCustomerId" promptText="ID" />
+                        <TextField fx:id="updateCustomerName" promptText="Name" />
+                        <TextField fx:id="updateCustomerEmail" promptText="Email" />
+                        <TextField fx:id="updateCustomerPassword" promptText="Password" />
+                        <Button fx:id="updateCustomerButton" onAction="#UpdateCustomer" text="Submit" />
+                        <Separator>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                           <styleClass>
+                              <String fx:value="thick-separator" />
+                           </styleClass>
+                        </Separator>
+                        <Label text="Delete Beneficiary" />
+                        <TextField fx:id="deleteCustomerId" promptText="ID" />
+                        <Button fx:id="deleteCustomerButton" onAction="#DeleteCustomer" text="Submit" />
+                        <Separator>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                           <styleClass>
+                              <String fx:value="thick-separator" />
+                           </styleClass>
+                        </Separator>
+                        <Label text="Retrieve Beneficiary" />
+                        <TextField fx:id="retrieveCustomerId" promptText="ID" />
+                        <Button fx:id="retrieveCustomerButton" onAction="#RetrieveCustomer" text="Submit" />
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     </VBox>
+               </content>
+            </Tab>
+            <Tab text="All Beneficiaries">
                <content>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <center>
-                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Accordion>
-                                 <panes>
-                                    <TitledPane animated="false" text="File Claim for yourself">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Please, fill in the information" />
-                                                <TextField fx:id="claimDateField" promptText="Date of claim made (yyyy-mm-dd)" />
-                                                <TextField fx:id="examDateField" promptText="Prefered date for Exam (yyyy-mm-dd)" />
-                                                <TextField fx:id="claimAmountField" promptText="Claim Amount" />
-                                                <TextField fx:id="bankingInfoField" promptText="Banking Information" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Label text="Please, upload the necessary documents" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="3.0" top="5.0" />
-                                                   </padding>
-                                                   <opaqueInsets>
-                                                      <Insets />
-                                                   </opaqueInsets>
-                                                </Separator>
-                                                <Button fx:id="submitCreateClaim" mnemonicParsing="false" onAction="#CreateClaim" text="Submit" />
-                                                <TitledPane animated="false" text="File Claim for yourself">
-                                                   <content>
-                                                      <VBox prefHeight="200.0" prefWidth="100.0">
-                                                         <children>
-                                                            <Label text="Please, fill in the information" />
-                                                            <TextField fx:id="claimDateField1" promptText="Date of claim made (yyyy-mm-dd)" />
-                                                            <TextField fx:id="examDateField1" promptText="Prefered date for Exam (yyyy-mm-dd)" />
-                                                            <TextField fx:id="claimAmountField1" promptText="Claim Amount" />
-                                                            <TextField fx:id="bankingInfoField1" promptText="Banking Information" />
-                                                            <Separator prefWidth="200.0">
-                                                               <padding>
-                                                                  <Insets top="5.0" />
-                                                               </padding>
-                                                            </Separator>
-                                                            <Label text="Please, upload the necessary documents" />
-                                                            <Separator prefWidth="200.0">
-                                                               <padding>
-                                                                  <Insets bottom="3.0" top="5.0" />
-                                                               </padding>
-                                                               <opaqueInsets>
-                                                                  <Insets />
-                                                               </opaqueInsets>
-                                                            </Separator>
-                                                            <Button fx:id="submitCreateClaim1" mnemonicParsing="false" onAction="#CreateClaim" text="Submit" />
-                                                         </children>
-                                                      </VBox>
-                                                   </content>
-                                                </TitledPane>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="File Claim for your PolicyHolder">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Please, fill information for your dependent." />
-                                                <ComboBox fx:id="holderComboBox" prefHeight="25.0" prefWidth="188.0" promptText="Choose your PolicyHolder" />
-                                                <TextField fx:id="claimDateHolderField" promptText="Date of claim made (yyyy-mm-dd)" />
-                                                <TextField fx:id="examDateHolderField" promptText="Preferred date for Exam (yyyy-mm-dd)" />
-                                                <TextField fx:id="claimAmountHolderField" promptText="Claim Amount" />
-                                                <TextField fx:id="bankingInfoHolderField" promptText="Banking Information" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Label text="Please, upload the necessary documents" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="3.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Button fx:id="submitCreateClaimHolder" mnemonicParsing="false" onAction="#CreateDependentClaim" text="Submit" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" layoutX="10.0" layoutY="35.0" text="File Claim for your Dependent">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Please, fill information for your dependent." />
-                                                <ComboBox fx:id="dependentComboBox" prefHeight="25.0" prefWidth="188.0" promptText="Choose your Dependent" />
-                                                <TextField fx:id="claimDateDependField" promptText="Date of claim made (yyyy-mm-dd)" />
-                                                <TextField fx:id="examDateDependField" promptText="Preferred date for Exam (yyyy-mm-dd)" />
-                                                <TextField fx:id="claimAmountDependField" promptText="Claim Amount" />
-                                                <TextField fx:id="bankingInfoDependField" promptText="Banking Information" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Label text="Please, upload the necessary documents" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="3.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Button fx:id="submitCreateClaimDependent" mnemonicParsing="false" onAction="#CreateDependentClaim" text="Submit" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                 </panes>
-                              </Accordion>
-                           </children>
-                        </VBox>
-                     </center>
-                  </BorderPane>
-               </content></Tab>
-            <Tab text="Update Information">
+                     <VBox>
+                        <Label text="All Beneficiaries" />
+                        <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                           <TableView fx:id="customerTable" maxWidth="1.7976931348623157E308" onSort="#CustomerTable" prefHeight="400.0" prefWidth="1176.0">
+                              <columns>
+                                 <TableColumn fx:id="customerIdColumn" prefWidth="227.0" text="ID" />
+                                 <TableColumn fx:id="customerNameColumn" prefWidth="227.0" text="Name" />
+                                 <TableColumn fx:id="customerEmailColumn" prefWidth="227.0" text="Email" />
+                                 <TableColumn fx:id="customerUserTypeColumn" prefWidth="227.0" text="UserType" />
+                                 <TableColumn fx:id="customerInsuranceNumberColumn" minWidth="0.0" prefWidth="236.0" text="InsuranceNumber" />
+                              </columns>
+                           </TableView>
+                        </ScrollPane>
+                     <padding>
+                        <Insets left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     </VBox>
+               </content>
+            </Tab>
+            <Tab text="Claim">
                <content>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <top>
-                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Accordion>
-                                 <panes>
-                                    <TitledPane animated="false" text="Update Your Information">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Fill in the information you want to Update" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="7.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <TextField fx:id="emailField" promptText="New Email" />
-                                                <TextField fx:id="passwordField" promptText="New Password" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="5.0" top="7.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Button fx:id="submitUpdate" mnemonicParsing="false" onAction="#UpdateHolder" text="Update" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" layoutX="10.0" layoutY="35.0" text="Update Holder Information">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Choose which of your Holder to Update" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="7.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <ComboBox fx:id="updateHolderComboBox" prefHeight="25.0" prefWidth="180.0" promptText="Choose your Holder" />
-                                                <TextField fx:id="emailHolderField" promptText="New Email" />
-                                                <TextField fx:id="passwordHolderField" promptText="New Password" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="5.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Button fx:id="updateHolder" mnemonicParsing="false" onAction="#UpdateHolder" text="Update" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Update Dependent Information">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Choose which of your Dependent to Update" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="7.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <ComboBox fx:id="updateDependComboBox" prefHeight="25.0" prefWidth="180.0" promptText="Choose your Dependent" />
-                                                <TextField fx:id="emailDependField" promptText="New Email" />
-                                                <TextField fx:id="passwordDependField" promptText="New Password" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="5.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Button fx:id="updateDependent" mnemonicParsing="false" onAction="#UpdateDependent" text="Update" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Update a Claim">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
-                                             <children>
-                                                <Label text="Fill in the information you want to Update" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="5.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <TextField fx:id="idClaimToFind" promptText="Fill in the ID of the Claim you want to Update" />
-                                                <TextField fx:id="claimDateUpdateField" promptText="New Prefered Exam Date" />
-                                                <TextField fx:id="amountUpdateField" promptText="New Amount" />
-                                                <TextField fx:id="bankUpdateField" promptText="New Banking Info" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="3.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Label text="Please, upload the necessary documents" />
-                                                <Separator prefWidth="200.0">
-                                                   <padding>
-                                                      <Insets bottom="3.0" top="5.0" />
-                                                   </padding>
-                                                </Separator>
-                                                <Button fx:id="updateClaimField" mnemonicParsing="false" onAction="#UpdateClaim" text="Update" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                 </panes>
-                              </Accordion>
-                           </children>
-                        </VBox>
-                     </top></BorderPane>
-               </content></Tab>
+                  <VBox>
+                     <children>
+                        <Label text="Create Claim" />
+                        <TextField fx:id="createClaim" promptText="Claim Date" />
+                        <TextField fx:id="createExamDate" promptText="Exam Date" />
+                        <TextField fx:id="createClaimAmount" promptText="Claim Amount" />
+                        <TextField fx:id="createInsuredPerson" layoutX="30.0" layoutY="97.0" promptText="Insured Person" />
+                        <TextField fx:id="createDocuments" layoutX="30.0" layoutY="147.0" promptText="Documents" />
+                        <TextField fx:id="receiverBankingInfo" layoutX="30.0" layoutY="147.0" promptText="Receiver Banking Info" />
+                        <Button fx:id="createClaimButton" onAction="#CreateClaim" text="Submit" />
+                        <Separator styleClass="thick-separator">
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </Separator>
+                        <Label text="Update Claim" />
+                        <TextField fx:id="updateClaimID" promptText="ID" />
+                        <TextField fx:id="updateClaimDate" layoutX="30.0" layoutY="47.0" promptText="Claim Date" />
+                        <TextField fx:id="updateExamDate" layoutX="30.0" layoutY="72.0" promptText="Exam Date" />
+                        <TextField fx:id="updateAmount" layoutX="30.0" layoutY="97.0" promptText="Claim Amount" />
+                        <TextField fx:id="updateDocuments" layoutX="30.0" layoutY="147.0" promptText="Documents" />
+                        <TextField fx:id="updateReceiverBankingInfo" layoutX="30.0" layoutY="172.0" promptText="Receiver Banking Info" />
+                        <Button fx:id="updateClaimButton" onAction="#UpdateClaim" text="Submit" />
+                        <Separator styleClass="thick-separator">
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </Separator>
+                        <Label text="Delete Claim" />
+                        <TextField fx:id="deleteClaim" promptText="ID" />
+                        <Button fx:id="deleteClaimButton" onAction="#DeleteClaim" text="Submit" />
+                        <Separator styleClass="thick-separator">
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </Separator>
+                        <Label text="Retrieve Claim" />
+                        <TextField fx:id="retrieveClaim" promptText="ID" />
+                        <Button fx:id="retrieveClaimButton" onAction="#RetrieveClaim" text="Submit" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="View Claims">
+                  <VBox>
+                     <Label text="All Claim" />
+                     <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                        <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" onSort="#ClaimTable" prefHeight="400.0" prefWidth="1176.0">
+                           <columns>
+                              <TableColumn fx:id="idColumn" prefWidth="142.0" text="ID" />
+                              <TableColumn fx:id="claimDateColumn" prefWidth="142.0" text="Claim Date" />
+                              <TableColumn fx:id="examDateColumn" prefWidth="142.0" text="Exam Date" />
+                              <TableColumn fx:id="claimAmountColumn" prefWidth="142.0" text="Claim Amount" />
+                              <TableColumn fx:id="insuredPersonColumn" prefWidth="142.0" text="Insured Person" />
+                              <TableColumn fx:id="statusColumn" prefWidth="142.0" text="Status" />
+                              <TableColumn fx:id="documentsColumn" prefWidth="142.0" text="Documents" />
+                              <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="149.0" text="Receiver Banking Info" />
+                           </columns>
+                        </TableView>
+                     </ScrollPane>
+                  <padding>
+                     <Insets left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  </VBox>
+            </Tab>
+            <Tab text="Yearly Insurance">
+               <content>
+                  <VBox>
+                     <padding>
+                        <Insets left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <Label text="User ID:">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                     </Label>
+                     <Label fx:id="userIdLabel" />
+                     <Label text="User Name:">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                     </Label>
+                     <Label fx:id="userNameLabel" />
+                     <Label text="User Email:">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                     </Label>
+                     <Label fx:id="userEmailLabel" />
+                     <Label text="Yearly Earn:">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                     </Label>
+                     <Label fx:id="totalCost" />
+                  </VBox>
+               </content>
+            </Tab>
          </tabs>
       </TabPane>
    </center>
