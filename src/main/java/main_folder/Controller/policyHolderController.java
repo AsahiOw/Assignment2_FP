@@ -11,7 +11,6 @@ import javafx.scene.control.Alert;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main_folder.ConnectDatabase.database;
@@ -19,15 +18,8 @@ import main_folder.Model.Claim;
 import main_folder.Model.Dependent;
 import main_folder.Model.PolicyHolder;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.file.Files;
 import java.sql.*;
 import java.util.ResourceBundle;
 
@@ -235,25 +227,40 @@ public class policyHolderController implements Initializable {
             if (conn != null) {
                 System.out.println("Database connection successful."); // Debug line
                 try {
-                    int holderId = Integer.parseInt(loginController.getLoggedInUser());
-                    String sql = "SELECT * FROM \"PolicyHolder_Dependent\" WHERE \"PolicyHolder\" = ?";
-                    String sql2 = "SELECT * FROM \"Dependent\" WHERE \"userID\" = ?";
+                    int userId = Integer.parseInt(loginController.getLoggedInUser());
+                    String sql = "SELECT * FROM \"PolicyHolder\" WHERE \"userID\" = ?";
+                    String sql2 = "SELECT * FROM \"PolicyHolder_Dependent\" WHERE \"PolicyHolder\" = ?";
+                    String sql3 = "SELECT * FROM \"Dependent\" WHERE \"id\" = ?";
+                    String sql4 = "SELECT * FROM \"User\" WHERE \"id\" = ?";
                     PreparedStatement stmt = conn.prepareStatement(sql);
-                    stmt.setInt(1, holderId);
+                    stmt.setInt(1, userId);
                     ResultSet rs = stmt.executeQuery();
-                    while (rs.next()) {
-                        int dependentId = rs.getInt("Dependent");
+                    if (!rs.next()) {
+
+                    } else {
+                        int holderId = rs.getInt("id");
                         PreparedStatement stmt2 = conn.prepareStatement(sql2);
-                        stmt2.setInt(1, dependentId);
+                        stmt2.setInt(1, holderId);
                         ResultSet rs2 = stmt2.executeQuery();
-                        if (rs2.next()) {
-                            Dependent dependent = new Dependent(
-                                    rs2.getString("id"),
-                                    rs2.getString("name"),
-                                    rs2.getString("email"),
-                                    rs.getString("policyNumber")
-                            );
-                            dependentData.add(dependent);
+                        while (rs2.next()) {
+                            int dependentId = rs2.getInt("Dependent");
+                            PreparedStatement stmt3 = conn.prepareStatement(sql3);
+                            stmt3.setInt(1, dependentId);
+                            ResultSet rs3 = stmt3.executeQuery();
+                            while (rs3.next()) {
+                                PreparedStatement stmt4 = conn.prepareStatement(sql4);
+                                stmt4.setInt(1, dependentId);
+                                ResultSet rs4 = stmt4.executeQuery();
+                                if (rs4.next()) {
+                                    Dependent dependent = new Dependent(
+                                            rs3.getString("id"),
+                                            rs4.getString("name"),
+                                            rs4.getString("email"),
+                                            rs3.getString("policyNumber")
+                                    );
+                                    dependentData.add(dependent);
+                                }
+                            }
                         }
                     }
                 }
@@ -303,6 +310,7 @@ public class policyHolderController implements Initializable {
                     ResultSet rs = pstmt.executeQuery();
                     if (!rs.next()){
                         //Handle Error
+                        System.out.println("No PolicyHolder found with the given userID");
                     } else {
                         int customerId = rs.getInt("policyNumber");
                         PreparedStatement pstmt2 = conn.prepareStatement(sql2);
@@ -310,6 +318,7 @@ public class policyHolderController implements Initializable {
                         ResultSet rs2 = pstmt2.executeQuery();
                         if (!rs2.next()){
                             //Handle Error
+                            System.out.println("No Claim found with the given Insured_Person");
                         } else {
                             //Display Claim
                             while (rs2.next()){
@@ -324,12 +333,14 @@ public class policyHolderController implements Initializable {
                                         rs2.getString("Receiver_Banking_Infor")
                                 );
                                 claimData.add(claim);
+                                System.out.println("Claim added"); // Debug line
                             }
                         }
                     }
                 }
                 catch (NumberFormatException e) {
                     //Handle Error
+                    System.out.println("Error parsing userID to integer");
                 }
             }
         }
@@ -350,10 +361,12 @@ public class policyHolderController implements Initializable {
     /***
      * =========================================
      * This is for the File Claim Tab
-     * =========================================*/
+     * =========================================
+     * @return*/
     //////////////////////////////////////////////
-    public void CreateClaim() {
+    public int CreateClaim() {
         database db = new database();
+        int generatedClaimId = -1;
         try (Connection conn = db.connect()){
             if (conn != null) {
                 if (claimDateField.getText().isEmpty() || examDateField.getText().isEmpty() || claimAmountField.getText().isEmpty() || bankingInfoField.getText().isEmpty()) {
@@ -371,14 +384,14 @@ public class policyHolderController implements Initializable {
                     Float claimAmount = Float.valueOf(claimAmountField.getText());
                     String bankingInfo = bankingInfoField.getText();
                     Integer insuredPerson = Integer.valueOf(cachedPolicyNumber);
-                    String status = "Pending";
+                    String status = "Processing";
                     String documents = "Documents.pdf";
 
 
                     // Prepare the SQL INSERT statement
                     String sql = "INSERT INTO \"Claim\" (\"Claim_Date\", \"Exam_Date\", \"Claim_amount\", \"Insured_Person\", \"Status\", \"Documents\", \"Receiver_Banking_Infor\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                     pstmt.setDate(1, claimDate);
                     pstmt.setDate(2, examDate);
                     pstmt.setFloat(3, claimAmount);
@@ -390,8 +403,42 @@ public class policyHolderController implements Initializable {
                     // Execute the SQL statement
                     pstmt.executeUpdate();
 
+                    // Retrieve the generated claim ID
+                    ResultSet rs = pstmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        generatedClaimId = rs.getInt(1);
+                    }
+
                     System.out.println("Claim created successfully");
                 }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return generatedClaimId;
+    }
+
+    public void createRecord() {
+        database db = new database();
+        try (Connection conn = db.connect()){
+            if (conn != null) {
+                // Create a new claim and get its ID
+                int claimId = CreateClaim();
+
+                // Prepare the record string
+                String record = cachedHolderName + " created claim with an ID of: " + claimId;
+
+                // Prepare the SQL INSERT statement
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, record);
+
+                // Execute the SQL statement
+                pstmt.executeUpdate();
+
+                System.out.println("Record created successfully");
             }
         }
         catch (SQLException e) {
@@ -421,7 +468,7 @@ public class policyHolderController implements Initializable {
                     Float claimAmount = Float.valueOf(claimAmountDependField.getText());
                     String bankingInfo = bankingInfoDependField.getText();
                     Integer insuredPerson = Integer.valueOf(selectedDependent.getPolicyNumber()); // Use the policy number of the selected dependent
-                    String status = "Pending";
+                    String status = "Processing";
                     String documents = "Documents.pdf";
 
                     // Prepare the SQL INSERT statement
@@ -536,7 +583,7 @@ public class policyHolderController implements Initializable {
         database db = new database();
         try (Connection conn = db.connect()){
             if (conn != null) {
-                if (idClaimToFind.getText().isEmpty() || claimDateUpdateField.getText().isEmpty() || amountUpdateField.getText().isEmpty() || bankUpdateField.getText().isEmpty()) {
+                if (idClaimToFind.getText().isEmpty() && claimDateUpdateField.getText().isEmpty() && amountUpdateField.getText().isEmpty() && bankUpdateField.getText().isEmpty()) {
                     System.out.println("Please enter all fields");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Update Claim notification");
