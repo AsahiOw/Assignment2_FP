@@ -171,6 +171,12 @@
                                 </font>
                             </Label>
                             <Label fx:id="userEmailLabel" />
+                            <Label text="Yearly Earn:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="totalCost" />
                         </VBox>
                     </TitledPane>
                 </panes>

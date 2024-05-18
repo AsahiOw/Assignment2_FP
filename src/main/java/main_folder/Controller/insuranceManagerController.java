@@ -74,6 +74,9 @@ public class insuranceManagerController {
     private Button searchButtonProvider;
 
     @FXML
+    private Label totalCost;
+
+    @FXML
     private TableView claimPending;
 
     @FXML
@@ -137,9 +140,11 @@ public class insuranceManagerController {
         CustomerTable();
         ProviderTable();
         userDetail();
+        costCalculation();
+        LoginRecord();
     }
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private ExecutorService executorService = Executors.newFixedThreadPool(6);
 
     private void setupPendingTableColumns() {
         executorService.submit(() -> {
@@ -169,7 +174,6 @@ public class insuranceManagerController {
 
     public void Logout() throws IOException {
         System.out.println("Logout button clicked."); // Debug line
-        loginController.setLoggedInUser(null);
         Stage stage = (Stage) logoutBTN.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
         Scene scene = new Scene(root);
@@ -216,7 +220,7 @@ public class insuranceManagerController {
                 return;
             }
 
-            // If the user exists, update the user's status
+            // If the claim exists, update the claim's status
             try (PreparedStatement updateStmt = conn.prepareStatement("UPDATE \"Claim\" SET \"Status\" = ? WHERE \"id\" = ?")) {
                 updateStmt.setString(1, managerOptionValue);
                 updateStmt.setLong(2, pendingIdLong);
@@ -224,6 +228,7 @@ public class insuranceManagerController {
             }
 
             // Show an alert saying "Evaluate Claim complete"
+            SendEvaluationRecord(pendingId, managerOptionValue);
             PendingTable();
             showAlert("Evaluate Claim complete");
 
@@ -717,7 +722,6 @@ public class insuranceManagerController {
         });
     }
     private void userDetail(){
-        // Assuming that the getLoggedInUser() method returns a User ID
         String loggedInUserId = loginController.getLoggedInUser();
 
         if (loggedInUserId != null) {
@@ -751,5 +755,80 @@ public class insuranceManagerController {
                 userEmailLabel.setText("No user logged in");
             });
         }
+    }
+    private void costCalculation() {
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                // Count the number of PolicyOwners
+                String sqlPolicyOwners = "SELECT COUNT(*) FROM \"User\" WHERE \"userType\" = 'PolicyOwner'";
+                PreparedStatement stmtPolicyOwners = conn.prepareStatement(sqlPolicyOwners);
+                ResultSet rsPolicyOwners = stmtPolicyOwners.executeQuery();
+                int countPolicyOwners = rsPolicyOwners.next() ? rsPolicyOwners.getInt(1) : 0;
+
+                // Count the number of PolicyHolders
+                String sqlPolicyHolders = "SELECT COUNT(*) FROM \"User\" WHERE \"userType\" = 'PolicyHolder'";
+                PreparedStatement stmtPolicyHolders = conn.prepareStatement(sqlPolicyHolders);
+                ResultSet rsPolicyHolders = stmtPolicyHolders.executeQuery();
+                int countPolicyHolders = rsPolicyHolders.next() ? rsPolicyHolders.getInt(1) : 0;
+
+                // Count the number of Dependents
+                String sqlDependents = "SELECT COUNT(*) FROM \"User\" WHERE \"userType\" = 'Dependent'";
+                PreparedStatement stmtDependents = conn.prepareStatement(sqlDependents);
+                ResultSet rsDependents = stmtDependents.executeQuery();
+                int countDependents = rsDependents.next() ? rsDependents.getInt(1) : 0;
+
+                // Calculate the total cost
+                int totalCosts = countPolicyOwners * 100 + countPolicyHolders * 100 + countDependents * 60;
+
+                // Calculate the cost for each user type
+                int costPolicyOwners = countPolicyOwners * 100;
+                int costPolicyHolders = countPolicyHolders * 100;
+                int costDependents = countDependents * 60;
+
+                // Create the formatted string
+                String formattedCosts = String.format("PolicyOwner: $%d\nPolicyHolder: $%d\nDependent: $%d\nTotal: $%d",
+                        costPolicyOwners, costPolicyHolders, costDependents, totalCosts);
+
+                // Update the "TotalCost" label
+                Platform.runLater(() -> totalCost.setText(formattedCosts));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    //    record section
+    private void LoginRecord(){
+        executorService.submit(() -> {
+            String loggedInUserId = loginController.getLoggedInUser();
+            String record = "InsuranceManager logged in with id " + loggedInUserId;
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void SendEvaluationRecord(String id, String managerOption){
+        executorService.submit(() -> {
+            String record = "Claim with id " + id + " has been evaluated by InsuranceManager id " + loginController.getLoggedInUser() + " as " + managerOption;
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

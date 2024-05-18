@@ -15,7 +15,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -47,7 +46,7 @@
                         <VBox>
                             <HBox>
                                 <TextField fx:id="searchBarCustomer" promptText="Search..." />
-                                <Button fx:id="searchButtonCustomer" text="Search" />
+                                <Button fx:id="searchButtonCustomer" onAction="#SearchCustomer" text="Search" />
                             </HBox>
                             <Label text="All Customers" />
                             <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
@@ -70,7 +69,7 @@
                                 <Label text="Send Claim Request" />
                                 <HBox>
                                     <TextField fx:id="RequestClaim" promptText="Enter an ID..." />
-                                    <Button fx:id="SendRequestedClaim" text="Send" />
+                                    <Button fx:id="SendRequestedClaim" onAction="#SendRequest" text="Send" />
                                 </HBox>
                             </VBox>
                             <Separator>
@@ -86,11 +85,11 @@
                             </Separator>
                             <HBox>
                                 <TextField fx:id="searchBarClaim" promptText="Search..." />
-                                <Button fx:id="searchButtonClaim" text="Search" />
+                                <Button fx:id="searchButtonClaim" onAction="#SearchClaim" text="Search" />
                             </HBox>
                             <Label text="All Claim" />
                             <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
-                                <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1176.0">
+                                <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" onSort="#ClaimTable" prefHeight="400.0" prefWidth="1176.0">
                                     <columns>
                                         <TableColumn fx:id="idColumn" text="ID" />
                                         <TableColumn fx:id="claimDateColumn" prefWidth="108.0" text="Claim Date" />
@@ -121,11 +120,17 @@
                                 </Label>
                                 <Label fx:id="userNameLabel" />
                                 <Label text="User Email:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                                </Label>
+                                <Label fx:id="userEmailLabel" />
+                                <Label text="Yearly Earn:">
                                     <font>
                                         <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label fx:id="userEmailLabel" />
+                                <Label fx:id="totalCost" />
                             </VBox>
                         </HBox>
                     </TitledPane>

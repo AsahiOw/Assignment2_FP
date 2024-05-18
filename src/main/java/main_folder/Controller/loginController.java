@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class loginController {
     @FXML
@@ -24,6 +26,8 @@ public class loginController {
     @FXML
     private Button loginBTN;
     private static String loggedInUser;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public void Login() {
         database db = new database();
@@ -69,6 +73,10 @@ public class loginController {
         }
     }
 
+    public void initialize() {
+        LogoutRecord(loggedInUser);
+    }
+
     public static String getLoggedInUser() {
         return loggedInUser;
     }
@@ -83,5 +91,35 @@ public class loginController {
         } else {
             return Character.toLowerCase(str.charAt(0)) + str.substring(1);
         }
+    }
+
+    private void LogoutRecord(String id) {
+        executorService.submit(() -> {
+            System.out.println("Logging out user with id " + id);
+            if (id == null || id.isBlank()) {
+                return;
+            }
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sqlUser = "SELECT * FROM \"User\" WHERE \"id\" = ?";
+                PreparedStatement stmtUser = conn.prepareStatement(sqlUser);
+                stmtUser.setInt(1, Integer.parseInt(id));
+                ResultSet rsUser = stmtUser.executeQuery();
+
+                if (rsUser.next()) {
+                    String userType = rsUser.getString("userType");
+
+                    String record = userType + " with id " + id + " has logout";
+
+                    String sqlRecord = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                    PreparedStatement stmtRecord = conn.prepareStatement(sqlRecord);
+                    stmtRecord.setString(1, record);
+                    stmtRecord.executeUpdate();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
