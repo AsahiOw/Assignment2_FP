@@ -10,6 +10,11 @@ public class Provider {
     private SimpleStringProperty userType;
     private SimpleStringProperty idDependency;
 
+    public Provider(String id, String name, String email) {
+        this.id = new SimpleStringProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.email = new SimpleStringProperty(email);
+    }
     public Provider(String id, String name, String email, String password, String userType, String idDependency) {
         this.id = new SimpleStringProperty(id);
         this.name = new SimpleStringProperty(name);

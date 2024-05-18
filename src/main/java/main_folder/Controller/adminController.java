@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.io.IOException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class adminController implements Initializable {
     @FXML
@@ -669,8 +671,10 @@ public class adminController implements Initializable {
         }
     }
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+
     public void CustomerTable() {
-        new Thread(() -> {
+        executorService.submit(() -> {
             database db = new database();
             try (Connection conn = db.connect()) {
                 if (conn != null) {
@@ -734,7 +738,7 @@ public class adminController implements Initializable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
     public void CreateProvider() {
         database db = new database();
@@ -1143,7 +1147,7 @@ public class adminController implements Initializable {
     }
 
     public void ProviderTable() {
-        new Thread(() -> {
+        executorService.submit(() -> {
             database db = new database();
             try (Connection conn = db.connect()) {
                 if (conn != null) {
@@ -1190,7 +1194,7 @@ public class adminController implements Initializable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
     public void TotalCost() {
         System.out.println("Logout");
