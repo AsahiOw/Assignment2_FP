@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
@@ -107,12 +106,12 @@
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <TableView prefHeight="570.0" prefWidth="1200.0">
+                                                <TableView fx:id="dependentTable" prefHeight="570.0" prefWidth="1200.0">
                                                   <columns>
                                                     <TableColumn fx:id="dependentIdColumn" prefWidth="100.0" text="Dependent's ID" />
                                                     <TableColumn fx:id="dependentNameColumn" prefWidth="300.0" text="Full Name" />
                                                       <TableColumn fx:id="dependentEmailColumn" prefWidth="300.0" text="Email" />
-                                                      <TableColumn fx:id="dependentPolicyNumberColumn" prefWidth="500.0" text="Policy Number" />
+                                                      <TableColumn fx:id="dependentPolicyNumberColumn" prefWidth="500.0" text="Insurance Number" />
                                                   </columns>
                                                 </TableView>
                                              </children></AnchorPane>
@@ -186,7 +185,7 @@
                                           <VBox prefHeight="200.0" prefWidth="100.0">
                                              <children>
                                                 <Label text="Please, fill information for your dependent." />
-                                                <ComboBox fx:id="dependentComboBox" prefHeight="25.0" prefWidth="188.0" promptText="Choose your Dependent" />
+                                                <TextField fx:id="insuredDependField" promptText="Insurance Number of your dependent" />
                                                 <TextField fx:id="claimDateDependField" promptText="Date of claim made (yyyy-mm-dd)" />
                                                 <TextField fx:id="examDateDependField" promptText="Preferred date for Exam (yyyy-mm-dd)" />
                                                 <TextField fx:id="claimAmountDependField" promptText="Claim Amount" />
@@ -202,7 +201,7 @@
                                                       <Insets bottom="3.0" top="5.0" />
                                                    </padding>
                                                 </Separator>
-                                                <Button fx:id="submitCreateClaimDependent" mnemonicParsing="false" onAction="#CreateDependentClaim" text="Submit" />
+                                                <Button fx:id="submitCreateClaimDependent" mnemonicParsing="false" onAction="#createRecordDependent" text="Submit" />
                                              </children>
                                           </VBox>
                                        </content>
@@ -254,7 +253,7 @@
                                                       <Insets bottom="7.0" top="5.0" />
                                                    </padding>
                                                 </Separator>
-                                                <ComboBox fx:id="updateDependComboBox" prefHeight="25.0" prefWidth="180.0" promptText="Choose your Dependent" />
+                                                <TextField fx:id="idDependUpdateField" promptText="Dependent's UserID" />
                                                 <TextField fx:id="emailDependField" promptText="New Email" />
                                                 <TextField fx:id="passwordDependField" promptText="New Password" />
                                                 <Separator prefWidth="200.0">
