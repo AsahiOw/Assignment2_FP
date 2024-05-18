@@ -176,7 +176,7 @@
                                                       <Insets />
                                                    </opaqueInsets>
                                                 </Separator>
-                                                <Button fx:id="submitCreateClaim" mnemonicParsing="false" onAction="#CreateClaim" text="Submit" />
+                                                <Button fx:id="submitCreateClaim" mnemonicParsing="false" onAction="#createRecord" text="Submit" />
                                              </children>
                                           </VBox>
                                        </content>
