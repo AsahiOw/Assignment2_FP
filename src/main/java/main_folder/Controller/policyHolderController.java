@@ -104,6 +104,8 @@ public class policyHolderController implements Initializable {
     @FXML
     private TextField bankingInfoField;
     @FXML
+    private TextField insuredDependField;
+    @FXML
     private TextField claimDateDependField;
     @FXML
     private TextField examDateDependField;
@@ -111,8 +113,6 @@ public class policyHolderController implements Initializable {
     private TextField claimAmountDependField;
     @FXML
     private TextField bankingInfoDependField;
-    @FXML
-    private ComboBox<Dependent> dependentComboBox;
 
     //Update Injection
     @FXML
@@ -120,7 +120,7 @@ public class policyHolderController implements Initializable {
     @FXML
     private TextField passwordField;
     @FXML
-    private ComboBox<Dependent> updateDependComboBox;
+    private TextField idDependUpdateField;
     @FXML
     private TextField emailDependField;
     @FXML
@@ -187,9 +187,7 @@ public class policyHolderController implements Initializable {
                                 );
                                 holderData.add(holder);
                                 cachedPolicyNumber = rs2.getString("policyNumber");
-                                cachedHolderName = rs.getString("id");
-                                cachedHolderName.concat("-");
-                                cachedHolderName.concat(rs.getString("name"));
+                                cachedHolderName = rs.getString("name");
 
                             }
                         }
@@ -228,40 +226,29 @@ public class policyHolderController implements Initializable {
                 System.out.println("Database connection successful."); // Debug line
                 try {
                     int userId = Integer.parseInt(loginController.getLoggedInUser());
-                    String sql = "SELECT * FROM \"PolicyHolder\" WHERE \"userID\" = ?";
-                    String sql2 = "SELECT * FROM \"PolicyHolder_Dependent\" WHERE \"PolicyHolder\" = ?";
-                    String sql3 = "SELECT * FROM \"Dependent\" WHERE \"id\" = ?";
-                    String sql4 = "SELECT * FROM \"User\" WHERE \"id\" = ?";
+
+                    // Prepare the SQL SELECT statement
+                    String sql = "SELECT U.id, U.name, U.email, C_D.\"InsuranceNumber\" " +
+                                 "FROM \"User\" U " +
+                                 "LEFT JOIN \"Dependent\" D ON U.\"id\" = D.\"userID\" " +
+                                 "LEFT JOIN \"Customer\" C_D ON D.\"policyNumber\" = C_D.\"id\" " +
+                                 "LEFT JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                                 "LEFT JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                                 "LEFT JOIN \"User\" UH ON PH_U.\"userID\" = UH.id " +
+                                 "WHERE UH.id = ?";
+
                     PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setInt(1, userId);
                     ResultSet rs = stmt.executeQuery();
-                    if (!rs.next()) {
 
-                    } else {
-                        int holderId = rs.getInt("id");
-                        PreparedStatement stmt2 = conn.prepareStatement(sql2);
-                        stmt2.setInt(1, holderId);
-                        ResultSet rs2 = stmt2.executeQuery();
-                        while (rs2.next()) {
-                            int dependentId = rs2.getInt("Dependent");
-                            PreparedStatement stmt3 = conn.prepareStatement(sql3);
-                            stmt3.setInt(1, dependentId);
-                            ResultSet rs3 = stmt3.executeQuery();
-                            while (rs3.next()) {
-                                PreparedStatement stmt4 = conn.prepareStatement(sql4);
-                                stmt4.setInt(1, dependentId);
-                                ResultSet rs4 = stmt4.executeQuery();
-                                if (rs4.next()) {
-                                    Dependent dependent = new Dependent(
-                                            rs3.getString("id"),
-                                            rs4.getString("name"),
-                                            rs4.getString("email"),
-                                            rs3.getString("policyNumber")
-                                    );
-                                    dependentData.add(dependent);
-                                }
-                            }
-                        }
+                    while (rs.next()) {
+                        Dependent dependent = new Dependent(
+                                rs.getString("id"),
+                                rs.getString("name"),
+                                rs.getString("email"),
+                                rs.getString("InsuranceNumber")
+                        );
+                        dependentData.add(dependent);
                     }
                 }
                 catch (NumberFormatException e) {
@@ -288,12 +275,6 @@ public class policyHolderController implements Initializable {
         catch (SQLException e) {
             e.printStackTrace();
         }
-        //Get just the dependent's data
-        dependentTable.setItems(dependentData);
-        dependentIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        dependentNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        dependentEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        dependentPolicyNumberColumn.setCellValueFactory(new PropertyValueFactory<>("policyNumber"));
     }
 
     public void RetrieveClaim() {
@@ -356,6 +337,71 @@ public class policyHolderController implements Initializable {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("Status"));
         documentsColumn.setCellValueFactory(new PropertyValueFactory<>("Documents"));
         receiverBankingInfoColumn.setCellValueFactory(new PropertyValueFactory<>("Receiver_Banking_Infor"));
+    }
+
+    public void RetrieveDependentClaim() {
+        database db = new database();
+        try (Connection conn = db.connect()){
+            if (conn != null) {
+                System.out.println("Database connection successful."); // Debug line
+                try {
+                    int userId = Integer.parseInt(loginController.getLoggedInUser());
+
+                    // Prepare the SQL SELECT statement
+                    String sql = "SELECT C.* " +
+                            "FROM \"Claim\" C " +
+                            "JOIN \"Dependent\" D ON C.\"Insured_Person\" = D.\"policyNumber\" " +
+                            "JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                            "JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                            "JOIN \"User\" UH ON PH_U.\"userID\" = UH.id " +
+                            "WHERE UH.id = ?";
+
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    stmt.setInt(1, userId);
+                    ResultSet rs = stmt.executeQuery();
+
+                    while (rs.next()) {
+                        Claim claim = new Claim(
+                                rs.getString("id"),
+                                rs.getString("Claim_Date"),
+                                rs.getString("Exam_Date"),
+                                rs.getString("Claim_amount"),
+                                rs.getString("Insured_Person"),
+                                rs.getString("Status"),
+                                rs.getString("Documents"),
+                                rs.getString("Receiver_Banking_Infor")
+                        );
+                        dependentClaimData.add(claim);
+                    }
+                }
+                catch (NumberFormatException e) {
+                    // handle error
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Retrieve Dependent Claim notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Claims corresponds to this User does not exist");
+                    alert.showAndWait();
+                }
+                // Update the UI on the JavaFX Application thread
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        dependentClaimTable.setItems(dependentClaimData);
+                        idDependentColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                        claimDateDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Claim_Date"));
+                        examDateDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Exam_Date"));
+                        claimAmountDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Claim_amount"));
+                        insuredPersonDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Insured_Person"));
+                        statusDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Status"));
+                        documentsDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Documents"));
+                        receiverBankingInfoDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Receiver_Banking_Infor"));
+                    }
+                });
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /***
@@ -459,15 +505,12 @@ public class policyHolderController implements Initializable {
                     alert.showAndWait();
                 }
                 else {
-                    // Get the selected dependent from the ComboBox
-                    Dependent selectedDependent = dependentComboBox.getSelectionModel().getSelectedItem();
-
                     // Get the values from the text fields
                     Date claimDate = Date.valueOf(claimDateDependField.getText());
                     Date examDate = Date.valueOf(examDateDependField.getText());
                     Float claimAmount = Float.valueOf(claimAmountDependField.getText());
                     String bankingInfo = bankingInfoDependField.getText();
-                    Integer insuredPerson = Integer.valueOf(selectedDependent.getPolicyNumber()); // Use the policy number of the selected dependent
+                    Integer insuranceNumber = Integer.valueOf(insuredDependField.getText()); // Use the policy number of the selected dependent
                     String status = "Processing";
                     String documents = "Documents.pdf";
 
@@ -475,18 +518,25 @@ public class policyHolderController implements Initializable {
                     String sql = "INSERT INTO \"Claim\" (\"Claim_Date\", \"Exam_Date\", \"Claim_amount\", \"Insured_Person\", \"Status\", \"Documents\", \"Receiver_Banking_Infor\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                     PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setDate(1, claimDate);
-                    pstmt.setDate(2, examDate);
-                    pstmt.setFloat(3, claimAmount);
-                    pstmt.setInt(4, insuredPerson);
-                    pstmt.setString(5, status);
-                    pstmt.setString(6, documents);
-                    pstmt.setString(7, bankingInfo);
+                    String sql2 = "SELECT * FROM \"Customer\" WHERE \"InsuranceNumber\" = ?";
+                    PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+                    pstmt2.setInt(1, insuranceNumber);
+                    ResultSet rs = pstmt2.executeQuery();
+                    if (rs.next()) {
+                        int insuredPerson = Integer.parseInt(rs.getString("id"));
+                        pstmt.setDate(1, claimDate);
+                        pstmt.setDate(2, examDate);
+                        pstmt.setFloat(3, claimAmount);
+                        pstmt.setInt(4, insuredPerson);
+                        pstmt.setString(5, status);
+                        pstmt.setString(6, documents);
+                        pstmt.setString(7, bankingInfo);
 
-                    // Execute the SQL statement
-                    pstmt.executeUpdate();
+                        // Execute the SQL statement
+                        pstmt.executeUpdate();
 
-                    System.out.println("Dependent claim created successfully");
+                        System.out.println("Dependent claim created successfully");
+                    }
                 }
             }
         }
@@ -551,13 +601,10 @@ public class policyHolderController implements Initializable {
                     alert.showAndWait();
                 }
                 else {
-                    // Get the selected dependent from the ComboBox
-                    Dependent selectedDependent = updateDependComboBox.getSelectionModel().getSelectedItem();
-
                     // Get the values from the text fields
                     String newEmail = emailDependField.getText();
                     String newPassword = passwordDependField.getText();
-                    int dependentId = Integer.parseInt(selectedDependent.getId());
+                    int dependentId = Integer.parseInt(idDependUpdateField.getText());
 
                     // Prepare the SQL UPDATE statement
                     String sql = "UPDATE \"User\" SET \"email\" = ?, \"password\" = ? WHERE \"id\" = ?";
@@ -612,6 +659,20 @@ public class policyHolderController implements Initializable {
                     pstmt.executeUpdate();
 
                     System.out.println("Claim updated successfully");
+
+                    // Prepare the record string
+                    String record = cachedHolderName + " update claim with an ID of: " + claimId;
+
+                    // Prepare the SQL INSERT statement
+                    String sql2 = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+
+                    PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+                    pstmt2.setString(1, record);
+
+                    // Execute the SQL statement
+                    pstmt2.executeUpdate();
+
+                    System.out.println("Record created successfully");
                 }
             }
         }
@@ -627,7 +688,6 @@ public class policyHolderController implements Initializable {
      * =========================================*/
     public void Logout() throws IOException {
         System.out.println("Logout button clicked."); // Debug line
-        loginController.setLoggedInUser(null);
         Stage stage = (Stage) logoutBTN.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
         Scene scene = new Scene(root);
@@ -635,46 +695,24 @@ public class policyHolderController implements Initializable {
         stage.show();
     }
 
-    public void populateComboBoxes() {
-        // Set the cell factory for the dependentComboBox
-        dependentComboBox.setCellFactory(new Callback<ListView<Dependent>, ListCell<Dependent>>() {
-            @Override
-            public ListCell<Dependent> call(ListView<Dependent> param) {
-                return new ListCell<Dependent>() {
-                    @Override
-                    protected void updateItem(Dependent item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null && !empty) {
-                            setText(item.getName()); // Display the name of the dependent
-                        } else {
-                            setText(null);
-                        }
-                    }
-                };
-            }
-        });
+    private void LoginRecord(){
+        String loggedInUserId = loginController.getLoggedInUser();
+        String record = "PolicyHolder logged in with id " + loggedInUserId;
 
-        // Set the cell factory for the updateDependentComboBox
-        updateDependComboBox.setCellFactory(new Callback<ListView<Dependent>, ListCell<Dependent>>() {
-            @Override
-            public ListCell<Dependent> call(ListView<Dependent> param) {
-                return new ListCell<Dependent>() {
-                    @Override
-                    protected void updateItem(Dependent item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null && !empty) {
-                            setText(item.getName()); // Display the name of the dependent
-                        } else {
-                            setText(null);
-                        }
-                    }
-                };
-            }
-        });
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, record);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        LoginRecord();
         //Create Runnable for Holder methods
         Runnable retrieveHolderRunnable = new Runnable() {
             @Override
@@ -689,7 +727,7 @@ public class policyHolderController implements Initializable {
             @Override
             public void run() {
                 RetrieveDependents();
-                populateComboBoxes();
+                RetrieveDependentClaim();
             }
         };
 

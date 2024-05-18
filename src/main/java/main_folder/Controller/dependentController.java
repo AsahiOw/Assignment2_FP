@@ -265,7 +265,6 @@ public class dependentController extends Thread implements Initializable {
 
     public void Logout() throws IOException {
         System.out.println("Logout button clicked."); // Debug line
-        loginController.setLoggedInUser(null);
         Stage stage = (Stage) logoutBTN.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("/main_folder/login/login.fxml"));
         Scene scene = new Scene(root);
@@ -273,8 +272,24 @@ public class dependentController extends Thread implements Initializable {
         stage.show();
     }
 
+    private void LoginRecord(){
+        String loggedInUserId = loginController.getLoggedInUser();
+        String record = "Dependent logged in with id " + loggedInUserId;
+
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, record);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        LoginRecord();
         // Create Runnable for RetrieveDependent
         Runnable retrieveDependentRunnable = new Runnable() {
             @Override
