@@ -274,16 +274,6 @@ public class policyHolderController implements Initializable {
                         dependentNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
                         dependentEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
                         dependentPolicyNumberColumn.setCellValueFactory(new PropertyValueFactory<>("policyNumber"));
-
-                        dependentClaimTable.setItems(dependentClaimData);
-                        idDependentColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-                        claimDateDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Claim_Date"));
-                        examDateDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Exam_Date"));
-                        claimAmountDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Claim_amount"));
-                        insuredPersonDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Insured_Person"));
-                        statusDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Status"));
-                        documentsDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Documents"));
-                        receiverBankingInfoDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Receiver_Banking_Infor"));
                     }
                 });
             }
@@ -297,17 +287,6 @@ public class policyHolderController implements Initializable {
         dependentNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         dependentEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         dependentPolicyNumberColumn.setCellValueFactory(new PropertyValueFactory<>("policyNumber"));
-
-        //Get their claims too. Because making another method with the same Query is too much work.
-        dependentClaimTable.setItems(dependentClaimData);
-        idDependentColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        claimDateDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Claim_Date"));
-        examDateDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Exam_Date"));
-        claimAmountDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Claim_amount"));
-        insuredPersonDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Insured_Person"));
-        statusDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Status"));
-        documentsDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Documents"));
-        receiverBankingInfoDependentColumn.setCellValueFactory(new PropertyValueFactory<>("Receiver_Banking_Infor"));
     }
 
     public void RetrieveClaim() {
@@ -387,24 +366,23 @@ public class policyHolderController implements Initializable {
                 }
                 else {
                     // Get the values from the text fields
-                    String claimDate = claimDateField.getText();
-                    String examDate = examDateField.getText();
-                    String claimAmount = claimAmountField.getText();
+                    Date claimDate = Date.valueOf(claimDateField.getText());
+                    Date examDate = Date.valueOf(examDateField.getText());
+                    Float claimAmount = Float.valueOf(claimAmountField.getText());
                     String bankingInfo = bankingInfoField.getText();
-                    String insuredPerson = cachedPolicyNumber;
+                    Integer insuredPerson = Integer.valueOf(cachedPolicyNumber);
                     String status = "Pending";
-                    String documents = cachedHolderName + "-" + selectFile().getName();
-                    newFileName = documents;
+                    String documents = "Documents.pdf";
 
 
                     // Prepare the SQL INSERT statement
-                    String sql = "INSERT INTO \"Claim\" (\"Claim_Date\", \"Exam_Date\", \"Claim_amount\", \"Insured_Person\", \"Status\", \"Documents\", \"Receiver_Banking_Infor\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    String sql = "INSERT INTO \"Claim\" (\"Claim_Date\", \"Exam_Date\", \"Claim_amount\", \"Insured_Person\", \"Status\", \"Documents\", \"Receiver_Banking_Infor\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                     PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, claimDate);
-                    pstmt.setString(2, examDate);
-                    pstmt.setString(3, claimAmount);
-                    pstmt.setString(4, insuredPerson);
+                    pstmt.setDate(1, claimDate);
+                    pstmt.setDate(2, examDate);
+                    pstmt.setFloat(3, claimAmount);
+                    pstmt.setInt(4, insuredPerson);
                     pstmt.setString(5, status);
                     pstmt.setString(6, documents);
                     pstmt.setString(7, bankingInfo);
@@ -412,12 +390,7 @@ public class policyHolderController implements Initializable {
                     // Execute the SQL statement
                     pstmt.executeUpdate();
 
-                    // Call uploadFileToSupabase() method
-                    File selectedFile = selectFile();
-                    uploadFileToSupabase(selectedFile);
-
                     System.out.println("Claim created successfully");
-                    newFileName="";
                 }
             }
         }
@@ -443,23 +416,22 @@ public class policyHolderController implements Initializable {
                     Dependent selectedDependent = dependentComboBox.getSelectionModel().getSelectedItem();
 
                     // Get the values from the text fields
-                    String claimDate = claimDateDependField.getText();
-                    String examDate = examDateDependField.getText();
-                    String claimAmount = claimAmountDependField.getText();
+                    Date claimDate = Date.valueOf(claimDateDependField.getText());
+                    Date examDate = Date.valueOf(examDateDependField.getText());
+                    Float claimAmount = Float.valueOf(claimAmountDependField.getText());
                     String bankingInfo = bankingInfoDependField.getText();
-                    String insuredPerson = selectedDependent.getPolicyNumber(); // Use the policy number of the selected dependent
+                    Integer insuredPerson = Integer.valueOf(selectedDependent.getPolicyNumber()); // Use the policy number of the selected dependent
                     String status = "Pending";
-                    String documents = selectedDependent.getId() + "-" + selectedDependent.getName() + "-" + selectFile().getName(); // Use the id and name of the selected dependent
-                    newFileName = documents;
+                    String documents = "Documents.pdf";
 
                     // Prepare the SQL INSERT statement
                     String sql = "INSERT INTO \"Claim\" (\"Claim_Date\", \"Exam_Date\", \"Claim_amount\", \"Insured_Person\", \"Status\", \"Documents\", \"Receiver_Banking_Infor\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                     PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, claimDate);
-                    pstmt.setString(2, examDate);
-                    pstmt.setString(3, claimAmount);
-                    pstmt.setString(4, insuredPerson);
+                    pstmt.setDate(1, claimDate);
+                    pstmt.setDate(2, examDate);
+                    pstmt.setFloat(3, claimAmount);
+                    pstmt.setInt(4, insuredPerson);
                     pstmt.setString(5, status);
                     pstmt.setString(6, documents);
                     pstmt.setString(7, bankingInfo);
@@ -467,72 +439,12 @@ public class policyHolderController implements Initializable {
                     // Execute the SQL statement
                     pstmt.executeUpdate();
 
-                    // Call selectFile() and uploadFileToSupabase() methods
-                    File selectedFile = selectFile();
-                    uploadFileToSupabase(selectedFile);
-                    newFileName= "";
-
                     System.out.println("Dependent claim created successfully");
                 }
             }
         }
         catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    /***
-     * =========================================
-     * This is for the File Select and Upload Tab
-     * =========================================*/
-    public File selectFile() {
-        // Create a FileChooser
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files", "*.pdf"));
-
-        // Open the FileChooser and get the selected file
-        File selectedFile = fileChooser.showOpenDialog(null);
-
-        if (selectedFile != null) {
-            return selectedFile;
-        } else {
-            System.out.println("No file selected");
-            return null;
-        }
-    }
-
-    public void uploadFileToSupabase(File selectedFile) {
-        if (selectedFile != null) {
-            try {
-                // Read the file into a byte array
-                byte[] fileBytes = Files.readAllBytes(selectedFile.toPath());
-
-                // Create an HttpClient
-                HttpClient client = HttpClient.newHttpClient();
-
-                // Create an HttpRequest
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(new URI("https://mczllvsxcqnfxlewvpkr.supabase.co/storage/v1/object/private/Claim%20Documents%20Bucket" + newFileName))
-                        .header("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jemxsdnN4Y3FuZnhsZXd2cGtyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxNDAzMzIwMiwiZXhwIjoyMDI5NjA5MjAyfQ.cNEDyg2qEStTXJSfNaF8_JWhW_9t7fAxSxPRA8mJR-A")
-                        .header("Content-Type", "application/pdf")
-                        .PUT(HttpRequest.BodyPublishers.ofByteArray(fileBytes))
-                        .build();
-
-                // Send the request and handle the response
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-                System.out.println("Response status code: " + response.statusCode());
-                System.out.println("Response body: " + response.body());
-            }
-            catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        else {
-            System.out.println("No file selected");
         }
     }
 
@@ -634,31 +546,23 @@ public class policyHolderController implements Initializable {
                 }
                 else {
                     // Get the values from the text fields
-                    String newExamDate = claimDateUpdateField.getText();
-                    String newAmount = amountUpdateField.getText();
+                    Date newExamDate = Date.valueOf(claimDateUpdateField.getText());
+                    Float newAmount = Float.valueOf(amountUpdateField.getText());
                     String newBankingInfo = bankUpdateField.getText();
                     int claimId = Integer.parseInt(idClaimToFind.getText());
 
-                    // Select a file
-                    File selectedFile = selectFile();
-                    newFileName = "Claim" + claimId + "-" + selectedFile.getName() + "-Updated";
 
                     // Prepare the SQL UPDATE statement
-                    String sql = "UPDATE \"Claim\" SET \"Exam_Date\" = ?, \"Claim_amount\" = ?, \"Receiver_Banking_Infor\" = ?, \"Documents\" = ? WHERE \"id\" = ?";
+                    String sql = "UPDATE \"Claim\" SET \"Exam_Date\" = ?, \"Claim_amount\" = ?, \"Receiver_Banking_Infor\" = ? WHERE \"id\" = ?";
 
                     PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, newExamDate);
-                    pstmt.setString(2, newAmount);
+                    pstmt.setDate(1, newExamDate);
+                    pstmt.setFloat(2, newAmount);
                     pstmt.setString(3, newBankingInfo);
-                    pstmt.setString(4, newFileName);
-                    pstmt.setInt(5, claimId);
+                    pstmt.setInt(4, claimId);
 
                     // Execute the SQL statement
                     pstmt.executeUpdate();
-
-                    // Upload the file to Supabase
-                    uploadFileToSupabase(selectedFile);
-                    newFileName="";
 
                     System.out.println("Claim updated successfully");
                 }

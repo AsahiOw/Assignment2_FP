@@ -168,7 +168,6 @@
                                                    </padding>
                                                 </Separator>
                                                 <Label text="Please, upload the necessary documents" />
-                                                <Button fx:id="chooseFileBTN" mnemonicParsing="false" onAction="#selectFile" text="Choose file" />
                                                 <Separator prefWidth="200.0">
                                                    <padding>
                                                       <Insets bottom="3.0" top="5.0" />
@@ -198,7 +197,6 @@
                                                    </padding>
                                                 </Separator>
                                                 <Label text="Please, upload the necessary documents" />
-                                                <Button fx:id="chooseFileDependBTN" mnemonicParsing="false" onAction="#selectFile" text="Choose file" />
                                                 <Separator prefWidth="200.0">
                                                    <padding>
                                                       <Insets bottom="3.0" top="5.0" />
@@ -289,7 +287,6 @@
                                                    </padding>
                                                 </Separator>
                                                 <Label text="Please, upload the necessary documents" />
-                                                <Button fx:id="chooseFileUpdateBTN" mnemonicParsing="false" onAction="#selectFile" text="Choose file" />
                                                 <Separator prefWidth="200.0">
                                                    <padding>
                                                       <Insets bottom="3.0" top="5.0" />
