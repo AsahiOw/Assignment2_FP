@@ -201,7 +201,7 @@
                                                       <Insets bottom="3.0" top="5.0" />
                                                    </padding>
                                                 </Separator>
-                                                <Button fx:id="submitCreateClaimDependent" mnemonicParsing="false" onAction="#CreateDependentClaim" text="Submit" />
+                                                <Button fx:id="submitCreateClaimDependent" mnemonicParsing="false" onAction="#createRecordDependent" text="Submit" />
                                              </children>
                                           </VBox>
                                        </content>

@@ -492,8 +492,9 @@ public class policyHolderController implements Initializable {
         }
     }
 
-    public void CreateDependentClaim() {
+    public int CreateDependentClaim() {
         database db = new database();
+        int generatedClaimId = -1;
         try (Connection conn = db.connect()){
             if (conn != null) {
                 if (claimDateDependField.getText().isEmpty() || examDateDependField.getText().isEmpty() || claimAmountDependField.getText().isEmpty() || bankingInfoDependField.getText().isEmpty()) {
@@ -522,6 +523,9 @@ public class policyHolderController implements Initializable {
                     PreparedStatement pstmt2 = conn.prepareStatement(sql2);
                     pstmt2.setInt(1, insuranceNumber);
                     ResultSet rs = pstmt2.executeQuery();
+                    // Retrieve the generated claim ID
+                    ResultSet rs2 = pstmt.getGeneratedKeys();
+
                     if (rs.next()) {
                         int insuredPerson = Integer.parseInt(rs.getString("id"));
                         pstmt.setDate(1, claimDate);
@@ -536,8 +540,39 @@ public class policyHolderController implements Initializable {
                         pstmt.executeUpdate();
 
                         System.out.println("Dependent claim created successfully");
+                        if (rs2.next()) {
+                            generatedClaimId = rs2.getInt(1);
+                        }
                     }
                 }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return generatedClaimId;
+    }
+
+    public void createRecordDependent() {
+        database db = new database();
+        try (Connection conn = db.connect()){
+            if (conn != null) {
+                // Create a new claim and get its ID
+                int claimId = CreateDependentClaim();
+
+                // Prepare the record string
+                String record = cachedHolderName + " created claim with an ID of: " + claimId;
+
+                // Prepare the SQL INSERT statement
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, record);
+
+                // Execute the SQL statement
+                pstmt.executeUpdate();
+
+                System.out.println("Record created successfully");
             }
         }
         catch (SQLException e) {
