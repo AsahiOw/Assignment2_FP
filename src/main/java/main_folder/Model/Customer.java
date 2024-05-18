@@ -21,6 +21,14 @@ public class Customer {
         this.idDependency = new SimpleStringProperty(idDependency);
     }
 
+    public Customer(String id, String name, String email, String userType, String insuranceNumber) {
+        this.id = new SimpleStringProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.email = new SimpleStringProperty(email);
+        this.userType = new SimpleStringProperty(userType);
+        this.insuranceNumber = new SimpleStringProperty(insuranceNumber);
+    }
+
     public String getId() {
         return id.get();
     }
