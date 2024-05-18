@@ -317,34 +317,30 @@ public class policyOwnerController implements Initializable {
                             alert.setContentText("The Customer does not exist");
                             alert.showAndWait();
                         } else {
-                            // Check if the new email already exists
-                            if (!updateCustomerEmail.getText().isEmpty()) {
-                                String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ? AND \"id\" != ?";
-                                PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
-                                checkEmailStmt.setString(1, updateCustomerEmail.getText());
-                                checkEmailStmt.setInt(2, customerId);
-                                ResultSet checkEmailRs = checkEmailStmt.executeQuery();
-                                if (checkEmailRs.next()) {
-                                    // If the email already exists and does not belong to the current user, show an alert and return
-                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                    alert.setTitle("Update Customer notification");
-                                    alert.setHeaderText(null);
-                                    alert.setContentText("The email already exists");
-                                    alert.showAndWait();
-                                    return;
-                                }
-                            }
-
-                            // Rest of the method...
                             String userType = rs.getString("userType");
-                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner"))) {
+                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder"))) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
                                 alert.setHeaderText(null);
-                                alert.setContentText("The Customer does not exist");
+                                alert.setContentText("Only PolicyHolder and Dependent can be updated");
                                 alert.showAndWait();
                                 return;
                             }
+
+                            // Check if the user exists in the Customer table
+                            sql = "SELECT * FROM \"Customer\" WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, customerId);
+                            rs = stmt.executeQuery();
+                            if (!rs.next()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Update Customer notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Customer does not exist in the Customer table");
+                                alert.showAndWait();
+                                return;
+                            }
+
                             if (updateCustomerName.getText().isEmpty() && updateCustomerEmail.getText().isEmpty() && updateCustomerPassword.getText().isEmpty()) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
@@ -426,14 +422,29 @@ public class policyOwnerController implements Initializable {
                             alert.showAndWait();
                         } else {
                             String userType = rs.getString("userType");
-                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner"))) {
+                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder"))) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Delete Customer notification");
                                 alert.setHeaderText(null);
-                                alert.setContentText("The Customer does not exist");
+                                alert.setContentText("Only PolicyHolder and Dependent can be deleted");
                                 alert.showAndWait();
                                 return;
                             }
+
+                            // Check if the user exists in the Customer table
+                            sql = "SELECT * FROM \"Customer\" WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, customerId);
+                            rs = stmt.executeQuery();
+                            if (!rs.next()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Delete Customer notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Customer does not exist in the Customer table");
+                                alert.showAndWait();
+                                return;
+                            }
+
                             sql = "DELETE FROM \"" + userType + "\" WHERE \"userID\" = ?";
                             stmt = conn.prepareStatement(sql);
                             stmt.setInt(1, customerId);
@@ -496,6 +507,30 @@ public class policyOwnerController implements Initializable {
                             alert.showAndWait();
                         } else {
                             String userType = rs.getString("userType");
+                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder"))) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Retrieve Customer notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Only PolicyHolder and Dependent can be retrieved");
+                                alert.showAndWait();
+                                return;
+                            }
+
+                            // Check if the user exists in the Customer table
+                            sql = "SELECT * FROM \"Customer\" WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, customerId);
+                            rs = stmt.executeQuery();
+                            if (!rs.next()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Retrieve Customer notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("The Customer does not exist in the Customer table");
+                                alert.showAndWait();
+                                return;
+                            }
+
+                            // If the user is a Dependent
                             if (userType.equals("Dependent")) {
                                 RetrieveCustomerRecord(customerId, "Dependent");
                                 sql = "SELECT U.*, C.\"InsuranceNumber\", PH_U.\"name\" AS \"PolicyHolderName\", PH_U.\"email\" AS \"PolicyHolderEmail\" " +
@@ -526,6 +561,8 @@ public class policyOwnerController implements Initializable {
                                     alert.showAndWait();
                                 }
                             }
+
+                            // If the user is a PolicyHolder
                             if (userType.equals("PolicyHolder")) {
                                 RetrieveCustomerRecord(customerId, "PolicyHolder");
                                 sql = "SELECT U.*, C.\"InsuranceNumber\", PO_U.\"name\" AS \"PolicyOwnerName\", PO_U.\"email\" AS \"PolicyOwnerEmail\" " +
@@ -726,7 +763,7 @@ public class policyOwnerController implements Initializable {
     }
 
     public void ClaimTable() {
-
+        
     }
 
     public void CreateClaim() {
