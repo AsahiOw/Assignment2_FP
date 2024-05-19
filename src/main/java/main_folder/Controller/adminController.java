@@ -1374,7 +1374,7 @@ public class adminController implements Initializable {
             }
         });
     }
-    private void UpdateCustomerRecord(int id){
+    public void UpdateCustomerRecord(int id){
         executorService.submit(() -> {
             String record = "Customer with the id of " + id + " has been updated by Admin id " + loginController.getLoggedInUser();
 
@@ -1389,7 +1389,7 @@ public class adminController implements Initializable {
             }
         });
     }
-    private void DeleteCustomerRecord(int id){
+    public void DeleteCustomerRecord(int id){
         executorService.submit(() -> {
             String record = "Customer with the id of " + id + " has been deleted by Admin id " + loginController.getLoggedInUser();
 
@@ -1404,7 +1404,7 @@ public class adminController implements Initializable {
             }
         });
     }
-    private void RetrieveCustomerRecord(int id, String userType){
+    public void RetrieveCustomerRecord(int id, String userType){
         executorService.submit(() -> {
             String record = userType + " with the id of " + id + " has been retrieved by Admin id " + loginController.getLoggedInUser();
 
@@ -1419,7 +1419,7 @@ public class adminController implements Initializable {
             }
         });
     }
-    private void UpdateProviderRecord(int id){
+    public void UpdateProviderRecord(int id){
         executorService.submit(() -> {
             String record = "Provider with the id of " + id + " has been updated by Admin id " + loginController.getLoggedInUser();
 
@@ -1434,7 +1434,7 @@ public class adminController implements Initializable {
             }
         });
     }
-    private void DeleteProviderRecord(int id){
+    public void DeleteProviderRecord(int id){
         executorService.submit(() -> {
             String record = "Provider with the id of " + id + " has been deleted by Admin id " + loginController.getLoggedInUser();
 
@@ -1449,7 +1449,7 @@ public class adminController implements Initializable {
             }
         });
     }
-    private void RetrieveProviderRecord(int id, String userType){
+    public void RetrieveProviderRecord(int id, String userType){
         executorService.submit(() -> {
             String record = userType + "with the id of " + id + " has been retrieved by Admin id " + loginController.getLoggedInUser();
 

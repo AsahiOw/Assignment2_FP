@@ -449,7 +449,7 @@ public class policyOwnerController implements Initializable {
                             stmt = conn.prepareStatement(sql);
                             stmt.setInt(1, customerId);
                             stmt.executeUpdate();
-                            
+
                             sql = "DELETE FROM \"" + userType + "\" WHERE \"userID\" = ?";
                             stmt = conn.prepareStatement(sql);
                             stmt.setInt(1, customerId);
