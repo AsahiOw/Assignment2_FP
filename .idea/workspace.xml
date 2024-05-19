@@ -10,27 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1f6b104-184f-4cf5-b5f8-3fcce2d9d740" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/ConnectDatabase/database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/ConnectDatabase/database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/dependentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/dependentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyHolderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyHolderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyOwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyOwnerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Execution/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Execution/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Claim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Claim.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Customer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Customer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Dependent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Dependent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyOwner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyOwner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Provider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Provider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Record.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Record.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Surveyor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Surveyor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/main_folder/Controller/adminControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/main_folder/Controller/adminControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,17 +30,17 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.main.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.adminControllerTest.testRetrieveProviderRecord.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.adminControllerTest.testUpdateCustomerRecord.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.main.executor": "Run",
+    "JUnit.adminControllerTest.testRetrieveProviderRecord.executor": "Run",
+    "JUnit.adminControllerTest.testUpdateCustomerRecord.executor": "Run",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "Merging master",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\RMIT\rmit 5 semester\Further programming\Assignment2_FP\src" />
