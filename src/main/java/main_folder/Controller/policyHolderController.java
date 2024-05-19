@@ -346,6 +346,7 @@ public class policyHolderController implements Initializable {
                 System.out.println("Database connection successful."); // Debug line
                 try {
                     int userId = Integer.parseInt(loginController.getLoggedInUser());
+
                     // Prepare the SQL SELECT statement
                     String sql = "SELECT C.* " +
                             "FROM \"Claim\" C " +
