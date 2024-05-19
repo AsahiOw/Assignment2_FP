@@ -12,8 +12,6 @@ import javafx.application.Platform;
 import main_folder.ConnectDatabase.database;
 import main_folder.Model.Claim;
 import main_folder.Model.Customer;
-import main_folder.Model.Provider;
-import main_folder.Model.Record;
 
 import java.net.URL;
 import java.sql.*;
@@ -68,6 +66,7 @@ public class policyOwnerController implements Initializable {
         setupClaimTableColumns();
         ClaimTable();
         userDetail();
+        LoginRecord();
     }
     private ExecutorService executorService = Executors.newFixedThreadPool(6);
 
@@ -895,6 +894,7 @@ public class policyOwnerController implements Initializable {
                                     }
                                     System.out.println("Created a claim with ID: " + claimId);
                                     ClaimTable();
+                                    CreateClaimRecord(claimId);
                                     Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                                     alert2.setTitle("Create Claim notification");
                                     alert2.setHeaderText(null);
@@ -997,6 +997,7 @@ public class policyOwnerController implements Initializable {
                             stmt.executeUpdate();
                             System.out.println("Updated the claim");
                             ClaimTable();
+                            UpdateClaimRecord(claimId);
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Update Claim notification");
                             alert.setHeaderText(null);
@@ -1054,6 +1055,7 @@ public class policyOwnerController implements Initializable {
 
                             System.out.println("Deleted the claim");
                             ClaimTable();
+                            DeleteClaimRecord(claimId);
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Claim notification");
                             alert.setHeaderText(null);
@@ -1196,5 +1198,69 @@ public class policyOwnerController implements Initializable {
         }
     }
 
+    private void LoginRecord(){
+        executorService.submit(() -> {
+            String loggedInUserId = loginController.getLoggedInUser();
+            String record = "PolicyOwner logged in with id " + loggedInUserId;
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void CreateClaimRecord(int id){
+        executorService.submit(() -> {
+            String record = "Claim with the id of " + id + " has been created by PolicyOwner id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void UpdateClaimRecord(int id){
+        executorService.submit(() -> {
+            String record = "Claim with the id of " + id + " has been updated by PolicyOwner id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void DeleteClaimRecord(int id){
+        executorService.submit(() -> {
+            String record = "Claim with the id of " + id + " has been deleted by PolicyOwner id " + loginController.getLoggedInUser();
+
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                String sql = "INSERT INTO \"Record\" (\"record\") VALUES (?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, record);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }
     
