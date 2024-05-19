@@ -497,6 +497,7 @@ public class policyHolderController implements Initializable {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        RetrieveClaim();
     }
 
     public int CreateDependentClaim() {
@@ -603,6 +604,7 @@ public class policyHolderController implements Initializable {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        RetrieveDependentClaim();
     }
 
     /***
@@ -646,6 +648,7 @@ public class policyHolderController implements Initializable {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        RetrieveHolder();
     }
 
     public void UpdateDependent() {
@@ -696,6 +699,7 @@ public class policyHolderController implements Initializable {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        RetrieveDependents();
     }
 
     public void UpdateClaim() {
@@ -776,6 +780,8 @@ public class policyHolderController implements Initializable {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        RetrieveClaim();
+        RetrieveDependentClaim();
     }
 
 
