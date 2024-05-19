@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a1f6b104-184f-4cf5-b5f8-3fcce2d9d740" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,13 +23,13 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.main.executor": "Run",
-    "git-widget-placeholder": "master",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.main.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main_folder.main" />

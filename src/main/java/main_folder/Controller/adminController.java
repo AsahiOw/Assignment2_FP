@@ -152,8 +152,8 @@ public class adminController implements Initializable {
         CustomerTable();
         ProviderTable();
         ClaimTable();
-        LoginRecord();
         RecordTable();
+        LoginRecord();
     }
 
     private void setupClaimTableColumns(){
@@ -318,6 +318,7 @@ public class adminController implements Initializable {
                                             stmt6.setInt(2, dependentId); // ID of the new Dependent
                                             stmt6.executeUpdate();
                                             CustomerTable();
+                                            RecordTable();
                                             System.out.println("Created a new dependency in the PolicyHolder_Dependent table");
                                         }
                                     }
@@ -354,6 +355,7 @@ public class adminController implements Initializable {
                                             stmt6.setInt(2, PolicyHolderId); // ID of the new PolicyHolder
                                             stmt6.executeUpdate();
                                             CustomerTable();
+                                            RecordTable();
                                             System.out.println("Created a new PolicyHolder in the PolicyOwner_PolicyHolder table");
                                         }
                                     }
@@ -390,6 +392,7 @@ public class adminController implements Initializable {
                                             stmt6.setInt(2, PolicyOwnerId); // ID of the new PolicyOwner
                                             stmt6.executeUpdate();
                                             CustomerTable();
+                                            RecordTable();
                                             System.out.println("Created a new PolicyOwner in the InsuranceManager_PolicyOwner table");
                                             }
                                         }
@@ -493,6 +496,7 @@ public class adminController implements Initializable {
                             System.out.println("Updated the customer");
                             UpdateCustomerRecord(customerId);
                             CustomerTable();
+                            RecordTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Update Customer notification");
                             alert.setHeaderText(null);
@@ -546,6 +550,11 @@ public class adminController implements Initializable {
                                 alert.showAndWait();
                                 return;
                             }
+                            sql = "DELETE FROM \"Claim\" WHERE \"Insured_Person\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, customerId);
+                            stmt.executeUpdate();
+
                             sql = "DELETE FROM \"" + userType + "\" WHERE \"userID\" = ?";
                             stmt = conn.prepareStatement(sql);
                             stmt.setInt(1, customerId);
@@ -564,6 +573,8 @@ public class adminController implements Initializable {
                             System.out.println("Deleted the customer");
                             DeleteCustomerRecord(customerId);
                             CustomerTable();
+                            ClaimTable();
+                            RecordTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Customer notification");
                             alert.setHeaderText(null);
@@ -911,6 +922,7 @@ public class adminController implements Initializable {
                                 stmt6.executeUpdate();
                                 CreateUserRecord();
                                 ProviderTable();
+                                RecordTable();
                                 System.out.println("Created a new InsuranceSurveyor in the InsuranceManager_InsuranceSurveyor table");
                                 }
                             }
@@ -1009,6 +1021,7 @@ public class adminController implements Initializable {
                             System.out.println("Updated the Provider");
                             UpdateProviderRecord(providerId);
                             ProviderTable();
+                            RecordTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Update Provider notification");
                             alert.setHeaderText(null);
@@ -1075,6 +1088,8 @@ public class adminController implements Initializable {
                             System.out.println("Deleted the provider");
                             DeleteProviderRecord(providerId);
                             ProviderTable();
+                            ClaimTable();
+                            RecordTable();
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Delete Provider notification");
                             alert.setHeaderText(null);
