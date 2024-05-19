@@ -6,7 +6,7 @@
 - Nguyen Ha Tuan Nguyen - s3978072
 - Luong Tuan Kiet - s3980288
 - Tran Tuan Minh - s3980288
-- Nguyen Thanh Tung - s3979489
+- Nguyen Thanh Tung -
 
 ### Assignment Detail: 
 An insurance claims management system.
@@ -24,3 +24,6 @@ Run the program from the `Assignment2_FP.jar`
 | PolicyOwner       | PO    | PO       |
 | PolicyHolder      | PH    | PH       |
 | Dependent         | D     | D        |
+
+### Repository Link:
+https://github.com/AsahiOw/Assignment2_FP
