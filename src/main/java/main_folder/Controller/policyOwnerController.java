@@ -763,23 +763,298 @@ public class policyOwnerController implements Initializable {
     }
 
     public void ClaimTable() {
-        
+        executorService.submit(() -> {
+            database db = new database();
+            try (Connection conn = db.connect()) {
+                if (conn != null) {
+                    int policyOwnerId = Integer.parseInt(loginController.getLoggedInUser());
+                    String sql = "SELECT cl.ID, cl.\"Claim_Date\", cl.\"Exam_Date\", cl.\"Claim_amount\", cl.\"Insured_Person\", cl.\"Status\", cl.\"Documents\", cl.\"Receiver_Banking_Infor\" " +
+                            "FROM \"Claim\" cl " +
+                            "INNER JOIN \"Customer\" cu ON cl.\"Insured_Person\" = cu.id " +
+                            "LEFT JOIN \"Dependent\" dep ON cu.id = dep.\"policyNumber\" " +
+                            "LEFT JOIN \"PolicyHolder_Dependent\" phd ON dep.id = phd.\"Dependent\" " +
+                            "LEFT JOIN \"PolicyHolder\" ph ON phd.\"PolicyHolder\" = ph.id " +
+                            "LEFT JOIN \"PolicyOwner_PolicyHolder\" poph ON ph.id = poph.\"PolicyHolder\" " +
+                            "LEFT JOIN \"PolicyOwner\" po ON poph.\"PolicyOwner\" = po.id " +
+                            "LEFT JOIN \"User\" u1 ON cu.id = u1.id " +
+//                            "LEFT JOIN \"User\" u2 ON dep.\"userID\" = u2.id " +
+//                            "LEFT JOIN \"User\" u3 ON ph.\"userID\" = u3.id " +
+//                            "LEFT JOIN \"User\" u4 ON po.\"userID\" = u4.id " +
+                            "WHERE u1.id = ?";
+
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    stmt.setInt(1, policyOwnerId);
+//                    stmt.setInt(2, policyOwnerId);
+//                    stmt.setInt(3, policyOwnerId);
+//                    stmt.setInt(4, policyOwnerId);
+                    ResultSet rs = stmt.executeQuery();
+
+                    // Clear existing data
+                    Platform.runLater(() -> claimTable.getItems().clear());
+
+                    // Add data to table
+                    while (rs.next()) {
+                        Claim claim = new Claim(
+                                rs.getString("id"),
+                                rs.getString("Claim_Date"),
+                                rs.getString("Exam_Date"),
+                                rs.getString("Claim_Amount"),
+                                rs.getString("Insured_Person"),
+                                rs.getString("status"),
+                                rs.getString("documents"),
+                                rs.getString("Receiver_Banking_Infor")
+                        );
+                        Platform.runLater(() -> claimTable.getItems().add(claim));
+                    }
+
+                    // Set column data
+                    Platform.runLater(() -> {
+                        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+                        claimDateColumn.setCellValueFactory(new PropertyValueFactory<>("claimDate"));
+                        examDateColumn.setCellValueFactory(new PropertyValueFactory<>("examDate"));
+                        claimAmountColumn.setCellValueFactory(new PropertyValueFactory<>("claimAmount"));
+                        insuredPersonColumn.setCellValueFactory(new PropertyValueFactory<>("insuredPerson"));
+                        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+                        documentsColumn.setCellValueFactory(new PropertyValueFactory<>("documents"));
+                        receiverBankingInfoColumn.setCellValueFactory(new PropertyValueFactory<>("receiverBankingInfo"));
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void CreateClaim() {
-
+//        database db = new database();
+//        try (Connection conn = db.connect()) {
+//            if (conn != null) {
+//                if (createClaim.getText().isEmpty() || createExamDate.getText().isEmpty() || createClaimAmount.getText().isEmpty() || createInsuredPerson.getText().isEmpty() || createDocuments.getText().isEmpty() || receiverBankingInfo.getText().isEmpty()) {
+//                    System.out.println("Please enter all fields");
+//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                    alert.setTitle("Create Claim notification");
+//                    alert.setHeaderText(null);
+//                    alert.setContentText("Please enter all fields");
+//                    alert.showAndWait();
+//                } else {
+//                    String sql = "INSERT INTO \"Claim\" (\"claim\", \"examDate\", \"claimAmount\", \"insuredPerson\", \"documents\", \"receiverBankingInfo\") VALUES (?, ?, ?, ?, ?, ?)";
+//                    PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+//                    stmt.setString(1, createClaim.getText());
+//                    stmt.setString(2, createExamDate.getText());
+//                    stmt.setString(3, createClaimAmount.getText());
+//                    stmt.setString(4, createInsuredPerson.getText());
+//                    stmt.setString(5, createDocuments.getText());
+//                    stmt.setString(6, receiverBankingInfo.getText());
+//                    stmt.executeUpdate();
+//                    ResultSet rs = stmt.getGeneratedKeys();
+//                    int claimId = 0;
+//                    if (rs.next()) {
+//                        claimId = rs.getInt(1);
+//                    }
+//                    System.out.println("Created a claim with ID: " + claimId);
+//                    Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+//                    alert2.setTitle("Create Claim notification");
+//                    alert2.setHeaderText(null);
+//                    alert2.setContentText("Created a claim with ID: " + claimId);
+//                    alert2.showAndWait();
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void UpdateClaim() {
-
+//        database db = new database();
+//        try (Connection conn = db.connect()) {
+//            if (conn != null) {
+//                if (updateClaimID.getText().isEmpty()) {
+//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                    alert.setTitle("Update Claim notification");
+//                    alert.setHeaderText(null);
+//                    alert.setContentText("The Claim does not exist");
+//                    alert.showAndWait();
+//                } else {
+//                    try {
+//                        int claimId = Integer.parseInt(updateClaimID.getText());
+//                        String sql = "SELECT * FROM \"Claim\" WHERE \"ID\" = ?";
+//                        PreparedStatement stmt = conn.prepareStatement(sql);
+//                        stmt.setInt(1, claimId);
+//                        ResultSet rs = stmt.executeQuery();
+//                        if (!rs.next()) {
+//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                            alert.setTitle("Update Claim notification");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText("The Claim does not exist");
+//                            alert.showAndWait();
+//                        } else {
+//                            if (updateClaimDate.getText().isEmpty() && updateExamDate.getText().isEmpty() && updateAmount.getText().isEmpty() && updateDocuments.getText().isEmpty() && updateReceiverBankingInfo.getText().isEmpty()) {
+//                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                                alert.setTitle("Update Claim notification");
+//                                alert.setHeaderText(null);
+//                                alert.setContentText("Please enter all fields");
+//                                alert.showAndWait();
+//                                return;
+//                            }
+//                            sql = "UPDATE \"Claim\" SET ";
+//                            if (!updateClaimDate.getText().isEmpty()) {
+//                                sql += "\"Claim_Date\" = ?, ";
+//                            }
+//                            if (!updateExamDate.getText().isEmpty()) {
+//                                sql += "\"Exam_Date\" = ?, ";
+//                            }
+//                            if (!updateAmount.getText().isEmpty()) {
+//                                sql += "\"Claim_amount\" = ?, ";
+//                            }
+//                            if (!updateDocuments.getText().isEmpty()) {
+//                                sql += "\"Documents\" = ?, ";
+//                            }
+//                            if (!updateReceiverBankingInfo.getText().isEmpty()) {
+//                                sql += "\"Receiver_Banking_Infor\" = ?, ";
+//                            }
+//                            sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
+//                            sql += " WHERE \"ID\" = ?";
+//                            stmt = conn.prepareStatement(sql);
+//                            int index = 1;
+//                            if (!updateClaimDate.getText().isEmpty()) {
+//                                stmt.setString(index++, updateClaimDate.getText());
+//                            }
+//                            if (!updateExamDate.getText().isEmpty()) {
+//                                stmt.setString(index++, updateExamDate.getText());
+//                            }
+//                            if (!updateAmount.getText().isEmpty()) {
+//                                stmt.setString(index++, updateAmount.getText());
+//                            }
+//                            if (!updateDocuments.getText().isEmpty()) {
+//                                stmt.setString(index++, updateDocuments.getText());
+//                            }
+//                            if (!updateReceiverBankingInfo.getText().isEmpty()) {
+//                                stmt.setString(index++, updateReceiverBankingInfo.getText());
+//                            }
+//                            stmt.setInt(index, claimId);
+//                            stmt.executeUpdate();
+//                            System.out.println("Updated the claim");
+//                            ClaimTable();
+//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                            alert.setTitle("Update Claim notification");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText("Updated the Claim");
+//                            alert.showAndWait();
+//                        }
+//                    } catch (NumberFormatException e) {
+//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                        alert.setTitle("Update Claim notification");
+//                        alert.setHeaderText(null);
+//                        alert.setContentText("The Claim does not exist");
+//                        alert.showAndWait();
+//                    }
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void DeleteClaim() {
-
+//        database db = new database();
+//        try (Connection conn = db.connect()) {
+//            if (conn != null) {
+//                if (deleteClaim.getText().isEmpty()) {
+//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                    alert.setTitle("Delete Claim notification");
+//                    alert.setHeaderText(null);
+//                    alert.setContentText("The Claim does not exist");
+//                    alert.showAndWait();
+//                } else {
+//                    try {
+//                        int claimId = Integer.parseInt(deleteClaim.getText());
+//                        String sql = "SELECT * FROM \"Claim\" WHERE \"ID\" = ?";
+//                        PreparedStatement stmt = conn.prepareStatement(sql);
+//                        stmt.setInt(1, claimId);
+//                        ResultSet rs = stmt.executeQuery();
+//                        if (!rs.next()) {
+//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                            alert.setTitle("Delete Claim notification");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText("The Claim does not exist");
+//                            alert.showAndWait();
+//                        } else {
+//                            sql = "DELETE FROM \"Claim\" WHERE \"ID\" = ?";
+//                            stmt = conn.prepareStatement(sql);
+//                            stmt.setInt(1, claimId);
+//                            stmt.executeUpdate();
+//
+//                            System.out.println("Deleted the claim");
+//                            ClaimTable();
+//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                            alert.setTitle("Delete Claim notification");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText("Deleted the claim");
+//                            alert.showAndWait();
+//                        }
+//                    } catch (NumberFormatException e) {
+//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                        alert.setTitle("Delete Claim notification");
+//                        alert.setHeaderText(null);
+//                        alert.setContentText("The Claim does not exist");
+//                        alert.showAndWait();
+//                    }
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void RetrieveClaim() {
-
+//        database db = new database();
+//        try (Connection conn = db.connect()) {
+//            if (conn != null) {
+//                if (retrieveClaim.getText().isEmpty()) {
+//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                    alert.setTitle("Retrieve Claim notification");
+//                    alert.setHeaderText(null);
+//                    alert.setContentText("The Claim corresponds to this id does not exist");
+//                    alert.showAndWait();
+//                } else {
+//                    try {
+//                        int claimId = Integer.parseInt(retrieveClaim.getText());
+//                        String sql = "SELECT * FROM \"Claim\" WHERE \"ID\" = ?";
+//                        PreparedStatement stmt = conn.prepareStatement(sql);
+//                        stmt.setInt(1, claimId);
+//                        ResultSet rs = stmt.executeQuery();
+//                        if (!rs.next()) {
+//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                            alert.setTitle("Retrieve Claim notification");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText("This Claim corresponds to this id does not exist");
+//                            alert.showAndWait();
+//                        } else {
+//                            String claimDetails = "Claim ID: " + rs.getInt("ID") + "\n" +
+//                                    "Claim Date: " + rs.getString("Claim_Date") + "\n" +
+//                                    "Exam Date: " + rs.getString("Exam_Date") + "\n" +
+//                                    "Claim Amount: " + rs.getString("Claim_Amount") + "\n" +
+//                                    "Insured Person: " + rs.getString("Insured_Person") + "\n" +
+//                                    "Documents: " + rs.getString("Documents") + "\n" +
+//                                    "Receiver Banking Info: " + rs.getString("Receiver_Banking_Infor");
+//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                            alert.setTitle("Retrieve Claim notification");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText(claimDetails);
+//                            alert.showAndWait();
+//                        }
+//                    } catch (NumberFormatException e) {
+//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                        alert.setTitle("Retrieve Claim notification");
+//                        alert.setHeaderText(null);
+//                        alert.setContentText("The Claim corresponds to this id does not exist");
+//                        alert.showAndWait();
+//                    }
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }
