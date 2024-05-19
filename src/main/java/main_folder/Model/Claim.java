@@ -1,6 +1,8 @@
 package main_folder.Model;
 
-import java.sql.Date;
+/**
+ * @Tran Tuan Minh <OOPtional>
+ */
 
 public class Claim {
     private String id;

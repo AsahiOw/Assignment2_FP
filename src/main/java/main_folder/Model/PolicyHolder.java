@@ -1,5 +1,9 @@
 package main_folder.Model;
 
+/**
+ * @Tran Tuan Minh <OOPtional>
+ */
+
 public class PolicyHolder {
     private String id;
     private String name;
