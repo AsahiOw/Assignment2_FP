@@ -1,3 +1,10 @@
+/**
+ * @Nguyen Ha Tuan Nguyen - s3978072
+ * @Luong Tuan Kiet - s3980288
+ * @Tran Tuan Minh - s3804812
+ * @Nguyen Thanh Tung - s3979489
+ * <Ooptional>
+ */
 package main_folder.Model;
 
 public class PolicyHolder {

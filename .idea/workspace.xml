@@ -1,12 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Assignment2_FP:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1f6b104-184f-4cf5-b5f8-3fcce2d9d740" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/ConnectDatabase/database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/ConnectDatabase/database.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/adminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/dependentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/dependentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceManagerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/insuranceSurveyorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/loginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyHolderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyHolderController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyOwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Controller/policyOwnerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Execution/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Execution/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Claim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Claim.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Customer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Customer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Dependent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Dependent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyHolder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyOwner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/PolicyOwner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Provider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Provider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Record.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Record.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/Surveyor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/Surveyor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/Model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/Model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main_folder/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main_folder/main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/main_folder/Controller/adminControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/main_folder/Controller/adminControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
