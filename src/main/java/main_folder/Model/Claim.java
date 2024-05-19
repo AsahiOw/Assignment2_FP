@@ -13,6 +13,7 @@ public class Claim {
     private String Status;
     private String Documents;
     private String Receiver_Banking_Infor;
+    public Claim() {}
 
     public Claim(String id, String claim_Date, String exam_Date, String claim_amount, String insured_Person, String status, String documents, String receiver_Banking_Infor) {
         this.id = id;

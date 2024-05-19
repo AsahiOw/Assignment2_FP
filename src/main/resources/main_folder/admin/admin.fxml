@@ -214,32 +214,34 @@
                   <VBox>
                      <Label text="All Claim" />
                      <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
-                        <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1176.0">
+                        <TableView fx:id="claimTable" maxWidth="1.7976931348623157E308" onSort="#ClaimTable" prefHeight="400.0" prefWidth="1176.0">
                            <columns>
-                              <TableColumn fx:id="idColumn" text="ID" />
-                              <TableColumn fx:id="claimDateColumn" prefWidth="108.0" text="Claim Date" />
-                              <TableColumn fx:id="examDateColumn" prefWidth="87.0" text="Exam Date" />
-                              <TableColumn fx:id="claimAmountColumn" prefWidth="101.0" text="Claim Amount" />
-                              <TableColumn fx:id="insuredPersonColumn" prefWidth="105.0" text="Insured Person" />
-                              <TableColumn fx:id="statusColumn" prefWidth="145.0" text="Status" />
-                              <TableColumn fx:id="documentsColumn" prefWidth="186.0" text="Documents" />
-                              <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="363.0" text="Receiver Banking Info" />
+                              <TableColumn fx:id="idColumn" prefWidth="146.0" text="ID" />
+                              <TableColumn fx:id="claimDateColumn" prefWidth="146.0" text="Claim Date" />
+                              <TableColumn fx:id="examDateColumn" prefWidth="146.0" text="Exam Date" />
+                              <TableColumn fx:id="claimAmountColumn" prefWidth="146.0" text="Claim Amount" />
+                              <TableColumn fx:id="insuredPersonColumn" prefWidth="146.0" text="Insured Person" />
+                              <TableColumn fx:id="statusColumn" prefWidth="146.0" text="Status" />
+                              <TableColumn fx:id="documentsColumn" prefWidth="146.0" text="Documents" />
+                              <TableColumn fx:id="receiverBankingInfoColumn" prefWidth="153.0" text="Receiver Banking Info" />
                            </columns>
                         </TableView>
                      </ScrollPane>
-                     <Separator>
-                        <padding>
-                           <Insets bottom="10.0" top="10.0" />
-                        </padding>
-                        <stylesheets>
-                           <URL value="@CSS/Seperator_style.css" />
-                        </stylesheets>
-                        <styleClass>
-                           <String fx:value="thick-separator" />
-                        </styleClass>
-                     </Separator>
-                     <Label text="Sum Total Claim" />
-                     <Label fx:id="totalClaimLabel" onDragDetected="#TotalCost" />
+                  </VBox>
+               </TitledPane>
+               <TitledPane text="System Record">
+                  <VBox>
+                     <Label text="System Record" />
+                     <Button fx:id="updateRecordButton" onAction="#updateRecordMethod" text="Update Table" />
+                     <ScrollPane maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                        <TableView fx:id="recordTable" maxWidth="1.7976931348623157E308" onSort="#RecordTable" prefHeight="400.0" prefWidth="1176.0">
+                           <columns>
+                              <TableColumn fx:id="idRecordColumn" prefWidth="391.0" text="ID" />
+                              <TableColumn fx:id="contextRecordColumn" prefWidth="391.0" text="Context" />
+                              <TableColumn fx:id="dateRecordColumn" prefWidth="393.0" text="Date" />
+                           </columns>
+                        </TableView>
+                     </ScrollPane>
                   </VBox>
                </TitledPane>
             </panes>
