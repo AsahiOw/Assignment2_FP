@@ -6,7 +6,7 @@
 - Nguyen Ha Tuan Nguyen - s3978072
 - Luong Tuan Kiet - s3980288
 - Tran Tuan Minh - s3980288
-- Nguyen Thanh Tung -
+- Nguyen Thanh Tung - s3979489
 
 ### Assignment Detail: 
 An insurance claims management system.
