@@ -17,6 +17,9 @@ import main_folder.Model.Record;
 
 import java.net.URL;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Random;
 import java.io.IOException;
@@ -45,7 +48,7 @@ public class policyOwnerController implements Initializable {
     private TableColumn customerIdColumn, customerNameColumn, customerEmailColumn, customerUserTypeColumn, customerInsuranceNumberColumn;
 
     @FXML
-    private TextField createClaim, createExamDate, createClaimAmount, createInsuredPerson, createDocuments, receiverBankingInfo, updateClaimID, updateClaimDate, updateExamDate, updateAmount, updateDocuments, updateReceiverBankingInfo, deleteClaim, retrieveClaim;
+    private TextField createClaim, createExamDate, createClaimAmount, createInsuredPerson, createDocuments, receiverBankingInfo, updateClaimID, updateClaimDate, updateExamDate, updateAmount, updateInsuredPerson, updateDocuments, updateReceiverBankingInfo, deleteClaim, retrieveClaim;
 
     @FXML
     private Button createClaimButton, updateClaimButton, deleteClaimButton, retrieveClaimButton;
@@ -62,9 +65,24 @@ public class policyOwnerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         CustomerTable();
+        setupClaimTableColumns();
         ClaimTable();
+        userDetail();
     }
     private ExecutorService executorService = Executors.newFixedThreadPool(6);
+
+    private void setupClaimTableColumns(){
+        executorService.submit(() -> {
+            idColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("id"));
+            claimDateColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_Date"));
+            examDateColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Exam_Date"));
+            claimAmountColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Claim_amount"));
+            insuredPersonColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Insured_Person"));
+            statusColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Status"));
+            documentsColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Documents"));
+            receiverBankingInfoColumn.setCellValueFactory(new PropertyValueFactory<Claim, String>("Receiver_Banking_Infor"));
+        });
+    }
 
     public void CreateCustomer() {
         database db = new database();
@@ -206,6 +224,7 @@ public class policyOwnerController implements Initializable {
                                                 stmt6.setInt(2, dependentId); // ID of the new Dependent
                                                 stmt6.executeUpdate();
                                                 CustomerTable();
+                                                userDetail();
                                                 System.out.println("Created a new dependency in the PolicyHolder_Dependent table");
                                             }
                                         }
@@ -242,6 +261,7 @@ public class policyOwnerController implements Initializable {
                                                 stmt6.setInt(2, PolicyHolderId); // ID of the new PolicyHolder
                                                 stmt6.executeUpdate();
                                                 CustomerTable();
+                                                userDetail();
                                                 System.out.println("Created a new PolicyHolder in the PolicyOwner_PolicyHolder table");
                                             }
                                         }
@@ -278,6 +298,7 @@ public class policyOwnerController implements Initializable {
                                                 stmt6.setInt(2, PolicyOwnerId); // ID of the new PolicyOwner
                                                 stmt6.executeUpdate();
                                                 CustomerTable();
+                                                userDetail();
                                                 System.out.println("Created a new PolicyOwner in the InsuranceManager_PolicyOwner table");
                                             }
                                         }
@@ -317,30 +338,34 @@ public class policyOwnerController implements Initializable {
                             alert.setContentText("The Customer does not exist");
                             alert.showAndWait();
                         } else {
+                            // Check if the new email already exists
+                            if (!updateCustomerEmail.getText().isEmpty()) {
+                                String checkEmailSql = "SELECT * FROM \"User\" WHERE \"email\" = ? AND \"id\" != ?";
+                                PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
+                                checkEmailStmt.setString(1, updateCustomerEmail.getText());
+                                checkEmailStmt.setInt(2, customerId);
+                                ResultSet checkEmailRs = checkEmailStmt.executeQuery();
+                                if (checkEmailRs.next()) {
+                                    // If the email already exists and does not belong to the current user, show an alert and return
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Update Customer notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("The email already exists");
+                                    alert.showAndWait();
+                                    return;
+                                }
+                            }
+
+                            // Rest of the method...
                             String userType = rs.getString("userType");
-                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder"))) {
+                            if (!(userType.equals("Dependent") || userType.equals("PolicyHolder") || userType.equals("PolicyOwner"))) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
                                 alert.setHeaderText(null);
-                                alert.setContentText("Only PolicyHolder and Dependent can be updated");
+                                alert.setContentText("The Customer does not exist");
                                 alert.showAndWait();
                                 return;
                             }
-
-                            // Check if the user exists in the Customer table
-                            sql = "SELECT * FROM \"Customer\" WHERE \"id\" = ?";
-                            stmt = conn.prepareStatement(sql);
-                            stmt.setInt(1, customerId);
-                            rs = stmt.executeQuery();
-                            if (!rs.next()) {
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("Update Customer notification");
-                                alert.setHeaderText(null);
-                                alert.setContentText("The Customer does not exist in the Customer table");
-                                alert.showAndWait();
-                                return;
-                            }
-
                             if (updateCustomerName.getText().isEmpty() && updateCustomerEmail.getText().isEmpty() && updateCustomerPassword.getText().isEmpty()) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Update Customer notification");
@@ -771,57 +796,29 @@ public class policyOwnerController implements Initializable {
         executorService.submit(() -> {
             database db = new database();
             try (Connection conn = db.connect()) {
-                if (conn != null) {
-                    int policyOwnerId = Integer.parseInt(loginController.getLoggedInUser());
-                    String sql = "SELECT cl.ID, cl.\"Claim_Date\", cl.\"Exam_Date\", cl.\"Claim_amount\", cl.\"Insured_Person\", cl.\"Status\", cl.\"Documents\", cl.\"Receiver_Banking_Infor\" " +
-                            "FROM \"Claim\" cl " +
-                            "INNER JOIN \"Customer\" cu ON cl.\"Insured_Person\" = cu.id " +
-                            "LEFT JOIN \"Dependent\" dep ON cu.id = dep.\"policyNumber\" " +
-                            "LEFT JOIN \"PolicyHolder_Dependent\" phd ON dep.id = phd.\"Dependent\" " +
-                            "LEFT JOIN \"PolicyHolder\" ph ON phd.\"PolicyHolder\" = ph.id " +
-                            "LEFT JOIN \"PolicyOwner_PolicyHolder\" poph ON ph.id = poph.\"PolicyHolder\" " +
-                            "LEFT JOIN \"PolicyOwner\" po ON poph.\"PolicyOwner\" = po.id " +
-                            "LEFT JOIN \"User\" u1 ON cu.id = u1.id " +
-//                            "LEFT JOIN \"User\" u2 ON dep.\"userID\" = u2.id " +
-//                            "LEFT JOIN \"User\" u3 ON ph.\"userID\" = u3.id " +
-//                            "LEFT JOIN \"User\" u4 ON po.\"userID\" = u4.id " +
-                            "WHERE u1.id = ?";
+                String sql = "SELECT C.* FROM \"Claim\" C";
 
-                    PreparedStatement stmt = conn.prepareStatement(sql);
-                    stmt.setInt(1, policyOwnerId);
-//                    stmt.setInt(2, policyOwnerId);
-//                    stmt.setInt(3, policyOwnerId);
-//                    stmt.setInt(4, policyOwnerId);
-                    ResultSet rs = stmt.executeQuery();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
 
-                    // Clear existing data
-                    Platform.runLater(() -> claimTable.getItems().clear());
+                // Clear existing data
+                claimTable.getItems().clear();
 
-                    // Add data to table
-                    while (rs.next()) {
-                        Claim claim = new Claim(
-                                rs.getString("id"),
-                                rs.getString("Claim_Date"),
-                                rs.getString("Exam_Date"),
-                                rs.getString("Claim_Amount"),
-                                rs.getString("Insured_Person"),
-                                rs.getString("status"),
-                                rs.getString("documents"),
-                                rs.getString("Receiver_Banking_Infor")
-                        );
-                        Platform.runLater(() -> claimTable.getItems().add(claim));
-                    }
-
-                    // Set column data
+                // Add data to table
+                while (rs.next()) {
+                    Claim claim = new Claim(
+                            rs.getString("id"),
+                            rs.getString("Claim_Date"),
+                            rs.getString("Exam_Date"),
+                            rs.getString("Claim_amount"),
+                            rs.getString("Insured_Person"),
+                            rs.getString("Status"),
+                            rs.getString("Documents"),
+                            rs.getString("Receiver_Banking_Infor")
+                    );
+                    // Update UI on JavaFX Application Thread
                     Platform.runLater(() -> {
-                        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-                        claimDateColumn.setCellValueFactory(new PropertyValueFactory<>("claimDate"));
-                        examDateColumn.setCellValueFactory(new PropertyValueFactory<>("examDate"));
-                        claimAmountColumn.setCellValueFactory(new PropertyValueFactory<>("claimAmount"));
-                        insuredPersonColumn.setCellValueFactory(new PropertyValueFactory<>("insuredPerson"));
-                        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-                        documentsColumn.setCellValueFactory(new PropertyValueFactory<>("documents"));
-                        receiverBankingInfoColumn.setCellValueFactory(new PropertyValueFactory<>("receiverBankingInfo"));
+                        claimTable.getItems().add(claim);
                     });
                 }
             } catch (SQLException e) {
@@ -831,235 +828,372 @@ public class policyOwnerController implements Initializable {
     }
 
     public void CreateClaim() {
-//        database db = new database();
-//        try (Connection conn = db.connect()) {
-//            if (conn != null) {
-//                if (createClaim.getText().isEmpty() || createExamDate.getText().isEmpty() || createClaimAmount.getText().isEmpty() || createInsuredPerson.getText().isEmpty() || createDocuments.getText().isEmpty() || receiverBankingInfo.getText().isEmpty()) {
-//                    System.out.println("Please enter all fields");
-//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                    alert.setTitle("Create Claim notification");
-//                    alert.setHeaderText(null);
-//                    alert.setContentText("Please enter all fields");
-//                    alert.showAndWait();
-//                } else {
-//                    String sql = "INSERT INTO \"Claim\" (\"claim\", \"examDate\", \"claimAmount\", \"insuredPerson\", \"documents\", \"receiverBankingInfo\") VALUES (?, ?, ?, ?, ?, ?)";
-//                    PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-//                    stmt.setString(1, createClaim.getText());
-//                    stmt.setString(2, createExamDate.getText());
-//                    stmt.setString(3, createClaimAmount.getText());
-//                    stmt.setString(4, createInsuredPerson.getText());
-//                    stmt.setString(5, createDocuments.getText());
-//                    stmt.setString(6, receiverBankingInfo.getText());
-//                    stmt.executeUpdate();
-//                    ResultSet rs = stmt.getGeneratedKeys();
-//                    int claimId = 0;
-//                    if (rs.next()) {
-//                        claimId = rs.getInt(1);
-//                    }
-//                    System.out.println("Created a claim with ID: " + claimId);
-//                    Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
-//                    alert2.setTitle("Create Claim notification");
-//                    alert2.setHeaderText(null);
-//                    alert2.setContentText("Created a claim with ID: " + claimId);
-//                    alert2.showAndWait();
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (createClaim.getText().isEmpty() || createExamDate.getText().isEmpty() || createClaimAmount.getText().isEmpty() || createInsuredPerson.getText().isEmpty() || createDocuments.getText().isEmpty() || receiverBankingInfo.getText().isEmpty()) {
+                    System.out.println("Please enter all fields");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Create Claim notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please enter all fields");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        LocalDate claimDate = LocalDate.parse(createClaim.getText(), formatter);
+                        LocalDate examDate = LocalDate.parse(createExamDate.getText(), formatter);
+
+                        float claimAmount = Float.parseFloat(createClaimAmount.getText());
+
+                        long userId = Long.parseLong(createInsuredPerson.getText());
+                        String checkUserSql = "SELECT * FROM \"User\" WHERE \"id\" = ?";
+                        PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql);
+                        checkUserStmt.setLong(1, userId);
+                        ResultSet checkUserRs = checkUserStmt.executeQuery();
+                        if (!checkUserRs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Create Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Invalid User ID");
+                            alert.showAndWait();
+                        } else {
+                            String userType = checkUserRs.getString("userType");
+                            if (!userType.equals("Dependent") && !userType.equals("PolicyHolder") && !userType.equals("PolicyOwner")) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Create Claim notification");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Invalid InsuredPerson");
+                                alert.showAndWait();
+                            } else {
+                                String checkPolicyNumberSql = "SELECT \"policyNumber\" FROM \"" + userType + "\" WHERE \"userID\" = ?";
+                                PreparedStatement checkPolicyNumberStmt = conn.prepareStatement(checkPolicyNumberSql);
+                                checkPolicyNumberStmt.setLong(1, userId);
+                                ResultSet checkPolicyNumberRs = checkPolicyNumberStmt.executeQuery();
+                                if (!checkPolicyNumberRs.next()) {
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Create Claim notification");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("Invalid InsuredPerson");
+                                    alert.showAndWait();
+                                } else {
+                                    long insuredPersonId = checkPolicyNumberRs.getLong("policyNumber");
+                                    String sql = "INSERT INTO \"Claim\" (\"Claim_Date\", \"Exam_Date\", \"Claim_amount\", \"Insured_Person\",\"Status\", \"Documents\", \"Receiver_Banking_Infor\") VALUES (?, ?, ?, ?, ?, ?, ?)";
+                                    PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                                    stmt.setDate(1, java.sql.Date.valueOf(claimDate));
+                                    stmt.setDate(2, java.sql.Date.valueOf(examDate));
+                                    stmt.setFloat(3, claimAmount);
+                                    stmt.setLong(4, insuredPersonId);
+                                    stmt.setString(5, "Pending");
+                                    stmt.setString(6, createDocuments.getText());
+                                    stmt.setString(7, receiverBankingInfo.getText());
+                                    stmt.executeUpdate();
+                                    ResultSet rs = stmt.getGeneratedKeys();
+                                    int claimId = 0;
+                                    if (rs.next()) {
+                                        claimId = rs.getInt(1);
+                                    }
+                                    System.out.println("Created a claim with ID: " + claimId);
+                                    ClaimTable();
+                                    Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+                                    alert2.setTitle("Create Claim notification");
+                                    alert2.setHeaderText(null);
+                                    alert2.setContentText("Created a claim with ID: " + claimId);
+                                    alert2.showAndWait();
+                                }
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Create Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The claim amount and insured person ID must be numbers");
+                        alert.showAndWait();
+                    } catch (DateTimeParseException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Create Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The date column must be a date in the format yyyy-MM-dd");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void UpdateClaim() {
-//        database db = new database();
-//        try (Connection conn = db.connect()) {
-//            if (conn != null) {
-//                if (updateClaimID.getText().isEmpty()) {
-//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                    alert.setTitle("Update Claim notification");
-//                    alert.setHeaderText(null);
-//                    alert.setContentText("The Claim does not exist");
-//                    alert.showAndWait();
-//                } else {
-//                    try {
-//                        int claimId = Integer.parseInt(updateClaimID.getText());
-//                        String sql = "SELECT * FROM \"Claim\" WHERE \"ID\" = ?";
-//                        PreparedStatement stmt = conn.prepareStatement(sql);
-//                        stmt.setInt(1, claimId);
-//                        ResultSet rs = stmt.executeQuery();
-//                        if (!rs.next()) {
-//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                            alert.setTitle("Update Claim notification");
-//                            alert.setHeaderText(null);
-//                            alert.setContentText("The Claim does not exist");
-//                            alert.showAndWait();
-//                        } else {
-//                            if (updateClaimDate.getText().isEmpty() && updateExamDate.getText().isEmpty() && updateAmount.getText().isEmpty() && updateDocuments.getText().isEmpty() && updateReceiverBankingInfo.getText().isEmpty()) {
-//                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                                alert.setTitle("Update Claim notification");
-//                                alert.setHeaderText(null);
-//                                alert.setContentText("Please enter all fields");
-//                                alert.showAndWait();
-//                                return;
-//                            }
-//                            sql = "UPDATE \"Claim\" SET ";
-//                            if (!updateClaimDate.getText().isEmpty()) {
-//                                sql += "\"Claim_Date\" = ?, ";
-//                            }
-//                            if (!updateExamDate.getText().isEmpty()) {
-//                                sql += "\"Exam_Date\" = ?, ";
-//                            }
-//                            if (!updateAmount.getText().isEmpty()) {
-//                                sql += "\"Claim_amount\" = ?, ";
-//                            }
-//                            if (!updateDocuments.getText().isEmpty()) {
-//                                sql += "\"Documents\" = ?, ";
-//                            }
-//                            if (!updateReceiverBankingInfo.getText().isEmpty()) {
-//                                sql += "\"Receiver_Banking_Infor\" = ?, ";
-//                            }
-//                            sql = sql.substring(0, sql.length() - 2); // Remove the last comma and space
-//                            sql += " WHERE \"ID\" = ?";
-//                            stmt = conn.prepareStatement(sql);
-//                            int index = 1;
-//                            if (!updateClaimDate.getText().isEmpty()) {
-//                                stmt.setString(index++, updateClaimDate.getText());
-//                            }
-//                            if (!updateExamDate.getText().isEmpty()) {
-//                                stmt.setString(index++, updateExamDate.getText());
-//                            }
-//                            if (!updateAmount.getText().isEmpty()) {
-//                                stmt.setString(index++, updateAmount.getText());
-//                            }
-//                            if (!updateDocuments.getText().isEmpty()) {
-//                                stmt.setString(index++, updateDocuments.getText());
-//                            }
-//                            if (!updateReceiverBankingInfo.getText().isEmpty()) {
-//                                stmt.setString(index++, updateReceiverBankingInfo.getText());
-//                            }
-//                            stmt.setInt(index, claimId);
-//                            stmt.executeUpdate();
-//                            System.out.println("Updated the claim");
-//                            ClaimTable();
-//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                            alert.setTitle("Update Claim notification");
-//                            alert.setHeaderText(null);
-//                            alert.setContentText("Updated the Claim");
-//                            alert.showAndWait();
-//                        }
-//                    } catch (NumberFormatException e) {
-//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                        alert.setTitle("Update Claim notification");
-//                        alert.setHeaderText(null);
-//                        alert.setContentText("The Claim does not exist");
-//                        alert.showAndWait();
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (updateClaimID.getText().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Update Claim notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Claim does not exist");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        int claimId = Integer.parseInt(updateClaimID.getText());
+                        String sql = "SELECT * FROM \"Claim\" WHERE \"id\" = ?";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, claimId);
+                        ResultSet rs = stmt.executeQuery();
+                        if (!rs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Update Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The Claim does not exist");
+                            alert.showAndWait();
+                        } else {
+                            StringBuilder updateSql = new StringBuilder("UPDATE \"Claim\" SET ");
+                            boolean first = true;
+
+                            if (!updateClaimDate.getText().isEmpty()) {
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                LocalDate claimDate = LocalDate.parse(updateClaimDate.getText(), formatter);
+                                if (!first) updateSql.append(", ");
+                                updateSql.append("\"Claim_Date\" = '").append(java.sql.Date.valueOf(claimDate)).append("'");
+                                first = false;
+                            }
+
+                            if (!updateExamDate.getText().isEmpty()) {
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                LocalDate examDate = LocalDate.parse(updateExamDate.getText(), formatter);
+                                if (!first) updateSql.append(", ");
+                                updateSql.append("\"Exam_Date\" = '").append(java.sql.Date.valueOf(examDate)).append("'");
+                                first = false;
+                            }
+
+                            if (!updateAmount.getText().isEmpty()) {
+                                float claimAmount = Float.parseFloat(updateAmount.getText());
+                                if (!first) updateSql.append(", ");
+                                updateSql.append("\"Claim_amount\" = ").append(claimAmount);
+                                first = false;
+                            }
+
+                            if (!updateInsuredPerson.getText().isEmpty()) {
+                                long userId = Long.parseLong(updateInsuredPerson.getText());
+                                if (!first) updateSql.append(", ");
+                                updateSql.append("\"Insured_Person\" = ").append(userId);
+                                first = false;
+                            }
+
+                            if (!updateDocuments.getText().isEmpty()) {
+                                if (!first) updateSql.append(", ");
+                                updateSql.append("\"Documents\" = '").append(updateDocuments.getText()).append("'");
+                                first = false;
+                            }
+
+                            if (!updateReceiverBankingInfo.getText().isEmpty()) {
+                                if (!first) updateSql.append(", ");
+                                updateSql.append("\"Receiver_Banking_Infor\" = '").append(updateReceiverBankingInfo.getText()).append("'");
+                            }
+
+                            updateSql.append(" WHERE \"id\" = ").append(claimId);
+
+                            stmt = conn.prepareStatement(updateSql.toString());
+                            stmt.executeUpdate();
+                            System.out.println("Updated the claim");
+                            ClaimTable();
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Update Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Updated the Claim");
+                            alert.showAndWait();
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Update Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The claim amount and insured person ID must be numbers");
+                        alert.showAndWait();
+                    } catch (DateTimeParseException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Update Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The date column must be a date in the format yyyy-MM-dd");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void DeleteClaim() {
-//        database db = new database();
-//        try (Connection conn = db.connect()) {
-//            if (conn != null) {
-//                if (deleteClaim.getText().isEmpty()) {
-//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                    alert.setTitle("Delete Claim notification");
-//                    alert.setHeaderText(null);
-//                    alert.setContentText("The Claim does not exist");
-//                    alert.showAndWait();
-//                } else {
-//                    try {
-//                        int claimId = Integer.parseInt(deleteClaim.getText());
-//                        String sql = "SELECT * FROM \"Claim\" WHERE \"ID\" = ?";
-//                        PreparedStatement stmt = conn.prepareStatement(sql);
-//                        stmt.setInt(1, claimId);
-//                        ResultSet rs = stmt.executeQuery();
-//                        if (!rs.next()) {
-//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                            alert.setTitle("Delete Claim notification");
-//                            alert.setHeaderText(null);
-//                            alert.setContentText("The Claim does not exist");
-//                            alert.showAndWait();
-//                        } else {
-//                            sql = "DELETE FROM \"Claim\" WHERE \"ID\" = ?";
-//                            stmt = conn.prepareStatement(sql);
-//                            stmt.setInt(1, claimId);
-//                            stmt.executeUpdate();
-//
-//                            System.out.println("Deleted the claim");
-//                            ClaimTable();
-//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                            alert.setTitle("Delete Claim notification");
-//                            alert.setHeaderText(null);
-//                            alert.setContentText("Deleted the claim");
-//                            alert.showAndWait();
-//                        }
-//                    } catch (NumberFormatException e) {
-//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                        alert.setTitle("Delete Claim notification");
-//                        alert.setHeaderText(null);
-//                        alert.setContentText("The Claim does not exist");
-//                        alert.showAndWait();
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (deleteClaim.getText().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Delete Claim notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Claim does not exist");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        int claimId = Integer.parseInt(deleteClaim.getText());
+                        String sql = "SELECT * FROM \"Claim\" WHERE \"id\" = ?";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, claimId);
+                        ResultSet rs = stmt.executeQuery();
+                        if (!rs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Delete Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The Claim does not exist");
+                            alert.showAndWait();
+                        } else {
+                            sql = "DELETE FROM \"Claim\" WHERE \"id\" = ?";
+                            stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, claimId);
+                            stmt.executeUpdate();
+
+                            System.out.println("Deleted the claim");
+                            ClaimTable();
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Delete Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Deleted the claim");
+                            alert.showAndWait();
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Delete Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The Claim does not exist");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void RetrieveClaim() {
-//        database db = new database();
-//        try (Connection conn = db.connect()) {
-//            if (conn != null) {
-//                if (retrieveClaim.getText().isEmpty()) {
-//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                    alert.setTitle("Retrieve Claim notification");
-//                    alert.setHeaderText(null);
-//                    alert.setContentText("The Claim corresponds to this id does not exist");
-//                    alert.showAndWait();
-//                } else {
-//                    try {
-//                        int claimId = Integer.parseInt(retrieveClaim.getText());
-//                        String sql = "SELECT * FROM \"Claim\" WHERE \"ID\" = ?";
-//                        PreparedStatement stmt = conn.prepareStatement(sql);
-//                        stmt.setInt(1, claimId);
-//                        ResultSet rs = stmt.executeQuery();
-//                        if (!rs.next()) {
-//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                            alert.setTitle("Retrieve Claim notification");
-//                            alert.setHeaderText(null);
-//                            alert.setContentText("This Claim corresponds to this id does not exist");
-//                            alert.showAndWait();
-//                        } else {
-//                            String claimDetails = "Claim ID: " + rs.getInt("ID") + "\n" +
-//                                    "Claim Date: " + rs.getString("Claim_Date") + "\n" +
-//                                    "Exam Date: " + rs.getString("Exam_Date") + "\n" +
-//                                    "Claim Amount: " + rs.getString("Claim_Amount") + "\n" +
-//                                    "Insured Person: " + rs.getString("Insured_Person") + "\n" +
-//                                    "Documents: " + rs.getString("Documents") + "\n" +
-//                                    "Receiver Banking Info: " + rs.getString("Receiver_Banking_Infor");
-//                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                            alert.setTitle("Retrieve Claim notification");
-//                            alert.setHeaderText(null);
-//                            alert.setContentText(claimDetails);
-//                            alert.showAndWait();
-//                        }
-//                    } catch (NumberFormatException e) {
-//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                        alert.setTitle("Retrieve Claim notification");
-//                        alert.setHeaderText(null);
-//                        alert.setContentText("The Claim corresponds to this id does not exist");
-//                        alert.showAndWait();
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        database db = new database();
+        try (Connection conn = db.connect()) {
+            if (conn != null) {
+                if (retrieveClaim.getText().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Retrieve Claim notification");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The Claim corresponds to this id does not exist");
+                    alert.showAndWait();
+                } else {
+                    try {
+                        int claimId = Integer.parseInt(retrieveClaim.getText());
+                        String sql = "SELECT * FROM \"Claim\" WHERE \"id\" = ?";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, claimId);
+                        ResultSet rs = stmt.executeQuery();
+                        if (!rs.next()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Retrieve Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("This Claim corresponds to this id does not exist");
+                            alert.showAndWait();
+                        } else {
+                            String claimDetails = "Claim ID: " + rs.getInt("ID") + "\n" +
+                                    "Claim Date: " + rs.getString("Claim_Date") + "\n" +
+                                    "Exam Date: " + rs.getString("Exam_Date") + "\n" +
+                                    "Claim Amount: " + rs.getString("Claim_Amount") + "\n" +
+                                    "Insured Person: " + rs.getString("Insured_Person") + "\n" +
+                                    "Documents: " + rs.getString("Documents") + "\n" +
+                                    "Receiver Banking Info: " + rs.getString("Receiver_Banking_Infor");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Retrieve Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText(claimDetails);
+                            alert.showAndWait();
+                        }
+                    } catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Retrieve Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The Claim corresponds to this id does not exist");
+                        alert.showAndWait();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void userDetail(){
+        String loggedInUserId = loginController.getLoggedInUser();
+
+        if (loggedInUserId != null) {
+            // Connect to the database and query the User table for a user with the given ID
+            database db = new database();
+            try (Connection conn = db.connect();
+                 PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"User\" WHERE \"id\" = ?")) {
+                stmt.setInt(1, Integer.parseInt(loggedInUserId));
+                ResultSet rs = stmt.executeQuery();
+
+                // If the user exists, update the labels with the user's details
+                if (rs.next()) {
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        userIdLabel.setText(loggedInUserId);
+                        userNameLabel.setText(name);
+                        userEmailLabel.setText(email);
+                    });
+
+                    // Query the PolicyOwner table for a PolicyOwner with the given userID
+                    PreparedStatement stmtPolicyOwner = conn.prepareStatement("SELECT * FROM \"PolicyOwner\" WHERE \"userID\" = ?");
+                    stmtPolicyOwner.setInt(1, Integer.parseInt(loggedInUserId));
+                    ResultSet rsPolicyOwner = stmtPolicyOwner.executeQuery();
+
+                    // If the PolicyOwner exists, get the PolicyOwner ID
+                    if (rsPolicyOwner.next()) {
+                        int policyOwnerId = rsPolicyOwner.getInt("id");
+                        // Use policyOwnerId for further processing
+
+                        // Count the number of PolicyHolders under the PolicyOwner
+                        String sqlPolicyHolders = "SELECT COUNT(*) FROM \"PolicyOwner_PolicyHolder\" WHERE \"PolicyOwner\" = ?";
+                        PreparedStatement stmtPolicyHolders = conn.prepareStatement(sqlPolicyHolders);
+                        stmtPolicyHolders.setInt(1, policyOwnerId);
+                        ResultSet rsPolicyHolders = stmtPolicyHolders.executeQuery();
+                        int countPolicyHolders = rsPolicyHolders.next() ? rsPolicyHolders.getInt(1) : 0;
+
+                        // Count the number of Dependents under the PolicyHolders
+                        String sqlDependents = "SELECT COUNT(*) FROM \"PolicyHolder_Dependent\" WHERE \"PolicyHolder\" IN (SELECT \"PolicyHolder\" FROM \"PolicyOwner_PolicyHolder\" WHERE \"PolicyOwner\" = ?)";
+                        PreparedStatement stmtDependents = conn.prepareStatement(sqlDependents);
+                        stmtDependents.setInt(1, policyOwnerId);
+                        ResultSet rsDependents = stmtDependents.executeQuery();
+                        int countDependents = rsDependents.next() ? rsDependents.getInt(1) : 0;
+
+                        // Calculate the total cost
+                        int totalCosts = 100 + countPolicyHolders * 100 + countDependents * 60;
+                        String totalCostsString =
+                                "Total PolicyHolder cost: $" + countPolicyHolders * 100 + "\n" +
+                                "Total Dependent cost: $" + countDependents * 60 + "\n" +
+                                "Total cost (Include PolicyOwner): $" + totalCosts;
+
+                        // Update the "TotalCost" label
+                        Platform.runLater(() -> totalCost.setText(totalCostsString));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Handle case where no user is logged in
+            Platform.runLater(() -> {
+                userIdLabel.setText("No user logged in");
+                userNameLabel.setText("No user logged in");
+                userEmailLabel.setText("No user logged in");
+            });
+        }
     }
 
 }
