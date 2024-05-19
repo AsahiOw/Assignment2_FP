@@ -528,20 +528,38 @@ public class policyHolderController implements Initializable {
 
                     if (rs.next()) {
                         int insuredPerson = Integer.parseInt(rs.getString("id"));
-                        pstmt.setDate(1, claimDate);
-                        pstmt.setDate(2, examDate);
-                        pstmt.setFloat(3, claimAmount);
-                        pstmt.setInt(4, insuredPerson);
-                        pstmt.setString(5, status);
-                        pstmt.setString(6, documents);
-                        pstmt.setString(7, bankingInfo);
 
-                        // Execute the SQL statement
-                        pstmt.executeUpdate();
+                        String checkSql = "SELECT * FROM \"PolicyHolder_Dependent\" WHERE \"Dependent\" = ? AND \"PolicyHolder\" = ?";
+                        PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+                        checkStmt.setInt(1, insuredPerson); // assuming insuranceNumber is the dependent's ID
+                        checkStmt.setInt(2, Integer.parseInt(loginController.getLoggedInUser())); // assuming this is the policy holder's ID
 
-                        System.out.println("Dependent claim created successfully");
-                        if (rs2.next()) {
-                            generatedClaimId = rs2.getInt(1);
+                        ResultSet checkRs = checkStmt.executeQuery();
+                        if (!checkRs.next()) {
+                            // The dependent is not associated with the policy holder
+                            System.out.println("This dependent is not associated with the current policy holder.");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Create Dependent Claim notification");
+                            alert.setHeaderText(null);
+                            alert.setContentText("This is not your dependent. Please select a dependent associated with your policy.");
+                            alert.showAndWait();
+                            return -1;
+                        } else {
+                            pstmt.setDate(1, claimDate);
+                            pstmt.setDate(2, examDate);
+                            pstmt.setFloat(3, claimAmount);
+                            pstmt.setInt(4, insuredPerson);
+                            pstmt.setString(5, status);
+                            pstmt.setString(6, documents);
+                            pstmt.setString(7, bankingInfo);
+
+                            // Execute the SQL statement
+                            pstmt.executeUpdate();
+
+                            System.out.println("Dependent claim created successfully");
+                            if (rs2.next()) {
+                                generatedClaimId = rs2.getInt(1);
+                            }
                         }
                     }
                 }
@@ -627,12 +645,12 @@ public class policyHolderController implements Initializable {
         database db = new database();
         try (Connection conn = db.connect()){
             if (conn != null) {
-                if (dependentTable.getSelectionModel().getSelectedItem() == null) {
+                if (idDependUpdateField.getText().isEmpty() && emailDependField.getText().isEmpty() && passwordDependField.getText().isEmpty()){
                     System.out.println("Please select a dependent");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Update Dependent notification");
                     alert.setHeaderText(null);
-                    alert.setContentText("Please select a dependent");
+                    alert.setContentText("Please fill in all the new information");
                     alert.showAndWait();
                 }
                 else {
@@ -643,16 +661,28 @@ public class policyHolderController implements Initializable {
 
                     // Prepare the SQL UPDATE statement
                     String sql = "UPDATE \"User\" SET \"email\" = ?, \"password\" = ? WHERE \"id\" = ?";
+                    String checkSql = "SELECT * FROM \"PolicyHolder_Dependent\" WHERE \"Dependent\" = ? AND \"PolicyHolder\" = ?";
+                    PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+                    checkStmt.setInt(1, Integer.parseInt(idDependUpdateField.getText())); // assuming this is the dependent's ID
+                    checkStmt.setInt(2, Integer.parseInt(loginController.getLoggedInUser())); // assuming this is the policy holder's ID
 
-                    PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, newEmail);
-                    pstmt.setString(2, newPassword);
-                    pstmt.setInt(3, dependentId);
+                    ResultSet checkRs = checkStmt.executeQuery();
+                    if (!checkRs.next()) {
+                        // The dependent is not associated with the policy holder
+                        System.out.println("This dependent is not associated with the current policy holder.");
+                        return;
+                    } else {
 
-                    // Execute the SQL statement
-                    pstmt.executeUpdate();
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, newEmail);
+                        pstmt.setString(2, newPassword);
+                        pstmt.setInt(3, dependentId);
 
-                    System.out.println("Dependent updated successfully");
+                        // Execute the SQL statement
+                        pstmt.executeUpdate();
+
+                        System.out.println("Dependent updated successfully");
+                    }
                 }
             }
         }
@@ -680,6 +710,31 @@ public class policyHolderController implements Initializable {
                     String newBankingInfo = bankUpdateField.getText();
                     int claimId = Integer.parseInt(idClaimToFind.getText());
 
+                    // Check if the claim is associated with the policy holder or his dependents
+                    String checkSql = "SELECT C.* " +
+                            "FROM \"Claim\" C " +
+                            "JOIN \"Dependent\" D ON C.\"Insured_Person\" = D.\"policyNumber\" " +
+                            "JOIN \"PolicyHolder_Dependent\" PD ON D.\"id\" = PD.\"Dependent\" " +
+                            "JOIN \"PolicyHolder\" PH_U ON PD.\"PolicyHolder\" = PH_U.\"id\" " +
+                            "JOIN \"User\" UH ON PH_U.\"userID\" = UH.id " +
+                            "WHERE (UH.id = ? OR C.\"Insured_Person\" = ?) AND C.\"id\" = ?";
+
+                    PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+                    checkStmt.setInt(1, Integer.parseInt(loginController.getLoggedInUser())); // assuming this is the policy holder's ID
+                    checkStmt.setInt(2, Integer.parseInt(cachedPolicyNumber)); // assuming this is the policy holder's policy number
+                    checkStmt.setInt(3, claimId);
+
+                    ResultSet checkRs = checkStmt.executeQuery();
+                    if (!checkRs.next()) {
+                        // The claim is not associated with the policy holder or his dependents
+                        System.out.println("This claim is not associated with the current policy holder or his dependents.");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Update Claim notification");
+                        alert.setHeaderText(null);
+                        alert.setContentText("This is not your claim or your dependent's claim. Please select a claim associated with your policy.");
+                        alert.showAndWait();
+                        return;
+                    }
 
                     // Prepare the SQL UPDATE statement
                     String sql = "UPDATE \"Claim\" SET \"Exam_Date\" = ?, \"Claim_amount\" = ?, \"Receiver_Banking_Infor\" = ? WHERE \"id\" = ?";
