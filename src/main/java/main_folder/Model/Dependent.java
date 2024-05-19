@@ -1,5 +1,8 @@
 package main_folder.Model;
 
+/**
+ * @Tran Tuan Minh <OOPtional>
+ */
 
 public class Dependent {
     private String id;

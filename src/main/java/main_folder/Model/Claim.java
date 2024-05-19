@@ -1,5 +1,9 @@
 package main_folder.Model;
 
+/**
+ * @Tran Tuan Minh <OOPtional>
+ */
+
 public class Claim {
     private String id;
     private String Claim_Date;
